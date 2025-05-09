@@ -1,33 +1,51 @@
-# Gradle files
+# Ignore Gradle build files
 .gradle/
 build/
 
-# Local configuration file (sdk path, etc)
-local.properties
+# Ignore local configuration
+/local.properties
+/.idea/
+/*.iml
+/.cxx/
 
-# Log/OS Files
+# Ignore log files
 *.log
 
-# Android Studio generated files and folders
-captures/
-.externalNativeBuild/
-.cxx/
-*.apk
+# Ignore Android Studio caches
+/.gradle/
+/.idea/
+/captures/
+/.externalNativeBuild
+
+# Ignore generated files
+generated/
 output.json
 
-# IntelliJ
-*.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
 
-# Keystore files
+# Ignore signing keys
 *.jks
 *.keystore
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
+# Ignore Proguard mappings
+proguard/mapping.txt
+proguard/seeds.txt
+proguard/usage.txt
+proguard/dump.txt
 
-# Android Profiling
-*.hprof
+# Ignore NDK build artifacts
+obj/
+*.so
+
+# Ignore miscellaneous
+*.apk
+*.ap_
+*.db
+*.lock
+
+# Ignore Google Services config (optional, if not public)
+# Uncomment if you use Firebase and don't want to leak your app credentials
+# google-services.json
+# GoogleService-Info.plist
