@@ -2,6 +2,7 @@ package fr.epita.beerreal;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -15,6 +16,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import fr.epita.beerreal.databinding.ActivityMainBinding;
 import fr.epita.beerreal.ui.home.HomeFragment;
@@ -31,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
                 }
             });
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             HomeFragment.cameraActive = false;
         });
+
     }
 
     private void checkCameraPermission() {

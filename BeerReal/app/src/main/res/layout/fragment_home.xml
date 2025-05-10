@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <!-- PreviewView for Camera Feed -->
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
@@ -16,31 +15,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Capture Button at the Bottom Center -->
-    <Button
+    <ImageButton
         android:id="@+id/captureButton"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:backgroundTint="@android:color/darker_gray"
-        android:src="@drawable/baseline_add_a_photo_24"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/photo_capture_button"
+        android:scaleType="fitEnd"
         app:cornerRadius="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Exit Button at the Top Left -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/exitButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:src="@drawable/baseline_close_24"
         app:backgroundTint="@android:color/holo_orange_light"
-        app:maxImageSize="24dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:fabSize="mini"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Add Button at the Bottom Right -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

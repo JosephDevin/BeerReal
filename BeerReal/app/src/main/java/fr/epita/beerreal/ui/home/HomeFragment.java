@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,10 +23,15 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import fr.epita.beerreal.MainActivity;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.databinding.FragmentHomeBinding;
 
+import java.io.Console;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment {
@@ -38,15 +44,20 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
+    public List<File> Images = new ArrayList<>();
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        LoadAllPictures();
+
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         previewView = binding.previewView;
 
-        Button captureButton = binding.captureButton;
+        ImageButton captureButton = binding.captureButton;
         captureButton.setVisibility(View.GONE);
 
         FloatingActionButton exitButton = binding.exitButton;
@@ -95,7 +106,7 @@ public class HomeFragment extends Fragment {
                         getViewLifecycleOwner(),
                         cameraSelector,
                         preview,
-                        imageCapture // NEW: also bind imageCapture
+                        imageCapture
                 );
 
             } catch (ExecutionException | InterruptedException e) {
@@ -121,7 +132,7 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        File photoFile = new File(requireContext().getExternalFilesDir(null), "photo_" + System.currentTimeMillis() + ".jpg");
+        File photoFile = new File(requireContext().getExternalFilesDir(null), "photo_" + Images.size() + ".jpg");
 
         ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
 
@@ -131,9 +142,9 @@ public class HomeFragment extends Fragment {
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-
+                        Images.add(photoFile);
                         OpenBeerMenu(photoFile.getAbsolutePath());
-
+                        System.out.println(Images.size() + "On capture");
                     }
 
                     @Override
@@ -146,6 +157,18 @@ public class HomeFragment extends Fragment {
         );
     }
 
+    private void LoadAllPictures() {
+        File directory = new File(String.valueOf(requireContext().getExternalFilesDir(null)));
+        if (directory.exists()) {
+            File[] files = directory.listFiles((dir, name) -> name.endsWith(".jpg"));
+            if (files != null) {
+                Images.addAll(Arrays.asList(files)); // Load existing images into the list
+            }
+
+            System.out.println(Images.size() + "On load");
+        }
+    }
+
     private void OpenBeerMenu(String path) {
         DestroyCamera();
 
@@ -156,6 +179,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Avoid memory leaks
+        binding = null;
     }
 }
