@@ -19,8 +19,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.util.ArrayList;
-
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.ActivityMainBinding;
 import fr.epita.beerreal.ui.home.HomeFragment;
@@ -57,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         // ARCHITECTURE RELATED ACTIONS
         CsvPath = CsvHelper.InitialiseCSV(this);
         CsvHelper.CreateImageDir(this);
-        System.out.println(CsvPath);
 
 
         // ACTIVITY RELATED ACTIONS
@@ -78,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             HomeFragment.cameraActive = false;
         });
-
     }
 
     private void checkCameraPermission() {

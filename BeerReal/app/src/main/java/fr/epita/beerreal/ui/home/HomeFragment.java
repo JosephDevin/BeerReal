@@ -47,21 +47,37 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // PICTURES RELATED
         LoadAllPictures();
 
+
+
+
+
+        // ACTIVITY RELATED
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         previewView = binding.previewView;
 
+
+
+        // CAPTURE BUTTON AND EXIT BUTTON
         ImageButton captureButton = binding.captureButton;
         captureButton.setVisibility(View.GONE);
+        captureButton.setOnClickListener(v -> CapturePhoto());
+
 
         FloatingActionButton exitButton = binding.exitButton;
         exitButton.setVisibility(View.GONE);
+        exitButton.setOnClickListener(v -> DestroyCamera());
 
+
+
+
+
+        // ADD PICTURE BUTTON
         FloatingActionButton addButton = binding.addButton;
-
         addButton.setOnClickListener(v -> {
             if (!cameraActive) {
                 StartCamera();
@@ -74,13 +90,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        captureButton.setOnClickListener(v -> CapturePhoto());
-
-        exitButton.setOnClickListener(v -> DestroyCamera());
-
         return root;
     }
 
+
+
+
+
+
+
+    // CAMERA RELATED
     private void StartCamera() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -111,8 +130,6 @@ public class HomeFragment extends Fragment {
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
-
-
     private void DestroyCamera() {
         if (cameraProvider != null) {
             cameraProvider.unbindAll();
@@ -123,6 +140,12 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
+
+
+
+
+    // CAPTURE PHOTO AND ADD BEER RELATED
     private void CapturePhoto() {
         if (imageCapture == null) {
             Toast.makeText(getContext(), "ImageCapture not ready", Toast.LENGTH_SHORT).show();
@@ -153,6 +176,23 @@ public class HomeFragment extends Fragment {
         );
     }
 
+    private void OpenBeerMenu(String path) {
+        DestroyCamera();
+
+        CsvHelper.AddLineCsv(path, "aaa", "aaa",
+                1.5f, 1.5f,
+                new double[] {LocationStorage.getLatitude(), LocationStorage.getLongitude()},
+                new Date(),
+                ""
+        );
+    }
+
+
+
+
+
+
+    // LOAD ALL PICTURES RELATED
     private void LoadAllPictures() {
         File directory = new File(String.valueOf(requireContext().getExternalFilesDir("pics")));
         if (directory.exists()) {
@@ -164,27 +204,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void OpenBeerMenu(String path) {
-        DestroyCamera();
-
-        CsvHelper.AddLineCsv(path, "aaa", "aaa",
-                1.5f, 1.5f,
-                        new double[] {LocationStorage.getLatitude(), LocationStorage.getLongitude()},
-                        new Date(),
-                        ""
-                );
-        /*
-        TODO
-        Photo: STRING
-        Title: STRING
-        Brand: STRING
-        Volume: FLOAT in cL
-        Price: FLOAT in Euro
-        Location: DOUBLE[]
-        DATE: STRING
-        Bar: STRING
-         */
-    }
 
 
     @Override

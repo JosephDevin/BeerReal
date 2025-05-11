@@ -15,6 +15,7 @@ import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 
 import fr.epita.beerreal.Line;
+import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 
@@ -37,6 +38,9 @@ public class MapFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        CsvHelper.ResetApp(requireContext());
+        System.out.println("App successfully reset");
+
         mapView = view.findViewById(R.id.map);
 
         // Initialize OSMDroid
@@ -47,7 +51,7 @@ public class MapFragment extends Fragment {
 
         // Set initial position and zoom
         mapView.getController().setZoom(15);
-        mapView.getController().setCenter(new GeoPoint(48.849161, 2.358694)); // TINO ROSSI
+        mapView.getController().setCenter(new GeoPoint(LocationStorage.getLatitude(), LocationStorage.getLongitude()));
 
         // TODO: Create a list of all the beers that have been saved and load them here
         LoadBeers(view);
@@ -65,6 +69,10 @@ public class MapFragment extends Fragment {
         Configuration.getInstance().save(requireContext(), requireActivity().getPreferences(Context.MODE_PRIVATE));
     }
 
+
+
+
+
     private void LoadBeers(View v) {
         ArrayList<Line> lines = CsvHelper.GetLinesCsv(requireContext());
         mapView = mapView.findViewById(R.id.map);
@@ -73,15 +81,8 @@ public class MapFragment extends Fragment {
             return;
         }
 
-        for (Line s : lines) {
-            System.out.println("CSV line: " + s.ToString());
-        }
-
-
         for (Line l:lines) {
             GeoPoint beer = new GeoPoint(l.Location[0], l.Location[1]);
-
-            System.out.println(l.Location[0] + " " + l.Location[1]);
 
             Marker marker = new Marker(mapView);
             marker.setPosition(beer);

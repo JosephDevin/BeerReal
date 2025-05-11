@@ -1,7 +1,6 @@
 package fr.epita.beerreal.csv;
 
 import android.content.Context;
-import android.os.Build;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -10,19 +9,20 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import fr.epita.beerreal.Line;
 import fr.epita.beerreal.MainActivity;
 
 public class CsvHelper {
 
+
+
+
+    // INITIALIZATION RELATED
     public static String InitialiseCSV(Context context)  {
         String dirName = "csv";
 
@@ -40,7 +40,7 @@ public class CsvHelper {
                 boolean isFileCreated = csvFile.createNewFile();
                 if (isFileCreated) {
                     try (FileWriter writer = new FileWriter(csvFile)) {
-                        writer.append("Photo_path,Title,Brand,Volume,Price,Latitude,Longitude,Date\n"); // CSV HEADER - to ignore
+                        writer.append("Photo_path,Title,Brand,Volume,Price,Latitude,Longitude,Date,Bar\n"); // CSV HEADER - to ignore
                         writer.flush();
                     }
                 } else {
@@ -65,10 +65,17 @@ public class CsvHelper {
         }
     }
 
+
+
+
+
+
+
+    // MANAGING NEW DATA RELATED
     public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] coords ,Date date, String bar) {
         String toAdd;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + coords[0] + "," + coords[1] + "," + dateFormat.format(date) + "\n";
+        toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + coords[0] + "," + coords[1] + "," + dateFormat.format(date) + "," + bar + "\n";
 
         try (FileWriter writer = new FileWriter(MainActivity.CsvPath, true)) {
             writer.append(toAdd);
@@ -78,13 +85,22 @@ public class CsvHelper {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    // LOADING DATA RELATED
     public static List<String> LoadCsvAsStrings(Context context) {
         try {
             File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
             FileInputStream fis = new FileInputStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-
-            System.out.println(context.getExternalFilesDir(null) + "/csv/data.csv");
 
             List<String> lines = new ArrayList<>();
             String line;
@@ -130,5 +146,27 @@ public class CsvHelper {
 
         return null;
     }
+
+
+
+
+
+
+
+
+
+
+    // DEVELOPER NEEDS
+    public static void ResetApp(Context context) {
+            File folderCsv = new File(context.getExternalFilesDir(null) + "csv");
+            File folderPics = new File(context.getExternalFilesDir(null) + "pics");
+
+            if (folderCsv.exists()) {
+                folderCsv.delete();
+            }
+            if (folderPics.exists()) {
+                folderPics.delete();
+            }
+        }
 
 }
