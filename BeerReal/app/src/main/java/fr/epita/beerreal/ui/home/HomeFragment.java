@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -23,14 +22,15 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import fr.epita.beerreal.MainActivity;
+import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
+import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.FragmentHomeBinding;
 
-import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -39,11 +39,8 @@ public class HomeFragment extends Fragment {
     private PreviewView previewView;
     private ProcessCameraProvider cameraProvider;
     private ImageCapture imageCapture;
-
     public static boolean cameraActive = false;
-
     private FragmentHomeBinding binding;
-
     public List<File> Images = new ArrayList<>();
 
     @Override
@@ -132,7 +129,7 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        File photoFile = new File(requireContext().getExternalFilesDir(null), "photo_" + Images.size() + ".jpg");
+        File photoFile = new File(requireContext().getExternalFilesDir("pics"), "photo_" + Images.size() + ".jpg");
 
         ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
 
@@ -143,8 +140,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         Images.add(photoFile);
-                        OpenBeerMenu(photoFile.getAbsolutePath());
-                        System.out.println(Images.size() + "On capture");
+                        OpenBeerMenu(photoFile.getName());
                     }
 
                     @Override
@@ -158,21 +154,36 @@ public class HomeFragment extends Fragment {
     }
 
     private void LoadAllPictures() {
-        File directory = new File(String.valueOf(requireContext().getExternalFilesDir(null)));
+        File directory = new File(String.valueOf(requireContext().getExternalFilesDir("pics")));
         if (directory.exists()) {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".jpg"));
             if (files != null) {
                 Images.addAll(Arrays.asList(files)); // Load existing images into the list
+                System.out.println(Images.size());
             }
-
-            System.out.println(Images.size() + "On load");
         }
     }
 
     private void OpenBeerMenu(String path) {
         DestroyCamera();
 
-        //TODO
+        CsvHelper.AddLineCsv(path, "aaa", "aaa",
+                1.5f, 1.5f,
+                        new double[] {LocationStorage.getLatitude(), LocationStorage.getLongitude()},
+                        new Date(),
+                        ""
+                );
+        /*
+        TODO
+        Photo: STRING
+        Title: STRING
+        Brand: STRING
+        Volume: FLOAT in cL
+        Price: FLOAT in Euro
+        Location: DOUBLE[]
+        DATE: STRING
+        Bar: STRING
+         */
     }
 
 

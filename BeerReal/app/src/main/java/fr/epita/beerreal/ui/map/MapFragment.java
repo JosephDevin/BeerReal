@@ -5,13 +5,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.views.MapView;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.ArrayList;
+
+import fr.epita.beerreal.Line;
 import fr.epita.beerreal.R;
+import fr.epita.beerreal.csv.CsvHelper;
 
 public class MapFragment extends Fragment {
 
@@ -45,7 +50,7 @@ public class MapFragment extends Fragment {
         mapView.getController().setCenter(new GeoPoint(48.849161, 2.358694)); // TINO ROSSI
 
         // TODO: Create a list of all the beers that have been saved and load them here
-        LoadBeers();
+        LoadBeers(view);
     }
 
     @Override
@@ -60,7 +65,29 @@ public class MapFragment extends Fragment {
         Configuration.getInstance().save(requireContext(), requireActivity().getPreferences(Context.MODE_PRIVATE));
     }
 
-    private void LoadBeers() {
+    private void LoadBeers(View v) {
+        ArrayList<Line> lines = CsvHelper.GetLinesCsv(requireContext());
+        mapView = mapView.findViewById(R.id.map);
 
+        if (lines == null) {
+            return;
+        }
+
+        for (Line s : lines) {
+            System.out.println("CSV line: " + s.ToString());
+        }
+
+
+        for (Line l:lines) {
+            GeoPoint beer = new GeoPoint(l.Location[0], l.Location[1]);
+
+            System.out.println(l.Location[0] + " " + l.Location[1]);
+
+            Marker marker = new Marker(mapView);
+            marker.setPosition(beer);
+            marker.setTitle("You drank a beer here");
+            mapView.getOverlays().add(marker);
+        }
     }
+
 }
