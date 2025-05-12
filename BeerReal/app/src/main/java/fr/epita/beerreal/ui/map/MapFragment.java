@@ -1,11 +1,16 @@
 package fr.epita.beerreal.ui.map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.views.MapView;
@@ -81,13 +86,24 @@ public class MapFragment extends Fragment {
             return;
         }
 
+        Drawable d = ContextCompat.getDrawable(requireContext(), R.drawable.beer_location_pin);
+
         for (Line l:lines) {
             GeoPoint beer = new GeoPoint(l.Location[0], l.Location[1]);
 
-            Marker marker = new Marker(mapView);
-            marker.setPosition(beer);
-            marker.setTitle("You drank a beer here");
-            mapView.getOverlays().add(marker);
+            Marker m = new Marker(mapView);
+            m.setPosition(beer);
+            m.setTitle(l.Title + l.Date);
+            m.setIcon(d);
+
+            m.setOnMarkerClickListener((Marker marker, MapView map) -> {
+                //LoadPicture();
+
+                System.out.println("Clicked" + l.Date);
+                return true;
+            });
+
+            mapView.getOverlays().add(m);
         }
     }
 

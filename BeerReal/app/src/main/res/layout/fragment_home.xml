@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:src="@drawable/baseline_close_24"
-        app:backgroundTint="@android:color/holo_orange_light"
+        app:backgroundTint="#FFB122"
         app:fabSize="mini"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/baseline_add_a_photo_24"
-        app:backgroundTint="@android:color/holo_orange_light"
+        app:backgroundTint="#FFB122"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
