@@ -40,7 +40,7 @@ public class CsvHelper {
                 boolean isFileCreated = csvFile.createNewFile();
                 if (isFileCreated) {
                     try (FileWriter writer = new FileWriter(csvFile)) {
-                        writer.append("Photo_path,Title,Brand,Volume,Price,Latitude,Longitude,Date,Bar\n"); // CSV HEADER - to ignore
+                        writer.append("Photo_path,Title,Brand,Volume,Price,Latitude,Longitude,Date,Rating,Bar\n"); // CSV HEADER - to ignore
                         writer.flush();
                     }
                 } else {
@@ -72,10 +72,10 @@ public class CsvHelper {
 
 
     // MANAGING NEW DATA RELATED
-    public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] coords ,Date date, String bar) {
+    public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] coords ,Date date, float rating, String bar) {
         String toAdd;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + coords[0] + "," + coords[1] + "," + dateFormat.format(date) + "," + bar + "\n";
+        toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + coords[0] + "," + coords[1] + "," + dateFormat.format(date) + "," + rating + "," + bar + "\n";
 
         try (FileWriter writer = new FileWriter(MainActivity.CsvPath, true)) {
             writer.append(toAdd);
@@ -129,13 +129,15 @@ public class CsvHelper {
 
                 res.add(new Line(
                         elements[0], // Picture path
-                        elements[1], // Name
-                        elements[2], // Title
+                        elements[1], // Title
+                        elements[2], // Brand
                         Float.parseFloat(elements[3]), // Volume
                         Float.parseFloat(elements[4]), // Price
                         Double.parseDouble(elements[5]), // Latitude
                         Double.parseDouble(elements[6]), // Longitude
-                        elements[7] // Date (as String yyyy-mm-dd)
+                        elements[7], // Date (as String yyyy-mm-dd)
+                        Float.parseFloat(elements[8]), // Rating
+                        elements[9] // Bar
                 ));
             }
 
@@ -158,15 +160,30 @@ public class CsvHelper {
 
     // DEVELOPER NEEDS
     public static void ResetApp(Context context) {
-            File folderCsv = new File(context.getExternalFilesDir(null) + "csv");
-            File folderPics = new File(context.getExternalFilesDir(null) + "pics");
+        System.out.println("CSV + Pics deleted");
 
-            if (folderCsv.exists()) {
-                folderCsv.delete();
+        File folderCsv = new File(context.getExternalFilesDir(null), "csv");
+        File folderPics = new File(context.getExternalFilesDir(null), "pics");
+
+        deleteFolderRecursively(folderCsv);
+        deleteFolderRecursively(folderPics);
+    }
+
+    private static void deleteFolderRecursively(File folder) {
+        if (folder != null && folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteFolderRecursively(file);
+                    } else {
+                        file.delete();
+                    }
+                }
             }
-            if (folderPics.exists()) {
-                folderPics.delete();
-            }
+            folder.delete();
         }
+    }
+
 
 }

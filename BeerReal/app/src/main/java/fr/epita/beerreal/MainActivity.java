@@ -48,7 +48,7 @@
 
 
             // LOCATION RELATED ACTIONS
-            getLocation(LocationStorage::saveLocation);
+            LocationStorage.RecalculatePosition(LocationStorage::saveLocation, this);
 
 
 
@@ -77,6 +77,11 @@
             });
         }
 
+
+
+
+
+        // PERMISSIONS CHECK
         private void checkCameraPermission() {
             if (ContextCompat.checkSelfPermission(
                     this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -90,25 +95,6 @@
                     this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-        }
-
-        public void getLocation(LocationCallback callback) {
-            locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                locationProviderClient.getLastLocation()
-                        .addOnSuccessListener(location -> {
-                            if (location != null) {
-                                callback.onLocationReceived(location.getLatitude(), location.getLongitude());
-                            } else {
-                                callback.onLocationReceived(0, 0);
-                            }
-                        });
-            } else {
-                callback.onLocationReceived(0, 0);
             }
         }
     }

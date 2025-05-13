@@ -1,9 +1,6 @@
 package fr.epita.beerreal.ui.map;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +9,9 @@ import android.view.ViewGroup;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.osmdroid.config.Configuration;
 import org.osmdroid.views.MapView;
 import org.osmdroid.util.GeoPoint;
@@ -23,28 +23,30 @@ import fr.epita.beerreal.Line;
 import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
+import fr.epita.beerreal.databinding.FragmentMapBinding;
 
 public class MapFragment extends Fragment {
 
     private MapView mapView;
+    private FragmentMapBinding binding;
 
     public MapFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false);
+        binding = FragmentMapBinding.inflate(inflater, container, false);
+
+        FloatingActionButton reloadButton = binding.reloadButton;
+        reloadButton.setOnClickListener(v -> ReloadCords());
+
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        CsvHelper.ResetApp(requireContext());
-        System.out.println("App successfully reset");
 
         mapView = view.findViewById(R.id.map);
 
@@ -54,7 +56,7 @@ public class MapFragment extends Fragment {
         mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
 
-        // Set initial position and zoom
+
         mapView.getController().setZoom(15);
         mapView.getController().setCenter(new GeoPoint(LocationStorage.getLatitude(), LocationStorage.getLongitude()));
 
@@ -73,8 +75,6 @@ public class MapFragment extends Fragment {
         super.onPause();
         Configuration.getInstance().save(requireContext(), requireActivity().getPreferences(Context.MODE_PRIVATE));
     }
-
-
 
 
 
@@ -98,13 +98,22 @@ public class MapFragment extends Fragment {
 
             m.setOnMarkerClickListener((Marker marker, MapView map) -> {
                 //LoadPicture();
-
-                System.out.println("Clicked" + l.Date);
+                System.out.println(l.toString());
                 return true;
             });
 
             mapView.getOverlays().add(m);
         }
+    }
+
+
+
+
+    private void ReloadCords() {
+        LocationStorage.RecalculatePosition(LocationStorage::saveLocation, requireContext());
+
+        mapView.getController().animateTo(new GeoPoint(LocationStorage.getLatitude(), LocationStorage.getLongitude()));
+        mapView.getController().stopAnimation(true);
     }
 
 }

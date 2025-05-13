@@ -26,6 +26,7 @@ import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.FragmentHomeBinding;
+import fr.epita.beerreal.ui.menu.BeerMenuFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -179,12 +180,9 @@ public class HomeFragment extends Fragment {
     private void OpenBeerMenu(String path) {
         DestroyCamera();
 
-        CsvHelper.AddLineCsv(path, "aaa", "aaa",
-                1.5f, 1.5f,
-                new double[] {LocationStorage.getLatitude(), LocationStorage.getLongitude()},
-                new Date(),
-                ""
-        );
+        BeerMenuFragment beerMenuFragment = BeerMenuFragment.newInstance(path);
+        beerMenuFragment.show(getParentFragmentManager(), "BeerMenuFragment");
+
     }
 
 
@@ -199,7 +197,6 @@ public class HomeFragment extends Fragment {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".jpg"));
             if (files != null) {
                 Images.addAll(Arrays.asList(files)); // Load existing images into the list
-                System.out.println(Images.size());
             }
         }
     }
