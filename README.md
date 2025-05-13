@@ -16,6 +16,26 @@ BeerReal offers the following features:
 - **Beer Map**: Allows the user to map out where they drink their beers, and get stats about where they drink the most!
 - **Statbeerstics**: Allows the user to get stats about their beer consumption: volume, cost, location...
 
+### Available stats
+    Numbers of beers
+    Total cost
+    Total volume
+    Average satisfaction
+    Total number of different bar visited
+    Average number of drinks per day
+    Favorite bar
+    Favorite brand
+    Favorite location
+    Average cost of a pint
+    Cheapest drink
+    Most expensive drink
+    Longest streak with
+    Longest streak without
+    Caloric Intake from Beer
+    Alcohol Units Consumed
+    Comparison with a few nationalities
+    Nationality with Highest Consumption Similarity
+
 ## Installation
 
 ### Prerequisites
