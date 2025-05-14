@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RatingBar;
 
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.fragment.app.DialogFragment;
@@ -19,10 +18,15 @@ import fr.epita.beerreal.csv.CsvHelper;
 
 public class BeerMenuFragment extends DialogFragment {
 
+    private static String photo_path;
+
     public static BeerMenuFragment newInstance(String photoPath) {
         BeerMenuFragment fragment = new BeerMenuFragment();
         Bundle args = new Bundle();
         args.putString("photo_path", photoPath);
+
+        photo_path = photoPath;
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,17 +47,21 @@ public class BeerMenuFragment extends DialogFragment {
         builder.setTitle("Beer Information")
                 .setView(view)
                 .setPositiveButton("Submit", (dialog, id) -> {
-                    CsvHelper.AddLineCsv(
-                            "",
-                            titleInput.getText().toString(),
-                            brandInput.getText().toString(),
-                            Float.parseFloat(volumeInput.getText().toString()),
-                            Float.parseFloat(priceInput.getText().toString()),
-                            new double[] {LocationStorage.getLatitude(), LocationStorage.getLongitude(),},
-                            new Date(),
-                            ratingInput.getRating(),
-                            barInput.getText().toString()
-                    );
+                    LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
+                        System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
+
+                        CsvHelper.AddLineCsv(
+                                photo_path,
+                                titleInput.getText().toString(),
+                                brandInput.getText().toString(),
+                                Float.parseFloat(volumeInput.getText().toString()),
+                                Float.parseFloat(priceInput.getText().toString()),
+                                new double[] {latitude, longitude},
+                                new Date(),
+                                ratingInput.getRating(),
+                                barInput.getText().toString()
+                        );
+                    });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());
 

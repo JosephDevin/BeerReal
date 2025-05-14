@@ -5,14 +5,11 @@
     import android.os.Bundle;
     import android.widget.Toast;
 
-    import com.google.android.gms.location.FusedLocationProviderClient;
-    import com.google.android.gms.location.LocationServices;
     import com.google.android.material.bottomnavigation.BottomNavigationView;
 
     import androidx.activity.result.ActivityResultLauncher;
     import androidx.activity.result.contract.ActivityResultContracts;
     import androidx.appcompat.app.AppCompatActivity;
-    import androidx.core.app.ActivityCompat;
     import androidx.core.content.ContextCompat;
     import androidx.navigation.NavController;
     import androidx.navigation.Navigation;
@@ -27,7 +24,6 @@
 
         private ActivityMainBinding binding;
         public static String CsvPath = "";
-        private FusedLocationProviderClient locationProviderClient;
 
         private final ActivityResultLauncher<String> requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -48,7 +44,12 @@
 
 
             // LOCATION RELATED ACTIONS
-            LocationStorage.RecalculatePosition(LocationStorage::saveLocation, this);
+            LocationStorage.RecalculatePosition(this, (latitude, longitude) -> {
+                // Use the updated latitude and longitude here
+                // For example:
+                System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
+            });
+
 
 
 

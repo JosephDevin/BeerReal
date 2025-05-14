@@ -2,10 +2,6 @@ package fr.epita.beerreal;
 
 import android.annotation.SuppressLint;
 
-import androidx.annotation.NonNull;
-
-import java.util.Date;
-
 public class Line {
 
     public String Picture;

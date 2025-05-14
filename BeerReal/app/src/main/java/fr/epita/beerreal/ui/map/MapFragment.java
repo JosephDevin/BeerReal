@@ -24,6 +24,7 @@ import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.FragmentMapBinding;
+import fr.epita.beerreal.ui.menu.ViewPhotoFragment;
 
 public class MapFragment extends Fragment {
 
@@ -50,18 +51,18 @@ public class MapFragment extends Fragment {
 
         mapView = view.findViewById(R.id.map);
 
-        // Initialize OSMDroid
         Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
         mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
 
-
         mapView.getController().setZoom(15);
-        mapView.getController().setCenter(new GeoPoint(LocationStorage.getLatitude(), LocationStorage.getLongitude()));
 
-        // TODO: Create a list of all the beers that have been saved and load them here
-        LoadBeers(view);
+        LocationStorage.RecalculatePosition(requireContext(), ((latitude, longitude) -> {
+            mapView.getController().setCenter(new GeoPoint(latitude, longitude));
+        }));
+
+        LoadBeers();
     }
 
     @Override
@@ -78,7 +79,7 @@ public class MapFragment extends Fragment {
 
 
 
-    private void LoadBeers(View v) {
+    public void LoadBeers() {
         ArrayList<Line> lines = CsvHelper.GetLinesCsv(requireContext());
         mapView = mapView.findViewById(R.id.map);
 
@@ -89,7 +90,8 @@ public class MapFragment extends Fragment {
         Drawable d = ContextCompat.getDrawable(requireContext(), R.drawable.beer_location_pin);
 
         for (Line l:lines) {
-            GeoPoint beer = new GeoPoint(l.Location[0], l.Location[1]);
+            double[] cords = LocationStorage.addNoiseToCoordinates(l.Location[0], l.Location[1]);
+            GeoPoint beer = new GeoPoint(cords[0], cords[1]);
 
             Marker m = new Marker(mapView);
             m.setPosition(beer);
@@ -97,8 +99,7 @@ public class MapFragment extends Fragment {
             m.setIcon(d);
 
             m.setOnMarkerClickListener((Marker marker, MapView map) -> {
-                //LoadPicture();
-                System.out.println(l.toString());
+                LoadPicture(l);
                 return true;
             });
 
@@ -110,10 +111,26 @@ public class MapFragment extends Fragment {
 
 
     private void ReloadCords() {
-        LocationStorage.RecalculatePosition(LocationStorage::saveLocation, requireContext());
+        LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
 
-        mapView.getController().animateTo(new GeoPoint(LocationStorage.getLatitude(), LocationStorage.getLongitude()));
-        mapView.getController().stopAnimation(true);
+            mapView.getController().animateTo(new GeoPoint(latitude, longitude));
+            mapView.getController().stopAnimation(true);
+        });
+    }
+
+
+    private void LoadPicture(Line l) {
+        ViewPhotoFragment beerMenuFragment = ViewPhotoFragment.newInstance(l, this);
+        beerMenuFragment.show(getParentFragmentManager(), "ViewPhotoFragment");
+    }
+
+    public void ClearAllMarkers() {
+        for (int i = mapView.getOverlays().size() - 1; i >= 0; i--) {
+            if (mapView.getOverlays().get(i) instanceof Marker) {
+                mapView.getOverlays().remove(i);
+            }
+        }
+        mapView.invalidate(); // Refresh the map view
     }
 
 }

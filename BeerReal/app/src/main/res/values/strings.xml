@@ -3,12 +3,17 @@
     <string name="title_home">Pub</string>
     <string name="title_map">Beer map</string>
     <string name="title_stats">Statbeerstics</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="rate_this_beer">⭐ Rate this beer:</string>
     <string name="bar_location">🏠 Bar / Location</string>
-    <string name="price">💶 Price (€)</string>
+    <string name="price_eur">💶 Price (€)</string>
     <string name="volume_l">🍶 Volume (L)</string>
     <string name="brand">🏭 Brand</string>
     <string name="beer_title">🍺 Beer Title</string>
+
+    <string name="bar_location_view">🏠 Bar: </string>
+    <string name="price">💶 Price: </string>
+    <string name="volume">🍶 Volume: </string>
+    <string name="brand_view">🏭 Brand: </string>
+    <string name="hour">☀️ Hour: </string>
 </resources>

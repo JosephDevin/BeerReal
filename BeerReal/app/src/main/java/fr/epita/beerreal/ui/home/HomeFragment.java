@@ -24,11 +24,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
-import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.FragmentHomeBinding;
 import fr.epita.beerreal.ui.menu.BeerMenuFragment;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        File photoFile = new File(requireContext().getExternalFilesDir("pics"), "photo_" + Images.size() + ".jpg");
+        File photoFile = new File(requireContext().getExternalFilesDir("pics"), String.format("photo_%s.jpg", new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())));
 
         ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
 
@@ -164,17 +164,19 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         Images.add(photoFile);
-                        OpenBeerMenu(photoFile.getName());
+
+                        // Recalculate to avoid bugs and get the updated location
+                        LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
+                            OpenBeerMenu(photoFile.getName());
+                        });
                     }
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
-                        exception.printStackTrace();
-                        Toast.makeText(getContext(), "Photo capture failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
 
-                }
-        );
+                    }
+                });
+
     }
 
     private void OpenBeerMenu(String path) {
@@ -182,11 +184,7 @@ public class HomeFragment extends Fragment {
 
         BeerMenuFragment beerMenuFragment = BeerMenuFragment.newInstance(path);
         beerMenuFragment.show(getParentFragmentManager(), "BeerMenuFragment");
-
     }
-
-
-
 
 
 

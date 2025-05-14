@@ -9,6 +9,8 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.Random;
+
 public class LocationStorage {
     private static double latitude;
     private static double longitude;
@@ -26,9 +28,10 @@ public class LocationStorage {
         return longitude;
     }
 
-    public static void RecalculatePosition(LocationCallback callback, Context cxt) {
-        getLocation(LocationStorage::saveLocation, cxt);
+    public static void RecalculatePosition(Context cxt, LocationCallback callback) {
+        getLocation(callback, cxt);
     }
+
 
     private static void getLocation(LocationCallback callback, Context context) {
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(context);
@@ -47,6 +50,17 @@ public class LocationStorage {
         } else {
             callback.onLocationReceived(0, 0);
         }
+    }
+
+    public static double[] addNoiseToCoordinates(double latitude, double longitude) {
+        Random rand = new Random();
+
+        double noiseFactor = 0.0001;
+
+        double noisyLatitude = latitude + (rand.nextDouble() * 2 * noiseFactor - noiseFactor);
+        double noisyLongitude = longitude + (rand.nextDouble() * 2 * noiseFactor - noiseFactor);
+
+        return new double[] { noisyLatitude, noisyLongitude };
     }
 
 }

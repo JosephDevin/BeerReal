@@ -4,8 +4,10 @@ import android.content.Context;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,8 +20,6 @@ import fr.epita.beerreal.Line;
 import fr.epita.beerreal.MainActivity;
 
 public class CsvHelper {
-
-
 
 
     // INITIALIZATION RELATED
@@ -72,10 +72,10 @@ public class CsvHelper {
 
 
     // MANAGING NEW DATA RELATED
-    public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] coords ,Date date, float rating, String bar) {
+    public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] cords ,Date date, float rating, String bar) {
         String toAdd;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + coords[0] + "," + coords[1] + "," + dateFormat.format(date) + "," + rating + "," + bar + "\n";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+        toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + cords[0] + "," + cords[1] + "," + dateFormat.format(date) + "," + rating + "," + bar + "\n";
 
         try (FileWriter writer = new FileWriter(MainActivity.CsvPath, true)) {
             writer.append(toAdd);
@@ -186,4 +186,35 @@ public class CsvHelper {
     }
 
 
+    public static void RemoveLine(Context context, String uniqueValue) {
+        String filePath = InitialiseCSV(context);
+        File csvFile = new File(filePath);
+        File tempFile = new File(filePath + ".temp");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split(",");
+
+                if (!fields[0].equals(uniqueValue)) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+
+            if (csvFile.delete()) {
+                if (!tempFile.renameTo(csvFile)) {
+                    System.out.println("Failed to rename the temp file to the original file name.");
+                }
+            } else {
+                System.out.println("Failed to delete the original file.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
