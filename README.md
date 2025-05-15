@@ -45,3 +45,5 @@ BeerReal offers the following features:
 ## Architecture
 
 ## Screenshots
+
+<img src="https://github.com/user-attachments/assets/d41ded04-f0f7-47df-87b1-206cadcc6f0d" alt="Logo" width="300">
