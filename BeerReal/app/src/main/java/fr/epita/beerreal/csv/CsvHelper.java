@@ -15,8 +15,8 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import fr.epita.beerreal.Line;
 import fr.epita.beerreal.MainActivity;
 
 public class CsvHelper {
@@ -74,7 +74,7 @@ public class CsvHelper {
     // MANAGING NEW DATA RELATED
     public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] cords ,Date date, float rating, String bar) {
         String toAdd;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm", Locale.FRANCE);
         toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + cords[0] + "," + cords[1] + "," + dateFormat.format(date) + "," + rating + "," + bar + "\n";
 
         try (FileWriter writer = new FileWriter(MainActivity.CsvPath, true)) {
@@ -135,7 +135,7 @@ public class CsvHelper {
                         Float.parseFloat(elements[4]), // Price
                         Double.parseDouble(elements[5]), // Latitude
                         Double.parseDouble(elements[6]), // Longitude
-                        elements[7], // Date (as String yyyy-mm-dd)
+                        elements[7], // Date (as String yyyy-mm-dd-HH:mm)
                         Float.parseFloat(elements[8]), // Rating
                         elements[9] // Bar
                 ));

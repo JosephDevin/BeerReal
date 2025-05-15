@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -24,7 +25,7 @@ import androidx.fragment.app.DialogFragment;
 import java.io.File;
 import java.io.IOException;
 
-import fr.epita.beerreal.Line;
+import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.ui.map.MapFragment;
@@ -52,7 +53,7 @@ public class ViewPhotoFragment extends DialogFragment {
         ImageView image = view.findViewById(R.id.photoImageView);
         File imgFile = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
 
-        String dateValue = line.Date.substring(0,10).replace('-',' ');
+        String dateValue = line.Date.substring(0, 10).replace('-', ' ');
         String hourValue = line.Date.substring(11, 16);
 
         image.setImageBitmap(LoadPictureCorrectly(imgFile));
@@ -70,23 +71,37 @@ public class ViewPhotoFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCustomTitle(layout)
                 .setView(view)
-                .setPositiveButton("Delete", (dialog, id) -> {
-                    CsvHelper.RemoveLine(requireContext(), line.Picture);
-                    map.ClearAllMarkers();
-                    map.LoadBeers();
-                });
+                .setPositiveButton("Delete", null);
 
+        AlertDialog dialog = builder.create();
 
-        brand.setText(String.format("%s       %s", getString(R.string.brand_view), line.Brand));
-        volume.setText(String.format("%s    %s L", getString(R.string.volume), line.Volume));
-        price.setText(String.format("%s         %s €", getString(R.string.price), line.Price));
-        bar.setText(String.format("%s            %s", getString(R.string.bar_location_view), line.Bar));
-        hour.setText(String.format("%s         %s", getString(R.string.hour), hourValue));
+        dialog.setOnShowListener(d -> {
+            Button deleteButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            deleteButton.setOnClickListener(v -> {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Delete this beer ?")
+                        .setMessage("Are you sure you want to delete this beer?")
+                        .setPositiveButton("Delete", (confirmDialog, which) -> {
+                            CsvHelper.RemoveLine(requireContext(), line.Picture);
+                            map.ClearAllMarkers();
+                            map.LoadBeers();
+                            dialog.dismiss();
+                        })
+                        .setNegativeButton("Cancel", (confirmDialog, which) -> confirmDialog.dismiss())
+                        .show();
+            });
+        });
+
+        brand.setText(getString(R.string.brand_view) + "       " + line.Brand);
+        volume.setText(getString(R.string.volume) + "    " + line.Volume + " L");
+        price.setText(getString(R.string.price) + "         " + line.Price + " €");
+        bar.setText(getString(R.string.bar_location_view) + "            " + line.Bar);
+        hour.setText(getString(R.string.hour) + "         " + hourValue);
         rating.setRating(line.Rating);
 
-
-        return builder.create();
+        return dialog;
     }
+
 
 
 

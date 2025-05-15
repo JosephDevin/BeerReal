@@ -1,4 +1,4 @@
-package fr.epita.beerreal;
+package fr.epita.beerreal.csv;
 
 import android.annotation.SuppressLint;
 
