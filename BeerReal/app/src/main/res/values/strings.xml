@@ -16,4 +16,39 @@
     <string name="volume">🍶 Volume: </string>
     <string name="brand_view">🏭 Brand: </string>
     <string name="hour">☀️ Hour: </string>
+
+
+    <string name="beer_stats_summary">Beer Stats Summary\n</string>
+    <string name="total_beers">🍺 Total Beers:</string>
+    <string name="total_cost">💶 Total Cost:</string>
+    <string name="total_volume">📦 Total Volume:</string>
+    <string name="average_satisfaction">⭐ Average Satisfaction:</string>
+    <string name="n_daily_averages">\nDaily Averages</string>
+    <string name="beers_day">🍺 Beers/Day:</string>
+    <string name="volume_day">🥛 Volume/Day:</string>
+    <string name="cost_day">💶 Cost/Day:</string>
+    <string name="n_favorites">\nFavorites</string>
+    <string name="bar">📍 Location:</string>
+    <string name="brand_st">🏷️ Brand:</string>
+    <string name="hour_st">🕔 Hour:</string>
+    <string name="n_streaks">\nStreaks</string>
+    <string name="longest_drinking_streak">🔥 Drinking Streak:</string>
+    <string name="longest_non_drinking_streak">❄️ Non-Drinking Streak:</string>
+    <string name="n_cost_breakdown">\nCost Breakdown</string>
+    <string name="avg_cost_per_beer">💶 Avg Cost per Beer:</string>
+    <string name="cheapest">🟢 Cheapest:</string>
+    <string name="most_expensive">🔴 Most Expensive:</string>
+    <string name="n_health_metrics">\nHealth Metrics</string>
+    <string name="estimated_calories">🔥 Estimated Calories:</string>
+    <string name="alcohol_units">🥴 Alcohol Units:</string>
+    <string name="n_global_comparison">\nGlobal Comparison</string>
+    <string name="romania">🇷🇴 Romania:</string>
+    <string name="georgia">🇬🇪 Georgia:</string>
+    <string name="latvia">🇱🇻 Latvia:</string>
+    <string name="france">🇫🇷 France:</string>
+    <string name="ireland">🇮🇪 Ireland:</string>
+    <string name="usa">🇺🇸 USA:</string>
+    <string name="bangladesh">🇧🇩 Bangladesh:</string>
+    <string name="closest_country">🏅 Alcohol nationality:</string>
+    <string name="totals">Totals</string>
 </resources>

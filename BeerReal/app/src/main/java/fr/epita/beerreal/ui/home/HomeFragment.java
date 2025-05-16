@@ -179,7 +179,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void OpenBeerMenu(String path) {
+    private void OpenBeerMenu(String path) { // Open the fragment to add the information of the beer capture
         DestroyCamera();
 
         BeerMenuFragment beerMenuFragment = BeerMenuFragment.newInstance(path);

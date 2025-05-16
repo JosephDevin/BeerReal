@@ -58,7 +58,7 @@ public class ViewPhotoFragment extends DialogFragment {
 
         image.setImageBitmap(LoadPictureCorrectly(imgFile));
 
-        // LOAD ALL DATA
+        // LOAD ALL VIEWS TO ADD THE DATA AFTER
         TextView brand = view.findViewById(R.id.brandText);
         TextView volume = view.findViewById(R.id.volumeText);
         TextView price = view.findViewById(R.id.priceText);
@@ -92,6 +92,8 @@ public class ViewPhotoFragment extends DialogFragment {
             });
         });
 
+
+        // ADD THE DATA
         brand.setText(getString(R.string.brand_view) + "       " + line.Brand);
         volume.setText(getString(R.string.volume) + "    " + line.Volume + " L");
         price.setText(getString(R.string.price) + "         " + line.Price + " €");

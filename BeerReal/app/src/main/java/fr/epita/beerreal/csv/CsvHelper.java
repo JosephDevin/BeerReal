@@ -1,6 +1,7 @@
 package fr.epita.beerreal.csv;
 
 import android.content.Context;
+import android.os.Build;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -11,6 +12,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -95,7 +99,7 @@ public class CsvHelper {
 
 
 
-    // LOADING DATA RELATED
+    // LOADING LINES RELATED
     public static List<String> LoadCsvAsStrings(Context context) {
         try {
             File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
@@ -157,34 +161,7 @@ public class CsvHelper {
 
 
 
-
-    // DEVELOPER NEEDS
-    public static void ResetApp(Context context) {
-        System.out.println("CSV + Pics deleted");
-
-        File folderCsv = new File(context.getExternalFilesDir(null), "csv");
-        File folderPics = new File(context.getExternalFilesDir(null), "pics");
-
-        deleteFolderRecursively(folderCsv);
-        deleteFolderRecursively(folderPics);
-    }
-
-    private static void deleteFolderRecursively(File folder) {
-        if (folder != null && folder.exists()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        deleteFolderRecursively(file);
-                    } else {
-                        file.delete();
-                    }
-                }
-            }
-            folder.delete();
-        }
-    }
-
+    // REMOVE LINE RELATED
 
     public static void RemoveLine(Context context, String uniqueValue) {
         String filePath = InitialiseCSV(context);
@@ -214,6 +191,124 @@ public class CsvHelper {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    // DATA LOADING RELATED
+
+    public static int getDaysFromEarliestDate(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            List<String> csvLines = LoadCsvAsStrings(context);
+
+            LocalDate earliest = null;
+
+            for (String line : csvLines) {
+                if (line.startsWith("Photo_path")) continue;
+
+                String[] parts = line.split(",");
+                if (parts.length < 8) continue;
+
+                String fullDate = parts[7]; // e.g. 2025-05-15-14:46
+                String dateOnly = fullDate.substring(0, 10); // keep only yyyy-MM-dd
+
+                LocalDate date = LocalDate.parse(dateOnly); // uses default ISO_LOCAL_DATE
+
+                if (earliest == null || date.isBefore(earliest)) {
+                    earliest = date;
+                }
+            }
+
+            if (earliest == null) {
+                throw new IllegalStateException("No valid date found in CSV.");
+            }
+
+            return (int) ChronoUnit.DAYS.between(earliest, LocalDate.now());
+        }
+        return 0;
+    }
+
+    public static int getDaysSoFarThisWeek() {
+        LocalDate today = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            today = LocalDate.now();
+
+            int dayOfWeek = today.getDayOfWeek().getValue();
+
+            return dayOfWeek;
+        }
+
+        return 7;
+    }
+
+    public static int getDaysSoFarThisMonth() {
+        LocalDate today = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            today = LocalDate.now();
+
+            int day = today.getDayOfMonth();
+
+            return day;
+        }
+
+        return 30;
+    }
+
+    public static int getDaysSoFarThisYear() {
+        LocalDate today = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            today = LocalDate.now();
+
+            int day = today.getDayOfYear();
+
+            return day;
+        }
+
+        return 365;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    // DEVELOPER NEEDS
+    public static void ResetApp(Context context) {
+        File folderCsv = new File(context.getExternalFilesDir(null), "csv");
+        File folderPics = new File(context.getExternalFilesDir(null), "pics");
+
+        deleteFolderRecursively(folderCsv);
+        deleteFolderRecursively(folderPics);
+    }
+
+    private static void deleteFolderRecursively(File folder) {
+        if (folder != null && folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteFolderRecursively(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+            folder.delete();
         }
     }
 }

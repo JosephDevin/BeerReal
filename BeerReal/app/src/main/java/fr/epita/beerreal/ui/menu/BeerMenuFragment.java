@@ -48,7 +48,6 @@ public class BeerMenuFragment extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
-                        System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
 
                         CsvHelper.AddLineCsv(
                                 photo_path,

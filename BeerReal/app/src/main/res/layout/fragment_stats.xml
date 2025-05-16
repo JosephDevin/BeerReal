@@ -1,19 +1,265 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.stats.StatsFragment">
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
-
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="37dp"
-        android:text="RESET"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvHeaderSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/beer_stats_summary"
+            android:textStyle="bold"
+            android:textSize="27sp"
+            android:paddingBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/tvHeaderTotals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/totals"
+            android:textStyle="bold"
+            android:textSize="27sp"
+            android:paddingBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/tvTotalBeers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_beers"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvTotalCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_cost"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvTotalVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_volume"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvAverageSatisfaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/average_satisfaction"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvHeaderDailyAverages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_daily_averages"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvBeersPerDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/beers_day"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvCostPerDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cost_day"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvVolumePerDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/volume_day"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvHeaderFavorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_favorites"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvFavoriteBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bar"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvFavoriteBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/brand_st"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvFavoriteHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hour_st"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvHeaderStreaks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_streaks"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvLongestDrinkingStreak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/longest_drinking_streak"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvLongestNonDrinkingStreak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/longest_non_drinking_streak"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvHeaderCostBreakdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_cost_breakdown"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvAvgCostPerBeer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/avg_cost_per_beer"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvCheapestBeer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cheapest"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvMostExpensiveBeer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/most_expensive"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvHeaderHealthMetrics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_health_metrics"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvEstimatedCalories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/estimated_calories"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvAlcoholUnits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alcohol_units"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvHeaderGlobalComparison"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_global_comparison"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvRomaniaRatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/romania"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvGeorgiaRatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/georgia"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvLatviaRatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/latvia"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvFranceRatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/france"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvIrelandRatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ireland"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvUSARatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/usa"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvBangladeshRatio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bangladesh"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvClosestCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/closest_country"
+            android:textSize="21sp" />
+
+    </LinearLayout>
+</ScrollView>

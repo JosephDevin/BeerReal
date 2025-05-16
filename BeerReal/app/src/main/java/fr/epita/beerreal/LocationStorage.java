@@ -55,7 +55,7 @@ public class LocationStorage {
     public static double[] addNoiseToCoordinates(double latitude, double longitude) {
         Random rand = new Random();
 
-        double noiseFactor = 0.0001;
+        double noiseFactor = 0.00001;
 
         double noisyLatitude = latitude + (rand.nextDouble() * 2 * noiseFactor - noiseFactor);
         double noisyLongitude = longitude + (rand.nextDouble() * 2 * noiseFactor - noiseFactor);

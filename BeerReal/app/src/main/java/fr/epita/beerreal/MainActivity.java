@@ -45,9 +45,6 @@
 
             // LOCATION RELATED ACTIONS
             LocationStorage.RecalculatePosition(this, (latitude, longitude) -> {
-                // Use the updated latitude and longitude here
-                // For example:
-                System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
             });
 
 
