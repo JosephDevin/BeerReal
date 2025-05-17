@@ -17,26 +17,30 @@ BeerReal offers the following features:
 - **Statbeerstics**: Allows the user to get stats about their beer consumption: volume, cost, location...
 
 ### Available stats
-    Numbers of beers
+    Numbers of total beers
     Total cost
     Total volume
     Average satisfaction
     Total number of different bar visited
     Average number of drinks per day
-    Favorite bar
-    Favorite brand
+    Average volume per day
     Favorite location
-    Average cost of a pint
-    Cheapest drink
-    Most expensive drink
-    Longest streak with
-    Longest streak without
-    Caloric Intake from Beer
-    Alcohol Units Consumed
-    Comparison with a few nationalities
-    Nationality with Highest Consumption Similarity
+    Favorite brand
+    Favorite hour
+    Average cost of a beer
+    Cheapest beer
+    Most expensive beer
+    Longest drinking streak
+    Longest non drinking streak
+    Estimated total caloric intake from beer
+    Estimated total alcohol units consumed
+    Comparison with the average drinker of:
+        Romania, Georgia, Latvia, France, Ireland, USA, Bangladesh
+    Alcohol nationaliity (closest match with average drinker from a country)
 
 ## Installation
+
+Not available yet.
 
 ### Prerequisites
 
@@ -44,6 +48,13 @@ BeerReal offers the following features:
 
 ## Architecture
 
-## Screenshots
+## Logo
 
 <img src="https://github.com/user-attachments/assets/d41ded04-f0f7-47df-87b1-206cadcc6f0d" alt="Logo" width="300">
+
+## Screenshots
+
+<img src="https://github.com/user-attachments/assets/d2409c41-f6de-4c22-9c09-ef41110c97d5" alt="Logo" width="300">
+<img src="https://github.com/user-attachments/assets/95558f8b-52a9-47fe-85a9-6502fec48c62" alt="Logo" width="300">
+<img src="https://github.com/user-attachments/assets/1cca86f8-d557-4d7b-bddb-3dac03f816f8" alt="Logo" width="300">
+
