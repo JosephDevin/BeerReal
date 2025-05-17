@@ -8,7 +8,7 @@
     "value":4.0273972603
   },
   {
-    "country":"Republic of Moldova",
+    "country":"Moldova",
     "value":3.8630136986
   },
   {
@@ -48,7 +48,7 @@
     "value":3.0684931507
   },
   {
-    "country":"Lao People's Democratic Republic",
+    "country":"Laos",
     "value":3.0684931507
   },
   {
@@ -68,7 +68,7 @@
     "value":2.9863013699
   },
   {
-    "country":"United Kingdom of Great Britain and Northern Ireland",
+    "country":"UK",
     "value":2.9863013699
   },
   {
@@ -92,7 +92,7 @@
     "value":2.8767123288
   },
   {
-    "country":"Russian Federation",
+    "country":"Russia",
     "value":2.8767123288
   },
   {
@@ -104,7 +104,7 @@
     "value":2.7397260274
   },
   {
-    "country":"United States of America",
+    "country":"USA",
     "value":2.6849315068
   },
   {
@@ -128,11 +128,11 @@
     "value":2.4657534247
   },
   {
-    "country":"Netherlands (Kingdom of the)",
+    "country":"Netherlands",
     "value":2.3835616438
   },
   {
-    "country":"Republic of Korea",
+    "country":"South Korea",
     "value":2.301369863
   },
   {
@@ -304,7 +304,7 @@
     "value":1.4246575342
   },
   {
-    "country":"Democratic People's Republic of Korea",
+    "country":"North Korea",
     "value":1.3150684932
   },
   {
@@ -440,7 +440,7 @@
     "value":0.6301369863
   },
   {
-    "country":"Venezuela (Bolivarian Republic of)",
+    "country":"Venezuela",
     "value":0.6301369863
   },
   {
@@ -460,7 +460,7 @@
     "value":0.5479452055
   },
   {
-    "country":"Micronesia (Federated States of)",
+    "country":"Micronesia",
     "value":0.5479452055
   },
   {
@@ -624,7 +624,7 @@
     "value":0.0684931507
   },
   {
-    "country":"Brunei Darussalam",
+    "country":"Brunei",
     "value":0.0657534247
   },
   {
@@ -640,7 +640,7 @@
     "value":0.0575342466
   },
   {
-    "country":"Bolivia (Plurinational State of)",
+    "country":"Bolivia",
     "value":0.0547945205
   },
   {
@@ -708,7 +708,7 @@
     "value":0.0273972603
   },
   {
-    "country":"Iran (Islamic Republic of)",
+    "country":"Iran",
     "value":0.0273972603
   },
   {
@@ -720,7 +720,7 @@
     "value":0.0273972603
   },
   {
-    "country":"Syrian Arab Republic",
+    "country":"Syria",
     "value":0.0273972603
   },
   {

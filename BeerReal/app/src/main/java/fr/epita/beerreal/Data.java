@@ -64,11 +64,12 @@ public class Data {
             case MONTH:
                 Days = CsvHelper.getDaysSoFarThisMonth();
                 break;
-            case YEAR:
-                Days = CsvHelper.getDaysSoFarThisYear();
-                break;
             case ALL_TIME:
                 Days = CsvHelper.getDaysFromEarliestDate(context);
+                break;
+            default:
+                Days = CsvHelper.getDaysSoFarThisYear();
+                break;
         }
 
         SelectTimeToLoad();
@@ -200,15 +201,11 @@ public class Data {
     }
 
     // STREAKS
-    private final int[] streaks = DataHelper.GetDrinkingStreak(Dates);
-
     public int GetLongestDrinkingStreak() {
-        return streaks[0];
+        return DataHelper.FindLongestStreakLength(Dates);
     }
 
-    public int GetLongestNonDrinkingStreak() {
-        return streaks[1];
-    }
+    public int GetLongestNonDrinkingStreak() { return DataHelper.FindLongestMissingStreak(Dates);}
 
 
     // HEALTH RELATED:

@@ -232,7 +232,7 @@ public class CsvHelper {
                 throw new IllegalStateException("No valid date found in CSV.");
             }
 
-            return (int) ChronoUnit.DAYS.between(earliest, LocalDate.now());
+            return (int) ChronoUnit.DAYS.between(earliest, LocalDate.now()) + 1;
         }
         return 0;
     }

@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,6 +18,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import fr.epita.beerreal.Data;
+import fr.epita.beerreal.R;
 import fr.epita.beerreal.Times;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.FragmentStatsBinding;
@@ -22,58 +26,115 @@ import fr.epita.beerreal.databinding.FragmentStatsBinding;
 public class StatsFragment extends Fragment {
 
     private FragmentStatsBinding binding;
+    private Data data;
+    private String currentSelected = null;
 
-    private Times time;
 
-    @SuppressLint("DefaultLocale")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentStatsBinding.inflate(inflater, container, false);
 
-        Data data = new Data(requireContext(), Times.WEEK);
+        data = new Data(requireContext(), Times.YEAR);
+
+        Spinner spinnerHeader = binding.spinnerHeader;
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.header_options,
+                R.layout.spinner_header_item  // custom layout
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // dropdown items can stay default
+        spinnerHeader.setAdapter(adapter);
+
+        spinnerHeader.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = parent.getItemAtPosition(position).toString();
+
+                if (!selected.equals(currentSelected)) {
+                    currentSelected = selected;
+
+                    System.out.println(selected);
+
+                    switch (selected) {
+                        case "Weekly Statbeerstics":
+                            data = new Data(requireContext(), Times.WEEK);
+                            break;
+                        case "Monthly Statbeerstics":
+                            data = new Data(requireContext(), Times.MONTH);
+                            break;
+                        case "All-Time Statbeerstics":
+                            data = new Data(requireContext(), Times.ALL_TIME);
+                            break;
+                        default:
+                            data = new Data(requireContext(), Times.YEAR);
+                            break;
+                    }
+
+                    LoadData(binding);
+                }
+            }
+
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Optional: Handle no selection
+            }
+        });
+
+
 
         // MAY LOOK SCARY BUT ONLY LOADING THE DATA INTO THE VIEW
 
-        binding.tvTotalBeers.setText(String.format("%s %d", binding.tvTotalBeers.getText(), data.GetTotalBeers()));
-        binding.tvTotalCost.setText(String.format("%s %.2f€", binding.tvTotalCost.getText(), data.GetTotalCost()));
-        binding.tvTotalVolume.setText(String.format("%s %.2f L", binding.tvTotalVolume.getText(), data.GetTotalVolume()));
-        binding.tvAverageSatisfaction.setText(String.format("%s %.1f / 5", binding.tvAverageSatisfaction.getText(), data.GetAverageSatisfaction()));
+        System.out.println(data.Days);
 
-        binding.tvBeersPerDay.setText(String.format("%s %.2f", binding.tvBeersPerDay.getText(), data.GetAverageDrinksPerDay()));
-        binding.tvCostPerDay.setText(String.format("%s %.2f€", binding.tvCostPerDay.getText(), data.GetAverageCostPerDay()));
-        binding.tvVolumePerDay.setText(String.format("%s %.2f L", binding.tvVolumePerDay.getText(), data.GetAverageVolumePerDay()));
 
-        binding.tvFavoriteBar.setText(String.format("%s %s", binding.tvFavoriteBar.getText(), data.GetFavoriteBar()));
-        binding.tvFavoriteBrand.setText(String.format("%s %s", binding.tvFavoriteBrand.getText(), data.GetFavoriteBrand()));
-        binding.tvFavoriteHour.setText(String.format("%s %s", binding.tvFavoriteHour.getText(), data.GetFavoriteHour()));
 
-        binding.tvLongestDrinkingStreak.setText(String.format("%s %d days", binding.tvLongestDrinkingStreak.getText(), data.GetLongestDrinkingStreak()));
-        binding.tvLongestNonDrinkingStreak.setText(String.format("%s %d days", binding.tvLongestNonDrinkingStreak.getText(), data.GetLongestNonDrinkingStreak()));
+        return binding.getRoot();
+    }
 
-        binding.tvAvgCostPerBeer.setText(String.format("%s %.2f€", binding.tvAvgCostPerBeer.getText(), data.GetAverageCost()));
-        binding.tvCheapestBeer.setText(String.format("%s\n %s", binding.tvCheapestBeer.getText(), data.GetCheapestBeer()));
-        binding.tvMostExpensiveBeer.setText(String.format("%s\n %s", binding.tvMostExpensiveBeer.getText(), data.GetMostExpensiveBeer()));
+    @SuppressLint("DefaultLocale")
+    private void LoadData(FragmentStatsBinding binding) {
 
-        binding.tvEstimatedCalories.setText(String.format("%s %.0f kcal", binding.tvEstimatedCalories.getText(), data.GetCaloricIntakeFromBeer()));
-        binding.tvAlcoholUnits.setText(String.format("%s %.1f", binding.tvAlcoholUnits.getText(), data.GetAlcoholUnitsConsumed()));
+        binding.tvTotalBeers.setText(String.format("%s %d", getString(R.string.total_beers), data.GetTotalBeers()));
+        binding.tvTotalCost.setText(String.format("%s %.2f€", getString(R.string.total_cost), data.GetTotalCost()));
+        binding.tvTotalVolume.setText(String.format("%s %.2f L", getString(R.string.total_volume), data.GetTotalVolume()));
+        binding.tvAverageSatisfaction.setText(String.format("%s %.1f / 5", getString(R.string.average_satisfaction), data.GetAverageSatisfaction()));
+
+        binding.tvBeersPerDay.setText(String.format("%s %.2f", getString(R.string.beers_day), data.GetAverageDrinksPerDay()));
+        binding.tvCostPerDay.setText(String.format("%s %.2f€", getString(R.string.cost_day), data.GetAverageCostPerDay()));
+        binding.tvVolumePerDay.setText(String.format("%s %.2f L", getString(R.string.volume_day), data.GetAverageVolumePerDay()));
+
+        binding.tvFavoriteBar.setText(String.format("%s %s", getString(R.string.bar_fav), data.GetFavoriteBar()));
+        binding.tvFavoriteBrand.setText(String.format("%s %s", getString(R.string.brand_fav), data.GetFavoriteBrand()));
+        binding.tvFavoriteHour.setText(String.format("%s %s", getString(R.string.hour_fav), data.GetFavoriteHour()));
+
+        binding.tvLongestDrinkingStreak.setText(String.format("%s %d days", getString(R.string.longest_drinking_streak), data.GetLongestDrinkingStreak()));
+        binding.tvLongestNonDrinkingStreak.setText(String.format("%s %d days", getString(R.string.longest_non_drinking_streak), data.GetLongestNonDrinkingStreak()));
+
+        binding.tvAvgCostPerBeer.setText(String.format("%s %.2f€", getString(R.string.avg_cost_per_beer), data.GetAverageCost()));
+        binding.tvCheapestBeer.setText(String.format("%s\n %s", getString(R.string.cheapest), data.GetCheapestBeer()));
+        binding.tvMostExpensiveBeer.setText(String.format("%s\n %s", getString(R.string.most_expensive), data.GetMostExpensiveBeer()));
+
+        binding.tvEstimatedCalories.setText(String.format("%s %.0f kcal", getString(R.string.estimated_calories), data.GetCaloricIntakeFromBeer()));
+        binding.tvAlcoholUnits.setText(String.format("%s %.1f", getString(R.string.alcohol_units), data.GetAlcoholUnitsConsumed()));
 
         float[] countries = data.CompareToWorldsDrinkers();
-        binding.tvRomaniaRatio.setText(String.format("%s %.1fx", binding.tvRomaniaRatio.getText(), countries[0]));
-        binding.tvGeorgiaRatio.setText(String.format("%s %.1fx", binding.tvGeorgiaRatio.getText(), countries[1]));
-        binding.tvLatviaRatio.setText(String.format("%s %.1fx", binding.tvLatviaRatio.getText(), countries[2]));
-        binding.tvFranceRatio.setText(String.format("%s %.1fx", binding.tvFranceRatio.getText(), countries[3]));
-        binding.tvIrelandRatio.setText(String.format("%s %.1fx", binding.tvIrelandRatio.getText(), countries[4]));
-        binding.tvUSARatio.setText(String.format("%s %.1fx", binding.tvUSARatio.getText(), countries[5]));
-        binding.tvBangladeshRatio.setText(String.format("%s %.1fx", binding.tvBangladeshRatio.getText(), countries[6]));
+        binding.tvRomaniaRatio.setText(String.format("%s %.1fx", getString(R.string.romania), countries[0]));
+        binding.tvGeorgiaRatio.setText(String.format("%s %.1fx", getString(R.string.georgia), countries[1]));
+        binding.tvLatviaRatio.setText(String.format("%s %.1fx", getString(R.string.latvia), countries[2]));
+        binding.tvFranceRatio.setText(String.format("%s %.1fx", getString(R.string.france), countries[3]));
+        binding.tvIrelandRatio.setText(String.format("%s %.1fx", getString(R.string.ireland), countries[4]));
+        binding.tvUSARatio.setText(String.format("%s %.1fx", getString(R.string.usa), countries[5]));
+        binding.tvBangladeshRatio.setText(String.format("%s %.1fx", getString(R.string.bangladesh), countries[6]));
         try {
-            binding.tvClosestCountry.setText(String.format("%s %s", binding.tvClosestCountry.getText(), data.ClosestComparison(requireContext())));
+            binding.tvClosestCountry.setText(String.format("%s %s", getString(R.string.closest_country), data.ClosestComparison(requireContext())));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return binding.getRoot();
     }
 
     /*

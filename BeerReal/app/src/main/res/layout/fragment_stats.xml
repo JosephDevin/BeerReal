@@ -8,13 +8,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvHeaderSummary"
+        <Spinner
+            android:id="@+id/spinnerHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/beer_stats_summary"
-            android:textStyle="bold"
-            android:textSize="27sp"
+            android:layout_gravity="center_horizontal"
+            android:spinnerMode="dropdown"
             android:paddingBottom="12dp"/>
 
         <TextView
@@ -99,21 +98,21 @@
             android:id="@+id/tvFavoriteBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bar"
+            android:text="@string/bar_fav"
             android:textSize="21sp" />
 
         <TextView
             android:id="@+id/tvFavoriteBrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/brand_st"
+            android:text="@string/brand_fav"
             android:textSize="21sp" />
 
         <TextView
             android:id="@+id/tvFavoriteHour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hour_st"
+            android:text="@string/hour_fav"
             android:textSize="21sp" />
 
         <TextView

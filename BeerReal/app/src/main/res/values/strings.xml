@@ -18,7 +18,7 @@
     <string name="hour">☀️ Hour: </string>
 
 
-    <string name="beer_stats_summary">Beer Stats Summary\n</string>
+    <string name="beer_stats_summary">Statbeerstics\n</string>
     <string name="total_beers">🍺 Total Beers:</string>
     <string name="total_cost">💶 Total Cost:</string>
     <string name="total_volume">📦 Total Volume:</string>
@@ -28,9 +28,9 @@
     <string name="volume_day">🥛 Volume/Day:</string>
     <string name="cost_day">💶 Cost/Day:</string>
     <string name="n_favorites">\nFavorites</string>
-    <string name="bar">📍 Location:</string>
-    <string name="brand_st">🏷️ Brand:</string>
-    <string name="hour_st">🕔 Hour:</string>
+    <string name="bar_fav">📍 Location:</string>
+    <string name="brand_fav">🏷️ Brand:</string>
+    <string name="hour_fav">🕔 Hour:</string>
     <string name="n_streaks">\nStreaks</string>
     <string name="longest_drinking_streak">🔥 Drinking Streak:</string>
     <string name="longest_non_drinking_streak">❄️ Non-Drinking Streak:</string>
@@ -51,4 +51,12 @@
     <string name="bangladesh">🇧🇩 Bangladesh:</string>
     <string name="closest_country">🏅 Alcohol nationality:</string>
     <string name="totals">Totals</string>
+
+    <string-array name="header_options">
+        <item>Yearly Statbeerstics</item>
+        <item>Weekly Statbeerstics</item>
+        <item>Monthly Statbeerstics</item>
+        <item>All-Time Statbeerstics</item>
+    </string-array>
+
 </resources>

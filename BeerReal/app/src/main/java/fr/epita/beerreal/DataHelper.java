@@ -81,68 +81,76 @@ public class DataHelper {
         return ((liters * 100) / 365);
     }
 
-    public static int[] GetDrinkingStreak(List<String> dates) { // TODO
-        if (dates == null || dates.isEmpty()) return new int[]{0, 0};
+    public static int FindLongestStreakLength(List<String> dateTimeStrings) {
+        DateTimeFormatter formatter = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm");
 
-        List<String> uniqueDays = new ArrayList<>();
-        for (String date : dates) {
-            String day = date.split("-")[0] + "-" + date.split("-")[1] + "-" + date.split("-")[2];
-            if (!uniqueDays.contains(day)) {
-                uniqueDays.add(day);
+            Set<LocalDate> dateSet = new HashSet<>();
+
+            for (String dateTimeStr : dateTimeStrings) {
+                LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+                dateSet.add(dateTime.toLocalDate());
             }
-        }
 
-        if (uniqueDays.isEmpty()) return new int[]{0, 0};
+            int bestLength = 0;
 
-        uniqueDays.sort((d1, d2) -> {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
-            try {
-                Date date1 = dateFormat.parse(d1);
-                Date date2 = dateFormat.parse(d2);
-                return date1.compareTo(date2);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            for (LocalDate date : dateSet) {
+                if (!dateSet.contains(date.minusDays(1))) {
+                    LocalDate current = date;
+                    int length = 1;
 
-        int longestDrinkingStreak = 1;
-        int currentDrinkingStreak = 1;
-        int longestNonDrinkingStreak = 0;
-        int currentNonDrinkingStreak = 0;
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
-        try {
-            Date prevDate = dateFormat.parse(uniqueDays.get(0));
-            for (int i = 1; i < uniqueDays.size(); i++) {
-                Date currentDate = dateFormat.parse(uniqueDays.get(i));
-
-                Calendar prevCal = Calendar.getInstance();
-                prevCal.setTime(prevDate);
-                Calendar currentCal = Calendar.getInstance();
-                currentCal.setTime(currentDate);
-
-                long diff = currentCal.getTimeInMillis() - prevCal.getTimeInMillis();
-                int daysDiff = (int) (diff / (24 * 60 * 60 * 1000));
-
-                if (daysDiff == 1) {
-                    currentDrinkingStreak++;
-                    if (currentDrinkingStreak > longestDrinkingStreak) {
-                        longestDrinkingStreak = currentDrinkingStreak;
+                    while (dateSet.contains(current.plusDays(1))) {
+                        current = current.plusDays(1);
+                        length++;
                     }
-                    currentNonDrinkingStreak = 0;
-                } else {
-                    currentNonDrinkingStreak += daysDiff - 1;
-                    if (currentNonDrinkingStreak > longestNonDrinkingStreak) {
-                        longestNonDrinkingStreak = currentNonDrinkingStreak;
+
+                    if (length > bestLength) {
+                        bestLength = length;
                     }
-                    currentDrinkingStreak = 1;
                 }
-                prevDate = currentDate;
             }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
 
-        return new int[]{longestDrinkingStreak, longestNonDrinkingStreak};
+            return bestLength;
+        }
+        return 0;
+    }
+
+
+    public static int FindLongestMissingStreak(List<String> dateTimeStrings) {
+        DateTimeFormatter formatter = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm");
+
+            Set<LocalDate> presentDates = new HashSet<>();
+
+            for (String dateTimeStr : dateTimeStrings) {
+                LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+                presentDates.add(dateTime.toLocalDate());
+            }
+
+            if (presentDates.isEmpty()) return 0;
+
+            // Determine the range to scan
+            LocalDate minDate = Collections.min(presentDates);
+            LocalDate maxDate = Collections.max(presentDates);
+
+            int longestGap = 0;
+            int currentGap = 0;
+
+            LocalDate cursor = minDate;
+            while (!cursor.isAfter(maxDate)) {
+                if (!presentDates.contains(cursor)) {
+                    currentGap++;
+                    longestGap = Math.max(longestGap, currentGap);
+                } else {
+                    currentGap = 0;
+                }
+                cursor = cursor.plusDays(1);
+            }
+
+            return longestGap;
+        }
+        return 0;
     }
 }
