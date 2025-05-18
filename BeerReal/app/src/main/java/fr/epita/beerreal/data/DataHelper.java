@@ -1,26 +1,22 @@
-package fr.epita.beerreal;
+package fr.epita.beerreal.data;
 
+import static fr.epita.beerreal.csv.CsvHelper.GetLinesCsv;
+
+import android.content.Context;
 import android.os.Build;
 
-import androidx.annotation.RequiresApi;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import fr.epita.beerreal.csv.Line;
 
 public class DataHelper {
 
@@ -45,7 +41,8 @@ public class DataHelper {
         return uniqueDays.size();
     }
 
-    public static String GetFavorite(List<String> input) {
+
+    public static String GetMost(List<String> input) {
         if (input.isEmpty()) return "N/A";
 
         Map<String, Integer> counts = new HashMap<>();

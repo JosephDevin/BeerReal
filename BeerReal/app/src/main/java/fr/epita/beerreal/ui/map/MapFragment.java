@@ -20,7 +20,6 @@ import org.osmdroid.views.overlay.Marker;
 import java.util.ArrayList;
 
 import fr.epita.beerreal.csv.Line;
-import fr.epita.beerreal.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.databinding.FragmentMapBinding;

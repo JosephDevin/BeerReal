@@ -17,6 +17,7 @@
     import androidx.navigation.ui.NavigationUI;
 
     import fr.epita.beerreal.csv.CsvHelper;
+    import fr.epita.beerreal.ui.map.LocationStorage;
     import fr.epita.beerreal.databinding.ActivityMainBinding;
     import fr.epita.beerreal.ui.home.HomeFragment;
 

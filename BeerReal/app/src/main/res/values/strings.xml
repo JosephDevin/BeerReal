@@ -31,6 +31,9 @@
     <string name="bar_fav">📍 Location:</string>
     <string name="brand_fav">🏷️ Brand:</string>
     <string name="hour_fav">🕔 Hour:</string>
+    <string name="bar_most">🧭 Location: </string>
+    <string name="brand_most">🧾 Brand:</string>
+    <string name="hour_most">⏰ Hour:</string>
     <string name="n_streaks">\nStreaks</string>
     <string name="longest_drinking_streak">🔥 Drinking Streak:</string>
     <string name="longest_non_drinking_streak">❄️ Non-Drinking Streak:</string>
@@ -51,12 +54,13 @@
     <string name="bangladesh">🇧🇩 Bangladesh:</string>
     <string name="closest_country">🏅 Alcohol nationality:</string>
     <string name="totals">Totals</string>
+    <string name="most_drinks">\nMost drinks</string>
 
     <string-array name="header_options">
-        <item>Yearly Statbeerstics</item>
+        <item>All-Time Statbeerstics</item>
         <item>Weekly Statbeerstics</item>
         <item>Monthly Statbeerstics</item>
-        <item>All-Time Statbeerstics</item>
+        <item>Yearly Statbeerstics</item>
     </string-array>
 
 </resources>

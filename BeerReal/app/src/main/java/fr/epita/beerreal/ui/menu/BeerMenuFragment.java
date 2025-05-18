@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Date;
 
-import fr.epita.beerreal.LocationStorage;
+import fr.epita.beerreal.ui.map.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 

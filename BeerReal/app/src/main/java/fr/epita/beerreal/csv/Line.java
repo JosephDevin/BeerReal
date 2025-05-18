@@ -49,5 +49,4 @@ public class Line {
                 "🏠 Bar: " + Bar;
     }
 
-
 }

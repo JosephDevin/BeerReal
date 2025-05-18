@@ -1,11 +1,14 @@
 package fr.epita.beerreal.ui.home;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,13 +22,18 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import fr.epita.beerreal.LocationStorage;
+import fr.epita.beerreal.csv.CsvHelper;
+import fr.epita.beerreal.csv.Line;
+import fr.epita.beerreal.ui.map.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.databinding.FragmentHomeBinding;
 import fr.epita.beerreal.ui.menu.BeerMenuFragment;
+import fr.epita.beerreal.ui.menu.ViewPhotoFragment;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -42,26 +50,34 @@ public class HomeFragment extends Fragment {
     private ImageCapture imageCapture;
     public static boolean cameraActive = false;
     private FragmentHomeBinding binding;
-    public List<File> Images = new ArrayList<>();
+    private Fragment fragment;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // PICTURES RELATED
-        LoadAllPictures();
-
-
-
-
+        fragment = this;
 
         // ACTIVITY RELATED
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        RecyclerView recyclerView = binding.feedRecyclerView;
+        List<FeedItem> feedList = LoadImagesIntoView(requireContext());
+
+        FeedAdapter adapter = new FeedAdapter(feedList, new FeedAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(FeedItem item) {
+                LoadPicture(item.getLine(), fragment);
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+
         previewView = binding.previewView;
+        previewView.setVisibility(View.GONE);
 
-
+        TextView topBar = binding.topBar;
 
         // CAPTURE BUTTON AND EXIT BUTTON
         ImageButton captureButton = binding.captureButton;
@@ -74,18 +90,18 @@ public class HomeFragment extends Fragment {
         exitButton.setOnClickListener(v -> DestroyCamera());
 
 
-
-
-
         // ADD PICTURE BUTTON
         FloatingActionButton addButton = binding.addButton;
         addButton.setOnClickListener(v -> {
             if (!cameraActive) {
+                previewView.setVisibility(View.VISIBLE);
                 StartCamera();
 
                 captureButton.setVisibility(View.VISIBLE);
                 exitButton.setVisibility(View.VISIBLE);
                 addButton.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                topBar.setVisibility(View.GONE);
 
                 cameraActive = true;
             }
@@ -93,11 +109,6 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
-
-
-
-
-
 
 
     // CAMERA RELATED
@@ -163,8 +174,6 @@ public class HomeFragment extends Fragment {
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                        Images.add(photoFile);
-
                         // Recalculate to avoid bugs and get the updated location
                         LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
                             OpenBeerMenu(photoFile.getName());
@@ -189,14 +198,30 @@ public class HomeFragment extends Fragment {
 
 
     // LOAD ALL PICTURES RELATED
-    private void LoadAllPictures() {
-        File directory = new File(String.valueOf(requireContext().getExternalFilesDir("pics")));
-        if (directory.exists()) {
-            File[] files = directory.listFiles((dir, name) -> name.endsWith(".jpg"));
-            if (files != null) {
-                Images.addAll(Arrays.asList(files)); // Load existing images into the list
-            }
+    public List<FeedItem> LoadImagesIntoView(Context context) {
+        List<Line> lines = CsvHelper.GetLinesCsv(context);
+        List<FeedItem> res = new ArrayList<>();
+
+        if (lines == null) {
+            Toast.makeText(context, "No beers", Toast.LENGTH_SHORT).show();
+
+            return null;
         }
+        else {
+
+            for (int i = lines.size(); i >= 0; i--) {
+                if (i < lines.size()) {
+                    res.add(new FeedItem(String.valueOf(requireContext().getExternalFilesDir("pics/" + lines.get(i).Picture)), lines.get(i).Title + "   " + lines.get(i).Date.substring(5,10), lines.get(i)));
+                }
+            }
+
+            return res;
+        }
+    }
+
+    private void LoadPicture(Line l, Fragment f) {
+        ViewPhotoFragment beerMenuFragment = ViewPhotoFragment.newInstance(l, f);
+        beerMenuFragment.show(getParentFragmentManager(), "ViewPhotoFragment");
     }
 
 

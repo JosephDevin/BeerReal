@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,14 +29,15 @@ import java.io.IOException;
 import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
+import fr.epita.beerreal.ui.home.HomeFragment;
 import fr.epita.beerreal.ui.map.MapFragment;
 
 public class ViewPhotoFragment extends DialogFragment {
 
     private static Line line;
-    private static MapFragment map;
+    private static Fragment map;
 
-    public static ViewPhotoFragment newInstance(Line l, MapFragment m) {
+    public static ViewPhotoFragment newInstance(Line l, Fragment m) {
         ViewPhotoFragment fragment = new ViewPhotoFragment();
 
         line = l;
@@ -73,6 +75,7 @@ public class ViewPhotoFragment extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Delete", null);
 
+
         AlertDialog dialog = builder.create();
 
         dialog.setOnShowListener(d -> {
@@ -83,8 +86,12 @@ public class ViewPhotoFragment extends DialogFragment {
                         .setMessage("Are you sure you want to delete this beer?")
                         .setPositiveButton("Delete", (confirmDialog, which) -> {
                             CsvHelper.RemoveLine(requireContext(), line.Picture);
-                            map.ClearAllMarkers();
-                            map.LoadBeers();
+
+                            if (map instanceof MapFragment) {
+                                ((MapFragment)map).ClearAllMarkers();
+                                ((MapFragment)map).LoadBeers();
+                            }
+
                             dialog.dismiss();
                         })
                         .setNegativeButton("Cancel", (confirmDialog, which) -> confirmDialog.dismiss())

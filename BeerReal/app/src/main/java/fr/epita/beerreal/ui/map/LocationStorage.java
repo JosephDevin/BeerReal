@@ -1,4 +1,4 @@
-package fr.epita.beerreal;
+package fr.epita.beerreal.ui.map;
 
 import android.Manifest;
 import android.content.Context;

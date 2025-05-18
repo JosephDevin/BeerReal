@@ -116,6 +116,37 @@
             android:textSize="21sp" />
 
         <TextView
+            android:id="@+id/tvHeaderMost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/most_drinks"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:paddingTop="18dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tvMostBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bar_fav"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvMostBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/brand_fav"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/tvMostHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hour_fav"
+            android:textSize="21sp" />
+
+        <TextView
             android:id="@+id/tvHeaderStreaks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

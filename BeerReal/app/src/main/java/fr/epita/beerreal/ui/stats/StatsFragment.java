@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -17,10 +16,9 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import fr.epita.beerreal.Data;
+import fr.epita.beerreal.data.Data;
 import fr.epita.beerreal.R;
-import fr.epita.beerreal.Times;
-import fr.epita.beerreal.csv.CsvHelper;
+import fr.epita.beerreal.data.Times;
 import fr.epita.beerreal.databinding.FragmentStatsBinding;
 
 public class StatsFragment extends Fragment {
@@ -53,8 +51,6 @@ public class StatsFragment extends Fragment {
                 if (!selected.equals(currentSelected)) {
                     currentSelected = selected;
 
-                    System.out.println(selected);
-
                     switch (selected) {
                         case "Weekly Statbeerstics":
                             data = new Data(requireContext(), Times.WEEK);
@@ -62,11 +58,11 @@ public class StatsFragment extends Fragment {
                         case "Monthly Statbeerstics":
                             data = new Data(requireContext(), Times.MONTH);
                             break;
-                        case "All-Time Statbeerstics":
-                            data = new Data(requireContext(), Times.ALL_TIME);
+                        case "Yearly Statbeerstics":
+                            data = new Data(requireContext(), Times.YEAR);
                             break;
                         default:
-                            data = new Data(requireContext(), Times.YEAR);
+                            data = new Data(requireContext(), Times.ALL_TIME);
                             break;
                     }
 
@@ -84,15 +80,13 @@ public class StatsFragment extends Fragment {
 
 
 
-        // MAY LOOK SCARY BUT ONLY LOADING THE DATA INTO THE VIEW
-
-        System.out.println(data.Days);
-
 
 
         return binding.getRoot();
     }
 
+
+    // MAY LOOK SCARY BUT ONLY LOADING THE DATA INTO THE VIEW
     @SuppressLint("DefaultLocale")
     private void LoadData(FragmentStatsBinding binding) {
 
@@ -108,6 +102,10 @@ public class StatsFragment extends Fragment {
         binding.tvFavoriteBar.setText(String.format("%s %s", getString(R.string.bar_fav), data.GetFavoriteBar()));
         binding.tvFavoriteBrand.setText(String.format("%s %s", getString(R.string.brand_fav), data.GetFavoriteBrand()));
         binding.tvFavoriteHour.setText(String.format("%s %s", getString(R.string.hour_fav), data.GetFavoriteHour()));
+
+        binding.tvMostBar.setText(String.format("%s %s", getString(R.string.bar_most), data.GetMostBar()));
+        binding.tvMostBrand.setText(String.format("%s %s", getString(R.string.brand_most), data.GetMostBrand()));
+        binding.tvMostHour.setText(String.format("%s %s", getString(R.string.hour_most), data.GetMostHour()));
 
         binding.tvLongestDrinkingStreak.setText(String.format("%s %d days", getString(R.string.longest_drinking_streak), data.GetLongestDrinkingStreak()));
         binding.tvLongestNonDrinkingStreak.setText(String.format("%s %d days", getString(R.string.longest_non_drinking_streak), data.GetLongestNonDrinkingStreak()));

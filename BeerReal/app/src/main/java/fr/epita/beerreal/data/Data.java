@@ -1,6 +1,7 @@
-package fr.epita.beerreal;
+package fr.epita.beerreal.data;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,9 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
+import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.csv.Line;
 
@@ -94,15 +100,25 @@ public class Data {
 
     public void LoadAllLinesIntoData(List<Line> lines) {
 
-        for (Line l:lines) {
-            Size += 1;
+        if (lines.isEmpty()) {
+            Brands.add("None");
+            Volumes.add(0.0f);
+            Prices.add(0.0f);
+            Dates.add("Never");
+            Bars.add("Nowhere");
+            Ratings.add(0.0f);
+        } else 
+        {
+            for (Line l:lines) {
+                Size += 1;
 
-            Brands.add(l.Brand);
-            Volumes.add(l.Volume);
-            Prices.add(l.Price);
-            Dates.add(l.Date);
-            Bars.add(l.Bar);
-            Ratings.add(l.Rating);
+                Brands.add(l.Brand);
+                Volumes.add(l.Volume);
+                Prices.add(l.Price);
+                Dates.add(l.Date);
+                Bars.add(l.Bar);
+                Ratings.add(l.Rating);
+            }
         }
 
         pricesTotal = DataHelper.Sum(Prices);
@@ -139,10 +155,82 @@ public class Data {
     }
 
     // FAVORITES:
-    public String GetFavoriteBar() { return DataHelper.GetFavorite(Bars); }
-    public String GetFavoriteBrand() { return DataHelper.GetFavorite(Brands); }
 
-    public String GetFavoriteHour() {
+    public String GetFavoriteBar() {
+        Map<String, Float> ratingSums = new HashMap<>();
+        Map<String, Integer> ratingCounts = new HashMap<>();
+
+        for (Line line : Lines) {
+            String brand = line.Bar.trim().toLowerCase();
+            float rating = line.Rating  ;
+            if (brand != null) {
+                ratingSums.put(brand, ratingSums.getOrDefault(brand, 0f) + rating);
+                ratingCounts.put(brand, ratingCounts.getOrDefault(brand, 0) + 1);
+            }
+        }
+
+        Map<String, Float> brandToAverageRating = new HashMap<>();
+        for (String brand : ratingSums.keySet()) {
+            float sum = ratingSums.get(brand);
+            int count = ratingCounts.get(brand);
+            brandToAverageRating.put(brand, sum / count);
+        }
+
+        String bestBrand = null;
+        float bestAverage = -1f;
+
+        for (Map.Entry<String, Float> entry : brandToAverageRating.entrySet()) {
+            if (entry.getValue() > bestAverage) {
+                bestAverage = entry.getValue();
+                bestBrand = entry.getKey();
+            }
+        }
+
+        return bestBrand + " (" + bestAverage + ")";
+    }
+
+
+    public String GetFavoriteBrand() {
+        Map<String, Float> ratingSums = new HashMap<>();
+        Map<String, Integer> ratingCounts = new HashMap<>();
+
+        for (Line line : Lines) {
+            String brand = line.Brand.trim().toLowerCase();
+            float rating = line.Rating  ;
+            if (brand != null) {
+                ratingSums.put(brand, ratingSums.getOrDefault(brand, 0f) + rating);
+                ratingCounts.put(brand, ratingCounts.getOrDefault(brand, 0) + 1);
+            }
+        }
+
+        Map<String, Float> brandToAverageRating = new HashMap<>();
+        for (String brand : ratingSums.keySet()) {
+            float sum = ratingSums.get(brand);
+            int count = ratingCounts.get(brand);
+            brandToAverageRating.put(brand, sum / count);
+        }
+
+        String bestBrand = null;
+        float bestAverage = -1f;
+
+        for (Map.Entry<String, Float> entry : brandToAverageRating.entrySet()) {
+            if (entry.getValue() > bestAverage) {
+                bestAverage = entry.getValue();
+                bestBrand = entry.getKey();
+            }
+        }
+
+        return bestBrand + " (" + bestAverage + ")";
+    }
+
+
+
+
+    // MOST:
+    public String GetMostBar() { return DataHelper.GetMost(Bars); }
+    public String GetMostBrand() { return DataHelper.GetMost(Brands); }
+
+    public String GetMostHour() {
         List<String> hours = new ArrayList<>();
 
         for (int i = 0; i < Dates.size(); i++) {
@@ -155,7 +243,7 @@ public class Data {
                 }
             }
         }
-        return DataHelper.GetFavorite(hours);
+        return DataHelper.GetMost(hours);
     }
 
 
@@ -439,10 +527,9 @@ public class Data {
         );
     }
 
-
-
-
-
+    public String GetFavoriteHour() {
+        return "20";
+    }
 
 
 }

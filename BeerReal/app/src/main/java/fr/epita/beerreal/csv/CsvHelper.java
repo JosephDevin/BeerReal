@@ -25,6 +25,7 @@ import fr.epita.beerreal.MainActivity;
 
 public class CsvHelper {
 
+    
 
     // INITIALIZATION RELATED
     public static String InitialiseCSV(Context context)  {
@@ -231,7 +232,6 @@ public class CsvHelper {
             if (earliest == null) {
                 throw new IllegalStateException("No valid date found in CSV.");
             }
-
             return (int) ChronoUnit.DAYS.between(earliest, LocalDate.now()) + 1;
         }
         return 0;
