@@ -24,9 +24,12 @@ BeerReal offers the following features:
     Total number of different bar visited
     Average number of drinks per day
     Average volume per day
-    Favorite location
+    Favorite location (best average rating)
     Favorite brand
     Favorite hour
+    Most drank at location
+    Most drank brand
+    Most drank at hour
     Average cost of a beer
     Cheapest beer
     Most expensive beer
@@ -45,8 +48,6 @@ Not available yet.
 ### Prerequisites
 
 - **Android**: Android 5.0 (Lollipop) or higher
-
-## Architecture
 
 ## Logo
 
