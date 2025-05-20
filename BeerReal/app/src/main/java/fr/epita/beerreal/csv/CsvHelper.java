@@ -18,14 +18,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import fr.epita.beerreal.MainActivity;
 
 public class CsvHelper {
-
-    
 
     // INITIALIZATION RELATED
     public static String InitialiseCSV(Context context)  {
@@ -274,6 +274,79 @@ public class CsvHelper {
         }
 
         return 365;
+    }
+
+    // ALCODEX
+
+    public static List<String> getUniqueBrands(Context context) {
+        File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
+
+        List<String> result = new ArrayList<>();
+        Set<String> seenNormalized = new HashSet<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue; // skip header
+                }
+
+                String[] parts = line.split(",");
+                if (parts.length < 3) continue; // skip malformed lines
+
+                String brand = parts[2].trim();
+                String normalized = normalizeBrand(brand);
+
+                if (!seenNormalized.contains(normalized)) {
+                    seenNormalized.add(normalized);
+                    result.add(brand);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private static String normalizeBrand(String brand) {
+        return brand.toLowerCase().replaceAll("[^a-z]", "");
+    }
+
+    public static String findFirstPhotoPathForBrand(Context context, String brand) {
+        File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean isFirstLine = true;
+
+            String normalizedTarget = normalizeBrand(brand);
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue; // skip header
+                }
+
+                String[] parts = line.split(",");
+                if (parts.length < 3) continue;
+
+                String csvBrand = parts[2].trim();
+                String normalizedCsvBrand = normalizeBrand(csvBrand);
+
+                if (normalizedCsvBrand.equals(normalizedTarget)) {
+                    // parts[0] is Photo_path
+                    return parts[0].trim();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null; // not found
     }
 
 

@@ -107,6 +107,18 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        getParentFragmentManager().setFragmentResultListener("refresh_feed", this, (key, bundle) -> {
+            List<FeedItem> feed = LoadImagesIntoView(requireContext());
+            FeedAdapter ad = new FeedAdapter(feed, new FeedAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(FeedItem item) {
+                    LoadPicture(item.getLine(), fragment);
+                }
+            });
+            binding.feedRecyclerView.setAdapter(ad);
+        });
+
+
         return root;
     }
 

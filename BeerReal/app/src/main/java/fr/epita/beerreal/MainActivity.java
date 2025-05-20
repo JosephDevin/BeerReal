@@ -48,9 +48,6 @@
             LocationStorage.RecalculatePosition(this, (latitude, longitude) -> {
             });
 
-
-
-
             // ARCHITECTURE RELATED ACTIONS
             CsvPath = CsvHelper.InitialiseCSV(this);
             CsvHelper.CreateImageDir(this);

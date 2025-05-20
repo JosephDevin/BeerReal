@@ -60,6 +60,10 @@ public class BeerMenuFragment extends DialogFragment {
                                 ratingInput.getRating(),
                                 barInput.getText().toString()
                         );
+                        Bundle result = new Bundle();
+                        getParentFragmentManager().setFragmentResult("refresh_feed", result);
+                        dismiss();
+
                     });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());

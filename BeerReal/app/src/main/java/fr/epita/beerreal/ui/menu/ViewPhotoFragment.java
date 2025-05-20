@@ -92,6 +92,10 @@ public class ViewPhotoFragment extends DialogFragment {
                                 ((MapFragment)map).LoadBeers();
                             }
 
+                            Bundle result = new Bundle();
+                            getParentFragmentManager().setFragmentResult("refresh_feed", result);
+                            dismiss();
+
                             dialog.dismiss();
                         })
                         .setNegativeButton("Cancel", (confirmDialog, which) -> confirmDialog.dismiss())

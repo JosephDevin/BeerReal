@@ -223,6 +223,42 @@ public class Data {
         return bestBrand + " (" + bestAverage + ")";
     }
 
+    public String GetFavoriteHour() {
+        Map<String, Float> ratingSums = new HashMap<>();
+        Map<String, Integer> ratingCounts = new HashMap<>();
+
+        for (Line line : Lines) {
+            String date = line.Date;
+            float rating = line.Rating;
+
+            if (date != null && date.length() >= 13) {
+                String hour = date.substring(11, 13); // Extract hour part (e.g., "20" from "2025-05-18-20:56")
+                ratingSums.put(hour, ratingSums.getOrDefault(hour, 0f) + rating);
+                ratingCounts.put(hour, ratingCounts.getOrDefault(hour, 0) + 1);
+            }
+        }
+
+        Map<String, Float> hourToAverageRating = new HashMap<>();
+        for (String hour : ratingSums.keySet()) {
+            float sum = ratingSums.get(hour);
+            int count = ratingCounts.get(hour);
+            hourToAverageRating.put(hour, sum / count);
+        }
+
+        String bestHour = null;
+        float bestAverage = -1f;
+
+        for (Map.Entry<String, Float> entry : hourToAverageRating.entrySet()) {
+            if (entry.getValue() > bestAverage) {
+                bestAverage = entry.getValue();
+                bestHour = entry.getKey();
+            }
+        }
+
+        return bestHour + "h (" + bestAverage + ")";
+    }
+
+
 
 
 
@@ -526,10 +562,5 @@ public class Data {
                 closestCountry
         );
     }
-
-    public String GetFavoriteHour() {
-        return "20";
-    }
-
 
 }

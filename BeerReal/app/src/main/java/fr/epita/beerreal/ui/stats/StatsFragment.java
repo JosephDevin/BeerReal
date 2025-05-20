@@ -20,6 +20,7 @@ import fr.epita.beerreal.data.Data;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.data.Times;
 import fr.epita.beerreal.databinding.FragmentStatsBinding;
+import fr.epita.beerreal.ui.menu.BeerMenuFragment;
 
 public class StatsFragment extends Fragment {
 
@@ -70,8 +71,6 @@ public class StatsFragment extends Fragment {
                 }
             }
 
-
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // Optional: Handle no selection
@@ -79,7 +78,15 @@ public class StatsFragment extends Fragment {
         });
 
 
+        binding.btnAchievements.setOnClickListener(v -> {
+            AchievementFragment achievements = AchievementFragment.newInstance();
+            achievements.show(getParentFragmentManager(), "Achievements Fragment");
+        });
 
+        binding.btnAlcodex.setOnClickListener(v -> {
+            AlcodexFragment alcodex = AlcodexFragment.newInstance(requireContext());
+            alcodex.show(getParentFragmentManager(), "Alcodex Fragment");
+        });
 
 
         return binding.getRoot();
