@@ -13,9 +13,11 @@ BeerReal is a mobile application that let users take daily pictures of their bee
 BeerReal offers the following features:
 
 - **The Pub**: Allows the user to take a picture of their beer, and save it for beery memories.
-- **Beer Map**: Allows the user to map out where they drink their beers, and get stats about where they drink the most!
+- **Beer Map**: Allows the user to map out where they drink their beers, and know about where they drink the most!
 - **Statbeerstics**: Allows the user to get stats about their beer consumption: volume, cost, location...
-
+- **Achivements**: As the user drinks more beers, he unlocks achievements such as "The 100th beer", or "Ubermensch"...
+- **Alcodex**: Allows the user to catch all beers, discovering new beers updates the alcodex.
+  
 ### Available stats
     Numbers of total beers
     Total cost
@@ -24,9 +26,12 @@ BeerReal offers the following features:
     Total number of different bar visited
     Average number of drinks per day
     Average volume per day
-    Favorite location
+    Favorite location (best average rating)
     Favorite brand
     Favorite hour
+    Most drank at location
+    Most drank brand
+    Most drank at hour
     Average cost of a beer
     Cheapest beer
     Most expensive beer
@@ -45,8 +50,6 @@ Not available yet.
 ### Prerequisites
 
 - **Android**: Android 5.0 (Lollipop) or higher
-
-## Architecture
 
 ## Logo
 
