@@ -16,6 +16,7 @@
     import androidx.navigation.ui.AppBarConfiguration;
     import androidx.navigation.ui.NavigationUI;
 
+    import fr.epita.beerreal.alcodex.AlcodexStorage;
     import fr.epita.beerreal.csv.CsvHelper;
     import fr.epita.beerreal.ui.map.LocationStorage;
     import fr.epita.beerreal.databinding.ActivityMainBinding;
@@ -25,6 +26,8 @@
 
         private ActivityMainBinding binding;
         public static String CsvPath = "";
+
+        public static AlcodexStorage alcodex;
 
         private final ActivityResultLauncher<String> requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -40,8 +43,9 @@
             super.onCreate(savedInstanceState);
 
             // PERMISSIONS
-            checkCameraPermission();
-            checkLocationPermission();
+            CheckCameraPermission();
+
+            CheckLocationPermission();
 
 
             // LOCATION RELATED ACTIONS
@@ -51,6 +55,9 @@
             // ARCHITECTURE RELATED ACTIONS
             CsvPath = CsvHelper.InitialiseCSV(this);
             CsvHelper.CreateImageDir(this);
+
+            // ALCODEX RELATED ACTIONS
+            alcodex = new AlcodexStorage(this);
 
 
             // ACTIVITY RELATED ACTIONS
@@ -78,7 +85,7 @@
 
 
         // PERMISSIONS CHECK
-        private void checkCameraPermission() {
+        private void CheckCameraPermission() {
             if (ContextCompat.checkSelfPermission(
                     this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             } else {
@@ -86,7 +93,7 @@
             }
         }
 
-        private void checkLocationPermission() {
+        private void CheckLocationPermission() {
             if (ContextCompat.checkSelfPermission(
                     this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             } else {

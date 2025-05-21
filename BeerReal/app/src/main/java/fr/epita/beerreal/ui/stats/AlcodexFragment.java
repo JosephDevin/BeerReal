@@ -21,76 +21,67 @@ import androidx.fragment.app.DialogFragment;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import fr.epita.beerreal.AlcodexStorage;
-import fr.epita.beerreal.BeerInfo;
+import fr.epita.beerreal.MainActivity;
+import fr.epita.beerreal.alcodex.BeerInfo;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 
 public class AlcodexFragment extends DialogFragment {
 
-    private static AlcodexStorage alcodex;
     private static Context context;
 
     public static AlcodexFragment newInstance(Context cxt) {
         context = cxt;
-        alcodex = new AlcodexStorage(cxt);
-
-        // Update JSON beers with first CSV image path for each brand
-        updateBeersWithCsvImages();
-
+        UpdateBeersWithCsvImages();
         return new AlcodexFragment();
     }
 
-    private static void updateBeersWithCsvImages() {
-        Map<String, BeerInfo> beers = alcodex.loadBeers();
-        List<String> uniqueBrands = CsvHelper.getUniqueBrands(context);
+    private static void UpdateBeersWithCsvImages() {
+        Map<String, BeerInfo> beers = MainActivity.alcodex.LoadBeers();
+        List<String> uniqueBrands = CsvHelper.GetUniqueBrands(context);
 
         for (String brand : uniqueBrands) {
-            String photoPath = findFirstPhotoPathForBrand(context, brand);
+            String photoPath = FindFirstPhotoPathForBrand(context, brand);
             boolean hasImage = photoPath != null && !photoPath.isEmpty();
 
             BeerInfo existing = beers.get(brand);
-            if (existing == null) {
-                existing = new BeerInfo(brand, hasImage, photoPath);
-            } else {
+            if (existing != null) {
                 existing.hasImage = hasImage;
                 existing.photoPath = photoPath;
             }
             beers.put(brand, existing);
         }
 
-        alcodex.saveBeers(beers);
+        MainActivity.alcodex.SaveBeers(beers);
     }
 
-    private static String findFirstPhotoPathForBrand(Context context, String brand) {
+    private static String FindFirstPhotoPathForBrand(Context context, String brand) {
         File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             boolean isFirstLine = true;
-            String normalizedTarget = normalizeBrand(brand);
+            String normalizedTarget = NormalizeBrand(brand);
 
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
                     isFirstLine = false;
-                    continue; // skip header
+                    continue;
                 }
 
                 String[] parts = line.split(",");
                 if (parts.length < 3) continue;
 
                 String csvBrand = parts[2].trim();
-                String normalizedCsvBrand = normalizeBrand(csvBrand);
+                String normalizedCsvBrand = NormalizeBrand(csvBrand);
 
                 if (normalizedCsvBrand.equals(normalizedTarget)) {
-                    return parts[0].trim(); // Photo_path
+                    return parts[0].trim();
                 }
             }
         } catch (IOException e) {
@@ -99,7 +90,7 @@ public class AlcodexFragment extends DialogFragment {
         return null;
     }
 
-    private static String normalizeBrand(String brand) {
+    private static String NormalizeBrand(String brand) {
         return brand.toLowerCase().replaceAll("[^a-z]", "");
     }
 
@@ -109,7 +100,7 @@ public class AlcodexFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_alcodex, null);
 
-        Map<String, BeerInfo> map = alcodex.loadBeers();
+        Map<String, BeerInfo> map = MainActivity.alcodex.LoadBeers();
         GridLayout grid = view.findViewById(R.id.grid_beer_list);
 
         for (Map.Entry<String, BeerInfo> entry : map.entrySet()) {

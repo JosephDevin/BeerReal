@@ -1,4 +1,4 @@
-package fr.epita.beerreal;
+package fr.epita.beerreal.alcodex;
 
 public class BeerInfo {
     public String name;

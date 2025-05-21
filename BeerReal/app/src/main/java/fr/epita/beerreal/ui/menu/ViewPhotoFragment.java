@@ -25,11 +25,12 @@ import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
+import fr.epita.beerreal.MainActivity;
 import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
-import fr.epita.beerreal.ui.home.HomeFragment;
 import fr.epita.beerreal.ui.map.MapFragment;
 
 public class ViewPhotoFragment extends DialogFragment {
@@ -75,7 +76,6 @@ public class ViewPhotoFragment extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Delete", null);
 
-
         AlertDialog dialog = builder.create();
 
         dialog.setOnShowListener(d -> {
@@ -90,6 +90,13 @@ public class ViewPhotoFragment extends DialogFragment {
                             if (map instanceof MapFragment) {
                                 ((MapFragment)map).ClearAllMarkers();
                                 ((MapFragment)map).LoadBeers();
+                            }
+
+                            if (MainActivity.alcodex.GetAllBrands().contains(line.Brand)) {
+                                if (!CsvHelper.IsBrandDuplicated(line.Brand, requireContext())
+                                        && !Objects.equals(requireContext().getExternalFilesDir("pics") + line.Picture, MainActivity.alcodex.LoadBeers().get(line.Brand).photoPath)) {
+                                    MainActivity.alcodex.ClearPhotoForBrand(line.Brand);
+                                }
                             }
 
                             Bundle result = new Bundle();
@@ -160,7 +167,7 @@ public class ViewPhotoFragment extends DialogFragment {
                 return rotatedBitmap;
 
             } catch (IOException e) {
-                e.printStackTrace(); // or handle properly
+                e.printStackTrace();
             }
         }
         return null;

@@ -263,5 +263,25 @@
     "brand": "Rince Cochon Rouge",
     "hasImage": false,
     "photoPath": ""
+  },
+  "Guinness": {
+    "brand": "Guinness",
+    "hasImage": false,
+    "photoPath": ""
+  },
+  "Kronenbourg": {
+    "brand": "Kronenbourg",
+    "hasImage": false,
+    "photoPath": ""
+  },
+  "Kingsbrau": {
+    "brand": "Kingsbrau",
+    "hasImage": false,
+    "photoPath": ""
+  },
+  "Stella Artois": {
+    "brand": "Stella artois",
+    "hasImage": false,
+    "photoPath": ""
   }
 }

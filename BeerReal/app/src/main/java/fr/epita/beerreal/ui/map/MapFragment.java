@@ -89,7 +89,7 @@ public class MapFragment extends Fragment {
         Drawable d = ContextCompat.getDrawable(requireContext(), R.drawable.beer_location_pin);
 
         for (Line l:lines) {
-            double[] cords = LocationStorage.addNoiseToCoordinates(l.Location[0], l.Location[1]);
+            double[] cords = LocationStorage.AddNoiseToCoordinates(l.Location[0], l.Location[1]);
             GeoPoint beer = new GeoPoint(cords[0], cords[1]);
 
             Marker m = new Marker(mapView);

@@ -27,6 +27,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import fr.epita.beerreal.MainActivity;
+import fr.epita.beerreal.alcodex.AlcodexStorage;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.ui.map.LocationStorage;

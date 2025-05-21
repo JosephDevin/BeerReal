@@ -1,9 +1,7 @@
 package fr.epita.beerreal.ui.stats;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +9,6 @@ import android.view.View;
 import androidx.fragment.app.DialogFragment;
 
 
-import fr.epita.beerreal.AlcodexStorage;
 import fr.epita.beerreal.R;
 
 public class AchievementFragment extends DialogFragment {

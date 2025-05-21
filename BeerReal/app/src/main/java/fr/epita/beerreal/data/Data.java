@@ -1,7 +1,6 @@
 package fr.epita.beerreal.data;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,11 +16,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
@@ -65,16 +62,16 @@ public class Data {
 
         switch (time) {
             case WEEK:
-                Days = CsvHelper.getDaysSoFarThisWeek();
+                Days = CsvHelper.GetDaysSoFarThisWeek();
                 break;
             case MONTH:
-                Days = CsvHelper.getDaysSoFarThisMonth();
+                Days = CsvHelper.GetDaysSoFarThisMonth();
                 break;
             case ALL_TIME:
-                Days = CsvHelper.getDaysFromEarliestDate(context);
+                Days = CsvHelper.GetDaysFromEarliestDate(context);
                 break;
             default:
-                Days = CsvHelper.getDaysSoFarThisYear();
+                Days = CsvHelper.GetDaysSoFarThisYear();
                 break;
         }
 

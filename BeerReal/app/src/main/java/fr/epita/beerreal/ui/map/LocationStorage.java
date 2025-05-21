@@ -20,20 +20,20 @@ public class LocationStorage {
         longitude = lon;
     }
 
-    public static double getLatitude() {
+    public static double GetLatitude() {
         return latitude;
     }
 
-    public static double getLongitude() {
+    public static double GetLongitude() {
         return longitude;
     }
 
     public static void RecalculatePosition(Context cxt, LocationCallback callback) {
-        getLocation(callback, cxt);
+        GetLocation(callback, cxt);
     }
 
 
-    private static void getLocation(LocationCallback callback, Context context) {
+    private static void GetLocation(LocationCallback callback, Context context) {
         FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -52,7 +52,7 @@ public class LocationStorage {
         }
     }
 
-    public static double[] addNoiseToCoordinates(double latitude, double longitude) {
+    public static double[] AddNoiseToCoordinates(double latitude, double longitude) {
         Random rand = new Random();
 
         double noiseFactor = 0.00001;

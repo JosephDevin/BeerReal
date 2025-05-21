@@ -39,9 +39,9 @@ public class StatsFragment extends Fragment {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.header_options,
-                R.layout.spinner_header_item  // custom layout
+                R.layout.spinner_header_item
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // dropdown items can stay default
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerHeader.setAdapter(adapter);
 
         spinnerHeader.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

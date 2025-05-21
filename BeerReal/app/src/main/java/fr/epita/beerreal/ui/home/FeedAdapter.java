@@ -18,12 +18,12 @@ import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.Line;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
-    private List<FeedItem> feedItems;
+    private List<FeedItem> FeedItems;
     private OnItemClickListener listener;
     private Line line;
 
     public FeedAdapter(List<FeedItem> feedItems, OnItemClickListener listener) {
-        this.feedItems = feedItems;
+        this.FeedItems = feedItems;
         this.listener = listener;
     }
 
@@ -37,7 +37,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
-        FeedItem item = feedItems.get(position);
+        FeedItem item = FeedItems.get(position);
         String title = item.getLine().Title;
         String date = item.getLine().Date.substring(5, 10);
 
@@ -54,7 +54,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     @Override
     public int getItemCount() {
-        return feedItems.size();
+        return FeedItems.size();
     }
 
     public interface OnItemClickListener {

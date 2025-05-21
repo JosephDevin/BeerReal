@@ -13,7 +13,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -207,7 +206,7 @@ public class CsvHelper {
 
     // DATA LOADING RELATED
 
-    public static int getDaysFromEarliestDate(Context context) {
+    public static int GetDaysFromEarliestDate(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             List<String> csvLines = LoadCsvAsStrings(context);
 
@@ -237,7 +236,7 @@ public class CsvHelper {
         return 0;
     }
 
-    public static int getDaysSoFarThisWeek() {
+    public static int GetDaysSoFarThisWeek() {
         LocalDate today = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
@@ -250,7 +249,7 @@ public class CsvHelper {
         return 7;
     }
 
-    public static int getDaysSoFarThisMonth() {
+    public static int GetDaysSoFarThisMonth() {
         LocalDate today = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
@@ -263,7 +262,7 @@ public class CsvHelper {
         return 30;
     }
 
-    public static int getDaysSoFarThisYear() {
+    public static int GetDaysSoFarThisYear() {
         LocalDate today = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
@@ -276,9 +275,15 @@ public class CsvHelper {
         return 365;
     }
 
-    // ALCODEX
 
-    public static List<String> getUniqueBrands(Context context) {
+
+
+
+
+
+
+    // ALCODEX
+    public static List<String> GetUniqueBrands(Context context) {
         File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
 
         List<String> result = new ArrayList<>();
@@ -298,7 +303,7 @@ public class CsvHelper {
                 if (parts.length < 3) continue; // skip malformed lines
 
                 String brand = parts[2].trim();
-                String normalized = normalizeBrand(brand);
+                String normalized = NormalizeBrand(brand);
 
                 if (!seenNormalized.contains(normalized)) {
                     seenNormalized.add(normalized);
@@ -312,33 +317,32 @@ public class CsvHelper {
         return result;
     }
 
-    private static String normalizeBrand(String brand) {
+    public static String NormalizeBrand(String brand) {
         return brand.toLowerCase().replaceAll("[^a-z]", "");
     }
 
-    public static String findFirstPhotoPathForBrand(Context context, String brand) {
+    public static String FindFirstPhotoPathForBrand(Context context, String brand) {
         File file = new File(context.getExternalFilesDir(null), "csv/data.csv");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             boolean isFirstLine = true;
 
-            String normalizedTarget = normalizeBrand(brand);
+            String normalizedTarget = NormalizeBrand(brand);
 
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
                     isFirstLine = false;
-                    continue; // skip header
+                    continue;
                 }
 
                 String[] parts = line.split(",");
                 if (parts.length < 3) continue;
 
                 String csvBrand = parts[2].trim();
-                String normalizedCsvBrand = normalizeBrand(csvBrand);
+                String normalizedCsvBrand = NormalizeBrand(csvBrand);
 
                 if (normalizedCsvBrand.equals(normalizedTarget)) {
-                    // parts[0] is Photo_path
                     return parts[0].trim();
                 }
             }
@@ -350,6 +354,21 @@ public class CsvHelper {
     }
 
 
+    public static boolean IsBrandDuplicated(String brandToCheck, Context context) {
+        ArrayList<Line> lines = GetLinesCsv(context);
+
+        int count = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            String brand = lines.get(i).Brand;
+            if (brand.equals(brandToCheck)) {
+                count++;
+                if (count > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
 
@@ -365,17 +384,17 @@ public class CsvHelper {
         File folderCsv = new File(context.getExternalFilesDir(null), "csv");
         File folderPics = new File(context.getExternalFilesDir(null), "pics");
 
-        deleteFolderRecursively(folderCsv);
-        deleteFolderRecursively(folderPics);
+        DeleteFolderRecursively(folderCsv);
+        DeleteFolderRecursively(folderPics);
     }
 
-    private static void deleteFolderRecursively(File folder) {
+    private static void DeleteFolderRecursively(File folder) {
         if (folder != null && folder.exists()) {
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        deleteFolderRecursively(file);
+                        DeleteFolderRecursively(file);
                     } else {
                         file.delete();
                     }

@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Date;
+import java.util.List;
 
+import fr.epita.beerreal.MainActivity;
 import fr.epita.beerreal.ui.map.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
@@ -19,6 +22,7 @@ import fr.epita.beerreal.csv.CsvHelper;
 public class BeerMenuFragment extends DialogFragment {
 
     private static String photo_path;
+    private List<String> AlcodexBrands;
 
     public static BeerMenuFragment newInstance(String photoPath) {
         BeerMenuFragment fragment = new BeerMenuFragment();
@@ -35,6 +39,8 @@ public class BeerMenuFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_menu, null);
+
+        AlcodexBrands = MainActivity.alcodex.GetAllBrands();
 
         EditText titleInput = view.findViewById(R.id.title_input);
         EditText brandInput = view.findViewById(R.id.brand_input);
@@ -64,10 +70,12 @@ public class BeerMenuFragment extends DialogFragment {
                         getParentFragmentManager().setFragmentResult("refresh_feed", result);
                         dismiss();
 
+                        if (AlcodexBrands.contains(brandInput.getText().toString()) && !MainActivity.alcodex.LoadBeers().get(brandInput.getText().toString()).hasImage) {
+                            Toast.makeText(requireContext(), "You've just unlocked a beer in the alcodex!", Toast.LENGTH_LONG).show();
+                        }
                     });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());
-
         return builder.create();
     }
 }
