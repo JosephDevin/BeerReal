@@ -21,6 +21,7 @@ import fr.epita.beerreal.data.Data;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.data.Times;
 import fr.epita.beerreal.databinding.FragmentStatsBinding;
+import fr.epita.beerreal.ui.stats.achievements.AchievementFragment;
 
 public class StatsFragment extends Fragment {
 

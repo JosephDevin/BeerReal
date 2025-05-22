@@ -8,11 +8,11 @@
     android:elevation="4dp">
 
     <TextView
-        android:id="@+id/tooltip_text"
+        android:id="@+id/tooltipText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tooltip text"
+        android:text=""
         android:textSize="14sp"
-        android:textColor="@android:color/white"
+        android:textColor="#C8C8C8"
         android:maxWidth="200dp" />
 </LinearLayout>

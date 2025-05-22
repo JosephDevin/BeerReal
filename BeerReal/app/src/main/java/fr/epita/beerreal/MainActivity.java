@@ -21,6 +21,8 @@
     import fr.epita.beerreal.ui.map.LocationStorage;
     import fr.epita.beerreal.databinding.ActivityMainBinding;
     import fr.epita.beerreal.ui.home.HomeFragment;
+    import fr.epita.beerreal.ui.stats.achievements.Achievement;
+    import fr.epita.beerreal.ui.stats.achievements.JSONHelper;
 
     public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +30,8 @@
         public static String CsvPath = "";
 
         public static AlcodexStorage alcodex;
+
+        public static JSONHelper achievements;
 
         private final ActivityResultLauncher<String> requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -58,7 +62,19 @@
 
             // ALCODEX RELATED ACTIONS
             alcodex = new AlcodexStorage(this);
+            achievements = new JSONHelper(this, "achievements.json");
 
+            achievements.SetUnlocked("Marathon runner", true);
+
+            for (Achievement a : achievements.GetAllUnlocked()) {
+                System.out.println(a.Name);
+            }
+
+            System.out.println("LOCKED");
+
+            for (Achievement a : achievements.GetAllLocked()) {
+                System.out.println(a.Name);
+            }
 
             // ACTIVITY RELATED ACTIONS
             binding = ActivityMainBinding.inflate(getLayoutInflater());

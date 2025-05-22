@@ -1,15 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#424242" >
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:background="#424242">
 
-    <TextView
-        android:id="@+id/achievement_title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Beer Master"
-        tools:ignore="MissingConstraints" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/unlockedTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔓 Unlocked\n"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:paddingBottom="8dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/unlockedLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/lockedTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔒 Locked\n"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:paddingTop="8dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/lockedLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</ScrollView>

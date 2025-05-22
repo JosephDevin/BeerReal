@@ -1,5 +1,154 @@
 {
-  "Fighter": false,
-  "Warrior": false,
-  "War general": false
+  "Fighter": {
+    "unlocked": false,
+    "description": "Drink 5 pints"
+  },
+  "Warrior": {
+    "unlocked": false,
+    "description": "Drink 10 pints"
+  },
+  "War general": {
+    "unlocked": false,
+    "description": "Drink 25 pints"
+  },
+  "Marathon runner": {
+    "unlocked": false,
+    "description": "Drink 42.195 pints"
+  },
+  "The 100th": {
+    "unlocked": false,
+    "description": "Drink 100 beers"
+  },
+  "King of the Keg": {
+    "unlocked": false,
+    "description": "Drink 2L in one glass"
+  },
+  "Beer week": {
+    "unlocked": false,
+    "description": "Longest streak of 7 days"
+  },
+  "Alcoholic": {
+    "unlocked": false,
+    "description": "Longest streak of 15 days"
+  },
+  "Ubermensch": {
+    "unlocked": false,
+    "description": "Longest streak of 31 days"
+  },
+  "The Trifecta": {
+    "unlocked": false,
+    "description": "3 beers in a day"
+  },
+  "Five pint plan": {
+    "unlocked": false,
+    "description": "5 beers in a day"
+  },
+  "Decapint": {
+    "unlocked": false,
+    "description": "10 beers in a day"
+  },
+  "Fast drinker": {
+    "unlocked": false,
+    "description": "Drink 2 beers in a 10 minutes interval"
+  },
+  "Very Fast Drinker": {
+    "unlocked": false,
+    "description": "Drink 2 beers in a 1 minute interval"
+  },
+  "Make day drinking great again": {
+    "unlocked": false,
+    "description": "Drink before noon (and after 8AM)"
+  },
+  "Night owl": {
+    "unlocked": false,
+    "description": "Drink a beer between midnight and 3AM"
+  },
+  "Vivaldi's beer": {
+    "unlocked": false,
+    "description": "Drink at least one beer in 4 different seasons"
+  },
+  "Happy Hour Hunter": {
+    "unlocked": false,
+    "description": "Drink 5 beers between 6PM to 8PM"
+  },
+  "What a gift!": {
+    "unlocked": false,
+    "description": "Drink a free beer"
+  },
+  "Money saver": {
+    "unlocked": false,
+    "description": "Drink a less than 1€ beer"
+  },
+  "Fancy beer": {
+    "unlocked": false,
+    "description": "Drink a more than 10€ beer"
+  },
+  "Gold brew": {
+    "unlocked": false,
+    "description": "Drink a more than 20€ beer"
+  },
+  "Price Shock": {
+    "unlocked": false,
+    "description": "Drink a beer that costs 10 times more than your cheapest beer"
+  },
+  "Value Seeker": {
+    "unlocked": false,
+    "description": "Rate 5 stars a less than 1€ beer"
+  },
+  "Globe trotter": {
+    "unlocked": false,
+    "description": "Drink a beer in another country"
+  },
+  "On The Road": {
+    "unlocked": false,
+    "description": "Drink beer at a latitude difference of 1000+ km from your hometown (where you first opened the app)"
+  },
+  "Bar Hopper": {
+    "unlocked": false,
+    "description": "Drink beers in 10 different bars/locations"
+  },
+  "Bar Explorer": {
+    "unlocked": false,
+    "description": "Visit and drink in 20 unique bars/locations"
+  },
+  "Bar Conqueror": {
+    "unlocked": false,
+    "description": "Visit and drink in 50 unique bars/locations"
+  },
+  "Piss Drinker": {
+    "unlocked": false,
+    "description": "Rate a beer 0 stars"
+  },
+  "Connoisseur": {
+    "unlocked": false,
+    "description": "Rate 10 beers 4 stars or above"
+  },
+  "Critic": {
+    "unlocked": false,
+    "description": "Rate 5 beers 2 stars or below"
+  },
+  "Rising Star": {
+    "unlocked": false,
+    "description": "Rate a newly discovered beer with 5 stars"
+  },
+  "Santa's Little Helper": {
+    "unlocked": false,
+    "description": "Drink on Christmas"
+  },
+  "Spooky beer": {
+    "unlocked": false,
+    "description": "Drink on Halloween"
+  },
+  "Revolution!": {
+    "unlocked": false,
+    "description": "Drink on le 14 Juillet"
+  },
+  "Look! A swallow!": {
+    "unlocked": false,
+    "description": "Drink on the first day of Spring"
+  },
+  "Cold one on a hot day": {
+    "unlocked": false,
+    "description": "Drink on the first day of Summer"
+  }
 }
