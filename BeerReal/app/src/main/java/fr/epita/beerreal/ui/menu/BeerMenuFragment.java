@@ -2,10 +2,12 @@ package fr.epita.beerreal.ui.menu;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatRatingBar;
@@ -42,15 +44,29 @@ public class BeerMenuFragment extends DialogFragment {
 
         AlcodexBrands = MainActivity.alcodex.GetAllBrands();
 
+        TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
+        customTitle.setText("Beer Information");
+        customTitle.setTextColor(Color.WHITE); // Set text color to white
+
         EditText titleInput = view.findViewById(R.id.title_input);
+        titleInput.setTextColor(Color.WHITE); // Set text color to white
+
         EditText brandInput = view.findViewById(R.id.brand_input);
+        brandInput.setTextColor(Color.WHITE); // Set text color to white
+
         EditText volumeInput = view.findViewById(R.id.volume_input);
+        volumeInput.setTextColor(Color.WHITE); // Set text color to white
+
         EditText priceInput = view.findViewById(R.id.price_input);
+        priceInput.setTextColor(Color.WHITE); // Set text color to white
+
         AppCompatRatingBar ratingInput = view.findViewById(R.id.rating_bar);
+
         EditText barInput = view.findViewById(R.id.bar_input);
+        barInput.setTextColor(Color.WHITE); // Set text color to white
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Beer Information")
+        builder.setCustomTitle(customTitle)
                 .setView(view)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
@@ -76,7 +92,16 @@ public class BeerMenuFragment extends DialogFragment {
                     });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());
-        return builder.create();
+
+        AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(d -> {
+            View buttonPanel = dialog.findViewById(getResources().getIdentifier("parentPanel", "id", "android"));
+            if (buttonPanel != null) {
+                buttonPanel.setBackgroundColor(Color.parseColor("#424242")); // Dark gray background
+            }
+        });
+
+        return dialog;
     }
 }
-

@@ -1,10 +1,11 @@
-package fr.epita.beerreal.ui.stats;
+package fr.epita.beerreal.alcodex;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import fr.epita.beerreal.MainActivity;
-import fr.epita.beerreal.alcodex.BeerInfo;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 
@@ -97,8 +97,11 @@ public class AlcodexFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle saved) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_alcodex, null);
+
+        TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
+        customTitle.setText("Alcodex");
 
         Map<String, BeerInfo> map = MainActivity.alcodex.LoadBeers();
         GridLayout grid = view.findViewById(R.id.grid_beer_list);
@@ -127,20 +130,23 @@ public class AlcodexFragment extends DialogFragment {
 
             TextView textView = new TextView(context);
             textView.setText(entry.getKey());
+            textView.setTextColor(Color.rgb(184,184,184));
             textView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
             textView.setHeight(175);
+
             itemLayout.addView(imageView);
             itemLayout.addView(textView);
 
             grid.addView(itemLayout);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Alcodex")
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setCustomTitle(customTitle)
                 .setView(view);
 
         return builder.create();
     }
+
 
     private Bitmap LoadPictureCorrectly(File imgFile) {
         if (imgFile.exists()) {

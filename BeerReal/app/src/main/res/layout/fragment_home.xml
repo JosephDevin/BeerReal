@@ -3,13 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Camera Preview full screen -->
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <!-- Scrollable feed on top of preview -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/feedRecyclerView"
         android:layout_width="match_parent"
@@ -17,21 +14,19 @@
         android:layout_marginTop="48dp"
         android:clipToPadding="false"
         android:paddingBottom="0dp"
-        android:background="#66000000" />
+        android:background="?attr/colorOnPrimary" />
 
-    <!-- Top fixed bar -->
     <TextView
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="#000000"
-        android:gravity="center_vertical|center_horizontal"
+        android:gravity="center"
         android:text="BeerReal."
-        android:textColor="#FFFFFF"
+        android:textColor="?attr/colorOnSurface"
         android:textStyle="bold"
         android:textSize="20sp" />
 
-    <!-- Capture Button centered at bottom -->
     <ImageButton
         android:id="@+id/captureButton"
         android:layout_width="80dp"
@@ -41,7 +36,6 @@
         android:background="@drawable/photo_capture_button"
         android:scaleType="fitEnd" />
 
-    <!-- Exit Button top-right -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/exitButton"
         android:layout_width="wrap_content"
@@ -49,10 +43,9 @@
         android:layout_gravity="top|end"
         android:layout_margin="4dp"
         android:src="@drawable/baseline_close_24"
-        app:backgroundTint="#FFB122"
+        app:backgroundTint="?attr/colorSecondary"
         app:fabSize="mini" />
 
-    <!-- Add Button bottom-right -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
@@ -60,6 +53,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/baseline_add_a_photo_24"
-        app:backgroundTint="#FFB122" />
+        app:backgroundTint="?attr/colorSecondary" />
 
 </FrameLayout>

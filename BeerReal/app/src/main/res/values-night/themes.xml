@@ -3,14 +3,20 @@
     <style name="Theme.BeerReal" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#FBB122</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">#FBB122</item>
+        <item name="colorOnPrimary">#121212</item>
+
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#FBB122</item>
         <item name="colorSecondaryVariant">#FBB122</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
+        <item name="colorOnSecondary">#121212</item>
+
+        <!-- Backgrounds and surfaces -->
+        <item name="android:windowBackground">#121212</item>
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+
+        <!-- Status bar color -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
     </style>
 </resources>

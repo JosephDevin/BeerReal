@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,28 +41,25 @@ public class ViewPhotoFragment extends DialogFragment {
 
     public static ViewPhotoFragment newInstance(Line l, Fragment m) {
         ViewPhotoFragment fragment = new ViewPhotoFragment();
-
         line = l;
         map = m;
-
         return fragment;
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_view_photo, null);
 
         ImageView image = view.findViewById(R.id.photoImageView);
         File imgFile = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
+        image.setImageBitmap(LoadPictureCorrectly(imgFile));
 
         String dateValue = line.Date.substring(0, 10).replace('-', ' ');
         String hourValue = line.Date.substring(11, 16);
 
-        image.setImageBitmap(LoadPictureCorrectly(imgFile));
-
-        // LOAD ALL VIEWS TO ADD THE DATA AFTER
+        // Load text views
         TextView brand = view.findViewById(R.id.brandText);
         TextView volume = view.findViewById(R.id.volumeText);
         TextView price = view.findViewById(R.id.priceText);
@@ -69,9 +67,17 @@ public class ViewPhotoFragment extends DialogFragment {
         TextView bar = view.findViewById(R.id.barText);
         RatingBar rating = view.findViewById(R.id.ratingBar);
 
+        // ✳️ Set all text colors to white
+        brand.setTextColor(Color.WHITE);
+        volume.setTextColor(Color.WHITE);
+        price.setTextColor(Color.WHITE);
+        hour.setTextColor(Color.WHITE);
+        bar.setTextColor(Color.WHITE);
+
+        // Build the custom title
         LinearLayout layout = CreateText(line.Title, dateValue);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setCustomTitle(layout)
                 .setView(view)
                 .setPositiveButton("Delete", null);
@@ -80,38 +86,81 @@ public class ViewPhotoFragment extends DialogFragment {
 
         dialog.setOnShowListener(d -> {
             Button deleteButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            deleteButton.setOnClickListener(v -> {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete this beer ?")
-                        .setMessage("Are you sure you want to delete this beer?")
-                        .setPositiveButton("Delete", (confirmDialog, which) -> {
-                            CsvHelper.RemoveLine(requireContext(), line.Picture);
+            if (deleteButton != null) {
+                deleteButton.setTextColor(Color.rgb(251, 177, 34));  // existing color
 
-                            if (map instanceof MapFragment) {
-                                ((MapFragment)map).ClearAllMarkers();
-                                ((MapFragment)map).LoadBeers();
-                            }
+                View buttonPanel = (View) deleteButton.getParent();
+                if (buttonPanel != null) {
+                    buttonPanel.setBackgroundColor(Color.rgb(66, 66, 66));
+                }
 
-                            if (MainActivity.alcodex.GetAllBrands().contains(line.Brand)) {
-                                if (!CsvHelper.IsBrandDuplicated(line.Brand, requireContext())
-                                        && !Objects.equals(requireContext().getExternalFilesDir("pics") + line.Picture, MainActivity.alcodex.LoadBeers().get(line.Brand).photoPath)) {
-                                    MainActivity.alcodex.ClearPhotoForBrand(line.Brand);
+                deleteButton.setOnClickListener(v -> {
+                    AlertDialog confirmDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("Delete this beer ?")
+                            .setMessage("Are you sure you want to delete this beer?")
+                            .setPositiveButton("Delete", (confirm, which) -> {
+                                CsvHelper.RemoveLine(requireContext(), line.Picture);
+
+                                if (map instanceof MapFragment) {
+                                    ((MapFragment) map).ClearAllMarkers();
+                                    ((MapFragment) map).LoadBeers();
                                 }
+
+                                if (MainActivity.alcodex.GetAllBrands().contains(line.Brand)) {
+                                    if (!CsvHelper.IsBrandDuplicated(line.Brand, requireContext())
+                                            && !Objects.equals(requireContext().getExternalFilesDir("pics") + line.Picture,
+                                            MainActivity.alcodex.LoadBeers().get(line.Brand).photoPath)) {
+                                        MainActivity.alcodex.ClearPhotoForBrand(line.Brand);
+                                    }
+                                }
+
+                                Bundle result = new Bundle();
+                                getParentFragmentManager().setFragmentResult("refresh_feed", result);
+                                dismiss();
+                            })
+                            .setNegativeButton("Cancel", (confirm, which) -> confirm.dismiss())
+                            .create();
+
+                    confirmDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.rgb(66, 66, 66)));
+
+                    confirmDialog.setOnShowListener(c -> {
+                        Button pos = confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        Button neg = confirmDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                        if (pos != null) {
+                            pos.setTextColor(Color.rgb(251, 177, 34));  // existing color
+                        }
+                        if (neg != null) {
+                            neg.setTextColor(Color.rgb(251, 177, 34));  // existing color
+                        }
+
+                        // Change confirm dialog footer background
+                        if (pos != null) {
+                            View footer = (View) pos.getParent();
+                            if (footer != null) {
+                                footer.setBackgroundColor(Color.rgb(66, 66, 66));
                             }
+                        }
 
-                            Bundle result = new Bundle();
-                            getParentFragmentManager().setFragmentResult("refresh_feed", result);
-                            dismiss();
+                        // ✳️ Set message text color to white
+                        TextView message = confirmDialog.findViewById(android.R.id.message);
+                        if (message != null) {
+                            message.setTextColor(Color.WHITE);
+                        }
 
-                            dialog.dismiss();
-                        })
-                        .setNegativeButton("Cancel", (confirmDialog, which) -> confirmDialog.dismiss())
-                        .show();
-            });
+                        // ✳️ Set title text color to white
+                        TextView title = confirmDialog.findViewById(android.R.id.title);
+                        if (title != null) {
+                            title.setTextColor(Color.WHITE);
+                        }
+                    });
+
+                    confirmDialog.show();
+                });
+            }
         });
 
-
-        // ADD THE DATA
+        // Set field values
         brand.setText(getString(R.string.brand_view) + "       " + line.Brand);
         volume.setText(getString(R.string.volume) + "    " + line.Volume + " L");
         price.setText(getString(R.string.price) + "         " + line.Price + " €");
@@ -122,21 +171,11 @@ public class ViewPhotoFragment extends DialogFragment {
         return dialog;
     }
 
-
-
-
-
-
-
-
-
-    // UTILITIES
-
+    // Load and rotate image if needed
     private Bitmap LoadPictureCorrectly(File imgFile) {
         if (imgFile.exists()) {
             try {
                 Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
                 ExifInterface exif = new ExifInterface(imgFile.getAbsolutePath());
                 int orientation = exif.getAttributeInt(
                         ExifInterface.TAG_ORIENTATION,
@@ -156,15 +195,7 @@ public class ViewPhotoFragment extends DialogFragment {
                         break;
                 }
 
-                Bitmap rotatedBitmap = Bitmap.createBitmap(
-                        bitmap,
-                        0, 0,
-                        bitmap.getWidth(), bitmap.getHeight(),
-                        matrix,
-                        true
-                );
-
-                return rotatedBitmap;
+                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -173,10 +204,12 @@ public class ViewPhotoFragment extends DialogFragment {
         return null;
     }
 
+    // Create a custom title bar
     private LinearLayout CreateText(String title, String date) {
         LinearLayout layout = new LinearLayout(requireContext());
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setPadding(32, 32, 32, 16);
+        layout.setBackgroundColor(Color.rgb(66, 66, 66));
         layout.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -185,13 +218,14 @@ public class ViewPhotoFragment extends DialogFragment {
         titleText.setText(title);
         titleText.setTextSize(20);
         titleText.setTypeface(null, Typeface.BOLD);
+        titleText.setTextColor(Color.rgb(200, 200, 200)); // already colored — keep as-is
         titleText.setLayoutParams(new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
         TextView dateText = new TextView(requireContext());
         dateText.setText(date);
         dateText.setTextSize(20);
-        dateText.setTextColor(Color.GRAY);
+        dateText.setTextColor(Color.rgb(136, 136, 136)); // already colored — keep as-is
         dateText.setTypeface(null, Typeface.NORMAL);
         dateText.setGravity(Gravity.END);
 
@@ -201,4 +235,3 @@ public class ViewPhotoFragment extends DialogFragment {
         return layout;
     }
 }
-

@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#424242">
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,7 +19,10 @@
             android:layout_height="wrap_content"
             android:hint="@string/beer_title"
             android:inputType="text"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            />
 
         <EditText
             android:id="@+id/brand_input"
@@ -26,7 +30,9 @@
             android:layout_height="wrap_content"
             android:hint="@string/brand"
             android:inputType="text"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"/>
 
         <EditText
             android:id="@+id/volume_input"
@@ -34,7 +40,9 @@
             android:layout_height="wrap_content"
             android:hint="@string/volume_l"
             android:inputType="numberDecimal"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"/>
 
         <EditText
             android:id="@+id/price_input"
@@ -42,7 +50,9 @@
             android:layout_height="wrap_content"
             android:hint="@string/price"
             android:inputType="numberDecimal"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"/>
 
         <EditText
             android:id="@+id/bar_input"
@@ -50,14 +60,18 @@
             android:layout_height="wrap_content"
             android:hint="@string/bar_location"
             android:inputType="text"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="⭐ Rate this beer:"
             android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"/>
 
         <RatingBar
             android:id="@+id/rating_bar"
