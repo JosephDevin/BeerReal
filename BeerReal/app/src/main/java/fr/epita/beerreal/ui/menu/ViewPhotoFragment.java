@@ -67,7 +67,6 @@ public class ViewPhotoFragment extends DialogFragment {
         TextView bar = view.findViewById(R.id.barText);
         RatingBar rating = view.findViewById(R.id.ratingBar);
 
-        // ✳️ Set all text colors to white
         brand.setTextColor(Color.WHITE);
         volume.setTextColor(Color.WHITE);
         price.setTextColor(Color.WHITE);
@@ -101,6 +100,14 @@ public class ViewPhotoFragment extends DialogFragment {
                             .setPositiveButton("Delete", (confirm, which) -> {
                                 CsvHelper.RemoveLine(requireContext(), line.Picture);
 
+                                File imgToDelete = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
+                                if (imgToDelete.exists()) {
+                                    boolean deleted = imgToDelete.delete();
+                                    if (!deleted) {
+                                        System.out.println("Failed to delete image: " + imgToDelete.getAbsolutePath());
+                                    }
+                                }
+
                                 if (map instanceof MapFragment) {
                                     ((MapFragment) map).ClearAllMarkers();
                                     ((MapFragment) map).LoadBeers();
@@ -118,6 +125,7 @@ public class ViewPhotoFragment extends DialogFragment {
                                 getParentFragmentManager().setFragmentResult("refresh_feed", result);
                                 dismiss();
                             })
+
                             .setNegativeButton("Cancel", (confirm, which) -> confirm.dismiss())
                             .create();
 

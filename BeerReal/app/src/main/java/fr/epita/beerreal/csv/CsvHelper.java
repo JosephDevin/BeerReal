@@ -77,13 +77,6 @@ public class CsvHelper {
 
     // MANAGING NEW DATA RELATED
     public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] cords ,Date date, float rating, String bar) {
-        System.out.println("CsvPath is: " + MainActivity.CsvPath);
-
-        File file = new File(MainActivity.CsvPath);
-        System.out.println("Can write: " + file.canWrite());
-
-        System.out.println("AddLinneCsv Called");
-
         String toAdd;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm", Locale.FRANCE);
         toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + cords[0] + "," + cords[1] + "," + dateFormat.format(date) + "," + rating + "," + bar + "\n";

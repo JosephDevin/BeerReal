@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.fragment.app.DialogFragment;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -69,26 +70,44 @@ public class BeerMenuFragment extends DialogFragment {
         builder.setCustomTitle(customTitle)
                 .setView(view)
                 .setPositiveButton("Submit", (dialog, id) -> {
-                    LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
+                    String title = titleInput.getText().toString();
+                    String brand = brandInput.getText().toString();
+                    String bar = barInput.getText().toString();
 
-                        System.out.println("Neuille");
+                    if (title.contains(",") || brand.contains(",") || bar.contains(",")) {
+                        Toast.makeText(requireContext(), "Please remove commas (,) from title, brand, or bar fields.", Toast.LENGTH_LONG).show();
+
+                        File imageFile = new File(photo_path);
+                        if (imageFile.exists()) {
+                            boolean deleted = imageFile.delete();
+                            if (!deleted) {
+                                System.out.println("Failed to delete image: " + photo_path);
+                            }
+                        }
+
+                        dismiss();
+                        return;
+                    }
+
+                    LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
                         CsvHelper.AddLineCsv(
                                 photo_path,
-                                titleInput.getText().toString(),
-                                brandInput.getText().toString(),
+                                title,
+                                brand,
                                 Float.parseFloat(volumeInput.getText().toString()),
                                 Float.parseFloat(priceInput.getText().toString()),
                                 new double[] {latitude, longitude},
                                 new Date(),
                                 ratingInput.getRating(),
-                                barInput.getText().toString()
+                                bar
                         );
                         CsvHelper.DebugPrintCsv(getContext());
+
                         Bundle result = new Bundle();
                         getParentFragmentManager().setFragmentResult("refresh_feed", result);
                         dismiss();
 
-                        if (AlcodexBrands.contains(brandInput.getText().toString()) && !MainActivity.alcodex.LoadBeers().get(brandInput.getText().toString()).hasImage) {
+                        if (AlcodexBrands.contains(brand) && !MainActivity.alcodex.LoadBeers().get(brand).hasImage) {
                             Toast.makeText(requireContext(), "You've just unlocked a beer in the alcodex!", Toast.LENGTH_LONG).show();
                         }
                     });
