@@ -46,24 +46,24 @@ public class BeerMenuFragment extends DialogFragment {
 
         TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
         customTitle.setText("Beer Information");
-        customTitle.setTextColor(Color.WHITE); // Set text color to white
+        customTitle.setTextColor(Color.WHITE);
 
         EditText titleInput = view.findViewById(R.id.title_input);
-        titleInput.setTextColor(Color.WHITE); // Set text color to white
+        titleInput.setTextColor(Color.WHITE);
 
         EditText brandInput = view.findViewById(R.id.brand_input);
-        brandInput.setTextColor(Color.WHITE); // Set text color to white
+        brandInput.setTextColor(Color.WHITE);
 
         EditText volumeInput = view.findViewById(R.id.volume_input);
-        volumeInput.setTextColor(Color.WHITE); // Set text color to white
+        volumeInput.setTextColor(Color.WHITE);
 
         EditText priceInput = view.findViewById(R.id.price_input);
-        priceInput.setTextColor(Color.WHITE); // Set text color to white
+        priceInput.setTextColor(Color.WHITE);
 
         AppCompatRatingBar ratingInput = view.findViewById(R.id.rating_bar);
 
         EditText barInput = view.findViewById(R.id.bar_input);
-        barInput.setTextColor(Color.WHITE); // Set text color to white
+        barInput.setTextColor(Color.WHITE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCustomTitle(customTitle)
@@ -71,6 +71,7 @@ public class BeerMenuFragment extends DialogFragment {
                 .setPositiveButton("Submit", (dialog, id) -> {
                     LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
 
+                        System.out.println("Neuille");
                         CsvHelper.AddLineCsv(
                                 photo_path,
                                 titleInput.getText().toString(),
@@ -82,6 +83,7 @@ public class BeerMenuFragment extends DialogFragment {
                                 ratingInput.getRating(),
                                 barInput.getText().toString()
                         );
+                        CsvHelper.DebugPrintCsv(getContext());
                         Bundle result = new Bundle();
                         getParentFragmentManager().setFragmentResult("refresh_feed", result);
                         dismiss();

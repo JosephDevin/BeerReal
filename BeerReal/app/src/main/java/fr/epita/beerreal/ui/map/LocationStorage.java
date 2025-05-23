@@ -3,6 +3,7 @@ package fr.epita.beerreal.ui.map;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
@@ -41,10 +42,14 @@ public class LocationStorage {
 
             locationProviderClient.getLastLocation()
                     .addOnSuccessListener(location -> {
-                        if (location != null) {
-                            callback.onLocationReceived(location.getLatitude(), location.getLongitude());
-                        } else {
-                            callback.onLocationReceived(0, 0);
+                        try {
+                            if (location != null) {
+                                callback.onLocationReceived(location.getLatitude(), location.getLongitude());
+                            } else {
+                                callback.onLocationReceived(0, 0);
+                            }
+                        } catch (Exception e) {
+                            Log.e("Location", "Error in success listener", e);
                         }
                     });
         } else {

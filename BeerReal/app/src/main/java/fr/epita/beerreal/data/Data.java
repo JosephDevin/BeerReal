@@ -27,7 +27,7 @@ import fr.epita.beerreal.csv.Line;
 public class Data {
 
     private final List<Line> Lines;
-    private final Times _time;
+    private Times _time;
 
     private List<String> Brands;
     private List<Float> Volumes;
@@ -39,7 +39,7 @@ public class Data {
 
 
 
-    private int Size;
+    public int Size;
     private float pricesTotal;
     private float volumeTotal;
     private int uniqueDays;
@@ -48,10 +48,8 @@ public class Data {
 
 
 
-
     public Data(Context context, Times time) {
         Lines = CsvHelper.GetLinesCsv(context);
-        _time = time;
 
         Brands = new ArrayList<>();
         Volumes = new ArrayList<>();
@@ -60,22 +58,26 @@ public class Data {
         Bars = new ArrayList<>();
         Ratings = new ArrayList<>();
 
-        switch (time) {
-            case WEEK:
-                Days = CsvHelper.GetDaysSoFarThisWeek();
-                break;
-            case MONTH:
-                Days = CsvHelper.GetDaysSoFarThisMonth();
-                break;
-            case ALL_TIME:
-                Days = CsvHelper.GetDaysFromEarliestDate(context);
-                break;
-            default:
-                Days = CsvHelper.GetDaysSoFarThisYear();
-                break;
-        }
+        if (!Lines.isEmpty()) {
+            _time = time;
 
-        SelectTimeToLoad();
+            switch (time) {
+                case WEEK:
+                    Days = CsvHelper.GetDaysSoFarThisWeek();
+                    break;
+                case MONTH:
+                    Days = CsvHelper.GetDaysSoFarThisMonth();
+                    break;
+                case ALL_TIME:
+                    Days = CsvHelper.GetDaysFromEarliestDate(context);
+                    break;
+                default:
+                    Days = CsvHelper.GetDaysSoFarThisYear();
+                    break;
+            }
+
+            SelectTimeToLoad();
+        }
     }
 
     public void SelectTimeToLoad() {
@@ -96,31 +98,26 @@ public class Data {
     }
 
     public void LoadAllLinesIntoData(List<Line> lines) {
+        for (Line l:lines) {
+            Size += 1;
 
-        if (lines.isEmpty()) {
-            Brands.add("None");
-            Volumes.add(0.0f);
-            Prices.add(0.0f);
-            Dates.add("Never");
-            Bars.add("Nowhere");
-            Ratings.add(0.0f);
-        } else 
-        {
-            for (Line l:lines) {
-                Size += 1;
-
-                Brands.add(l.Brand);
-                Volumes.add(l.Volume);
-                Prices.add(l.Price);
-                Dates.add(l.Date);
-                Bars.add(l.Bar);
-                Ratings.add(l.Rating);
-            }
+            Brands.add(l.Brand);
+            Volumes.add(l.Volume);
+            Prices.add(l.Price);
+            Dates.add(l.Date);
+            Bars.add(l.Bar);
+            Ratings.add(l.Rating);
         }
 
-        pricesTotal = DataHelper.Sum(Prices);
-        volumeTotal = DataHelper.Sum(Volumes);
-        uniqueDays = DataHelper.CountUniqueDays(Dates);
+        if (Size != 0) {
+            pricesTotal = DataHelper.Sum(Prices);
+            volumeTotal = DataHelper.Sum(Volumes);
+            uniqueDays = DataHelper.CountUniqueDays(Dates);
+        } else {
+            pricesTotal = 1;
+            volumeTotal = 1;
+            uniqueDays = 1;
+        }
     }
 
 
@@ -154,6 +151,8 @@ public class Data {
     // FAVORITES:
 
     public String GetFavoriteBar() {
+        if (Size == 0) return "N/A";
+
         Map<String, Float> ratingSums = new HashMap<>();
         Map<String, Integer> ratingCounts = new HashMap<>();
 
@@ -188,6 +187,8 @@ public class Data {
 
 
     public String GetFavoriteBrand() {
+        if (Size == 0) return "N/A";
+
         Map<String, Float> ratingSums = new HashMap<>();
         Map<String, Integer> ratingCounts = new HashMap<>();
 
@@ -221,6 +222,8 @@ public class Data {
     }
 
     public String GetFavoriteHour() {
+        if (Size == 0) return "N/A";
+
         Map<String, Float> ratingSums = new HashMap<>();
         Map<String, Integer> ratingCounts = new HashMap<>();
 

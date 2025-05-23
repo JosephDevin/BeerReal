@@ -34,7 +34,8 @@ public class StatsFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentStatsBinding.inflate(inflater, container, false);
 
-        data = new Data(requireContext(), Times.YEAR);
+        data = new Data(requireContext(), Times.ALL_TIME);
+        LoadData(binding);
 
         Spinner spinnerHeader = binding.spinnerHeader;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -68,7 +69,9 @@ public class StatsFragment extends Fragment {
                             break;
                     }
 
-                    LoadData(binding);
+                    if (data.Size != 0) {
+                        LoadData(binding);
+                    }
                 }
             }
 

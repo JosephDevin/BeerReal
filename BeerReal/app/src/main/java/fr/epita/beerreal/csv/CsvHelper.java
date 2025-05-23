@@ -77,6 +77,13 @@ public class CsvHelper {
 
     // MANAGING NEW DATA RELATED
     public static void AddLineCsv(String path, String title, String brand, float volume, float price, double[] cords ,Date date, float rating, String bar) {
+        System.out.println("CsvPath is: " + MainActivity.CsvPath);
+
+        File file = new File(MainActivity.CsvPath);
+        System.out.println("Can write: " + file.canWrite());
+
+        System.out.println("AddLinneCsv Called");
+
         String toAdd;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm", Locale.FRANCE);
         toAdd = path + "," + title + "," + brand + "," + volume + "," + price + "," + cords[0] + "," + cords[1] + "," + dateFormat.format(date) + "," + rating + "," + bar + "\n";
@@ -84,11 +91,24 @@ public class CsvHelper {
         try (FileWriter writer = new FileWriter(MainActivity.CsvPath, true)) {
             writer.append(toAdd);
             writer.flush();
+
+            System.out.println("Line written");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static void DebugPrintCsv(Context context) {
+        File file = new File(MainActivity.CsvPath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("CSV LINE: " + line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -144,13 +164,11 @@ public class CsvHelper {
                         elements[9] // Bar
                 ));
             }
-
             return res;
         } else {
             Toast.makeText(context, "You've never drank any beers! Get to it!", Toast.LENGTH_LONG).show();
+            return res;
         }
-
-        return null;
     }
 
 
@@ -229,7 +247,7 @@ public class CsvHelper {
             }
 
             if (earliest == null) {
-                throw new IllegalStateException("No valid date found in CSV.");
+                return 0;
             }
             return (int) ChronoUnit.DAYS.between(earliest, LocalDate.now()) + 1;
         }

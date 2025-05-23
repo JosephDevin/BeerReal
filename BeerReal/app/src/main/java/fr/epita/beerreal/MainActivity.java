@@ -1,120 +1,117 @@
-    package fr.epita.beerreal;
+package fr.epita.beerreal;
 
-    import android.Manifest;
-    import android.content.pm.PackageManager;
-    import android.os.Bundle;
-    import android.widget.Toast;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.widget.Toast;
 
-    import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-    import androidx.activity.result.ActivityResultLauncher;
-    import androidx.activity.result.contract.ActivityResultContracts;
-    import androidx.appcompat.app.AppCompatActivity;
-    import androidx.core.content.ContextCompat;
-    import androidx.navigation.NavController;
-    import androidx.navigation.Navigation;
-    import androidx.navigation.ui.AppBarConfiguration;
-    import androidx.navigation.ui.NavigationUI;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
-    import fr.epita.beerreal.alcodex.AlcodexStorage;
-    import fr.epita.beerreal.csv.CsvHelper;
-    import fr.epita.beerreal.ui.map.LocationStorage;
-    import fr.epita.beerreal.databinding.ActivityMainBinding;
-    import fr.epita.beerreal.ui.home.HomeFragment;
-    import fr.epita.beerreal.ui.stats.achievements.Achievement;
-    import fr.epita.beerreal.ui.stats.achievements.JSONHelper;
-
-    public class MainActivity extends AppCompatActivity {
-
-        private ActivityMainBinding binding;
-        public static String CsvPath = "";
-
-        public static AlcodexStorage alcodex;
-
-        public static JSONHelper achievements;
-
-        private final ActivityResultLauncher<String> requestPermissionLauncher =
-                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                    if (isGranted) {
-                        Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            // PERMISSIONS
-            CheckCameraPermission();
-
-            CheckLocationPermission();
+import fr.epita.beerreal.alcodex.AlcodexStorage;
+import fr.epita.beerreal.csv.CsvHelper;
+import fr.epita.beerreal.ui.map.LocationStorage;
+import fr.epita.beerreal.databinding.ActivityMainBinding;
+import fr.epita.beerreal.ui.home.HomeFragment;
+import fr.epita.beerreal.ui.stats.achievements.Achievement;
+import fr.epita.beerreal.ui.stats.achievements.JSONHelper;
 
 
-            // LOCATION RELATED ACTIONS
-            LocationStorage.RecalculatePosition(this, (latitude, longitude) -> {
+public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding binding;
+    public static String CsvPath = "";
+
+    public static AlcodexStorage alcodex;
+    public static JSONHelper achievements;
+
+    private final String[] requiredPermissions = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (allPermissionsGranted()) {
+                    StartAppLogic();
+                } else {
+                    Toast.makeText(this, "Permissions are required to use the app.", Toast.LENGTH_LONG).show();
+                    finish(); // Exit app if user declines
+                }
             });
 
-            // ARCHITECTURE RELATED ACTIONS
-            CsvPath = CsvHelper.InitialiseCSV(this);
-            CsvHelper.CreateImageDir(this);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-            // ALCODEX RELATED ACTIONS
-            alcodex = new AlcodexStorage(this);
-            achievements = new JSONHelper(this, "achievements.json");
+        // Inflate layout early to avoid errors if we show a toast
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-            achievements.SetUnlocked("Marathon runner", true);
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));
+        getSupportActionBar().hide();
 
-            for (Achievement a : achievements.GetAllUnlocked()) {
-                System.out.println(a.Name);
-            }
-
-            System.out.println("LOCKED");
-
-            for (Achievement a : achievements.GetAllLocked()) {
-                System.out.println(a.Name);
-            }
-
-            // ACTIVITY RELATED ACTIONS
-            binding = ActivityMainBinding.inflate(getLayoutInflater());
-            setContentView(binding.getRoot());
-
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));
-            getSupportActionBar().hide();
-
-            BottomNavigationView navView = findViewById(R.id.nav_view);
-            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_home, R.id.navigation_map, R.id.navigation_stats)
-                    .build();
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            NavigationUI.setupWithNavController(binding.navView, navController);
-
-            navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-                HomeFragment.cameraActive = false;
-            });
+        // Check and request permissions before launching app logic
+        if (allPermissionsGranted()) {
+            StartAppLogic();
+        } else {
+            requestNextMissingPermission();
         }
+    }
 
-
-
-
-
-        // PERMISSIONS CHECK
-        private void CheckCameraPermission() {
-            if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+    private boolean allPermissionsGranted() {
+        for (String permission : requiredPermissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
             }
         }
+        return true;
+    }
 
-        private void CheckLocationPermission() {
-            if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+    private void requestNextMissingPermission() {
+        for (String permission : requiredPermissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(permission);
+                return;
             }
         }
     }
 
+    private void StartAppLogic() {
+        // LOCATION
+        LocationStorage.RecalculatePosition(this, (latitude, longitude) -> {
+        });
+
+        // CSV
+        CsvPath = CsvHelper.InitialiseCSV(this);
+        CsvHelper.CreateImageDir(this);
+
+        // ALCODEX
+        alcodex = new AlcodexStorage(this);
+
+        // ACHIEVEMENTS
+        achievements = new JSONHelper(this, "achievements.json");
+        achievements.SetUnlocked("Marathon runner", true);
+
+        // NAVIGATION
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_map, R.id.navigation_stats)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            HomeFragment.cameraActive = false;
+        });
+    }
+}
