@@ -2,7 +2,6 @@ package fr.epita.beerreal.ui.home;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import fr.epita.beerreal.MainActivity;
-import fr.epita.beerreal.alcodex.AlcodexStorage;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.ui.map.LocationStorage;
@@ -222,10 +219,20 @@ public class HomeFragment extends Fragment {
             return null;
         }
         else {
-
+            File picsDir = requireContext().getExternalFilesDir("pics");
             for (int i = lines.size(); i >= 0; i--) {
                 if (i < lines.size()) {
-                    res.add(new FeedItem(String.valueOf(requireContext().getExternalFilesDir("pics/" + lines.get(i).Picture)), lines.get(i).Title + "   " + lines.get(i).Date.substring(5,10), lines.get(i)));
+                    File photoFile = new File(picsDir, lines.get(i).Picture);
+
+                    if (photoFile.exists() && photoFile.canRead()) {
+                        res.add(new FeedItem(photoFile.getAbsolutePath(),
+                                lines.get(i).Title + "   " + lines.get(i).Date.substring(5,10),
+                                lines.get(i)));
+                    } else {
+                        res.add(new FeedItem(null,
+                                lines.get(i).Title + "   " + lines.get(i).Date.substring(5,10),
+                                lines.get(i)));
+                    }
                 }
             }
 

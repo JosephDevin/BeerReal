@@ -70,12 +70,21 @@ public class BeerMenuFragment extends DialogFragment {
         builder.setCustomTitle(customTitle)
                 .setView(view)
                 .setPositiveButton("Submit", (dialog, id) -> {
-                    String title = titleInput.getText().toString();
-                    String brand = brandInput.getText().toString();
-                    String bar = barInput.getText().toString();
+                    String title = titleInput.getText().toString().trim();
+                    String brand = brandInput.getText().toString().trim();
+                    String bar = barInput.getText().toString().trim();
 
-                    if (title.contains(",") || brand.contains(",") || bar.contains(",")) {
-                        Toast.makeText(requireContext(), "Please remove commas (,) from title, brand, or bar fields.", Toast.LENGTH_LONG).show();
+                    if (title.isEmpty()) title = "Unknown Title";
+                    if (brand.isEmpty()) brand = "Unknown Brand";
+                    if (bar.isEmpty()) bar = "Unknown Bar";
+
+                    // Safely parse volume and price, default to 0 if blank or invalid
+                    float volume = safeParseFloat(volumeInput.getText().toString(), 0f);
+                    float price = safeParseFloat(priceInput.getText().toString(), 0f);
+
+                    if (title.contains(",") || brand.contains(",") || bar.contains(",")
+                            || title.length() > 30 || brand.length() > 30 || bar.length() > 30) {
+                        Toast.makeText(requireContext(), "The maximum length is 30 characters and commas are not allowed", Toast.LENGTH_LONG).show();
 
                         File imageFile = new File(photo_path);
                         if (imageFile.exists()) {
@@ -89,17 +98,21 @@ public class BeerMenuFragment extends DialogFragment {
                         return;
                     }
 
+                    String finalTitle = title;
+                    String finalBrand = brand;
+                    String finalBar = bar;
+
                     LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
                         CsvHelper.AddLineCsv(
                                 photo_path,
-                                title,
-                                brand,
-                                Float.parseFloat(volumeInput.getText().toString()),
-                                Float.parseFloat(priceInput.getText().toString()),
+                                finalTitle,
+                                finalBrand,
+                                volume,
+                                price,
                                 new double[] {latitude, longitude},
                                 new Date(),
                                 ratingInput.getRating(),
-                                bar
+                                finalBar
                         );
                         CsvHelper.DebugPrintCsv(getContext());
 
@@ -107,12 +120,13 @@ public class BeerMenuFragment extends DialogFragment {
                         getParentFragmentManager().setFragmentResult("refresh_feed", result);
                         dismiss();
 
-                        if (AlcodexBrands.contains(brand) && !MainActivity.alcodex.LoadBeers().get(brand).hasImage) {
+                        if (AlcodexBrands.contains(finalBrand) && !MainActivity.alcodex.LoadBeers().get(finalBrand).hasImage) {
                             Toast.makeText(requireContext(), "You've just unlocked a beer in the alcodex!", Toast.LENGTH_LONG).show();
                         }
                     });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());
+
 
         AlertDialog dialog = builder.create();
 
@@ -125,4 +139,15 @@ public class BeerMenuFragment extends DialogFragment {
 
         return dialog;
     }
+
+    private float safeParseFloat(String input, float fallback) {
+        try {
+            input = input.trim();
+            if (input.isEmpty()) return fallback;
+            return Float.parseFloat(input);
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
+    }
+
 }

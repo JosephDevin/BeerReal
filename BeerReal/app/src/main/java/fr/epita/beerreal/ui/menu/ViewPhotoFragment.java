@@ -53,8 +53,20 @@ public class ViewPhotoFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_view_photo, null);
 
         ImageView image = view.findViewById(R.id.photoImageView);
-        File imgFile = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
-        image.setImageBitmap(LoadPictureCorrectly(imgFile));
+        File picsDir = requireContext().getExternalFilesDir("pics");
+        File imgFile = new File(picsDir, line.Picture);
+
+        if (imgFile.exists() && imgFile.canRead()) {
+            Bitmap bitmap = LoadPictureCorrectly(imgFile);
+            if (bitmap != null) {
+                image.setImageBitmap(bitmap);
+            } else {
+                image.setImageResource(R.drawable.beer_unknown);
+            }
+        } else {
+            image.setImageResource(R.drawable.beer_unknown);
+        }
+
 
         String dateValue = line.Date.substring(0, 10).replace('-', ' ');
         String hourValue = line.Date.substring(11, 16);
@@ -150,13 +162,11 @@ public class ViewPhotoFragment extends DialogFragment {
                             }
                         }
 
-                        // ✳️ Set message text color to white
                         TextView message = confirmDialog.findViewById(android.R.id.message);
                         if (message != null) {
                             message.setTextColor(Color.WHITE);
                         }
 
-                        // ✳️ Set title text color to white
                         TextView title = confirmDialog.findViewById(android.R.id.title);
                         if (title != null) {
                             title.setTextColor(Color.WHITE);
