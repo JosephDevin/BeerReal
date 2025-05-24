@@ -32,15 +32,13 @@ public class AchievementFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_achievements, null);
 
         TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
-        customTitle.setText("Achievements");
+        customTitle.setText("\uD83C\uDFC6 Achievements");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCustomTitle(customTitle)
                 .setView(view);
 
         LinearLayout unlocked = view.findViewById(R.id.unlockedLayout);
-        TextView unlockedTitle = view.findViewById(R.id.unlockedTextView);
-        boolean hasUnlocked = false;
         for (Achievement a : MainActivity.achievements.GetAllUnlocked()) {
             TextView textView = new TextView(getContext());
             textView.setText(a.Name);
@@ -51,14 +49,9 @@ public class AchievementFragment extends DialogFragment {
             unlocked.addView(textView);
 
             textView.setOnClickListener(v -> showTooltip(v, a.Description));
-
-            hasUnlocked = true;
         }
-        if (hasUnlocked) unlockedTitle.setVisibility(View.VISIBLE);
 
         LinearLayout locked = view.findViewById(R.id.lockedLayout);
-        TextView lockedTitle = view.findViewById(R.id.lockedTextView);
-        boolean hasLocked = false;
         for (Achievement a : MainActivity.achievements.GetAllLocked()) {
             TextView textView = new TextView(getContext());
             textView.setText(a.Name);
@@ -69,10 +62,7 @@ public class AchievementFragment extends DialogFragment {
             locked.addView(textView);
 
             textView.setOnClickListener(v -> showTooltip(v, a.Description));
-
-            hasLocked = true;
         }
-        if (hasLocked) lockedTitle.setVisibility(View.VISIBLE);
 
 
         return builder.create();

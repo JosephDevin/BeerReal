@@ -14,13 +14,17 @@ import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import fr.epita.beerreal.MainActivity;
+import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.ui.map.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
+import fr.epita.beerreal.ui.stats.achievements.Achievement;
+import fr.epita.beerreal.ui.stats.achievements.AchievementHandler;
 
 public class BeerMenuFragment extends DialogFragment {
 
@@ -114,7 +118,6 @@ public class BeerMenuFragment extends DialogFragment {
                                 ratingInput.getRating(),
                                 finalBar
                         );
-                        CsvHelper.DebugPrintCsv(getContext());
 
                         Bundle result = new Bundle();
                         getParentFragmentManager().setFragmentResult("refresh_feed", result);
@@ -123,6 +126,30 @@ public class BeerMenuFragment extends DialogFragment {
                         if (AlcodexBrands.contains(finalBrand) && !MainActivity.alcodex.LoadBeers().get(finalBrand).hasImage) {
                             Toast.makeText(requireContext(), "You've just unlocked a beer in the alcodex!", Toast.LENGTH_LONG).show();
                         }
+
+                        AchievementHandler achievementHandler = new AchievementHandler(getContext());
+                        achievementHandler.CheckForNewAchievements(MainActivity.achievements.GetAllLocked(),
+                                new Line(photo_path,
+                                        finalTitle,
+                                        finalBrand,
+                                        volume,
+                                        price,
+                                        latitude,
+                                        longitude,
+                                        new SimpleDateFormat("yyyy-MM-dd-HH:mm").format(new Date()),
+                                        ratingInput.getRating(),
+                                        finalBar
+                                )
+                        );
+                        System.out.println("UNLOCKED");
+                        for (Achievement a : MainActivity.achievements.GetAllUnlocked()) {
+                            System.out.println(a.Name + ": " + a.Unlocked);
+                        }
+                        System.out.println("LOCKED");
+                        for (Achievement a : MainActivity.achievements.GetAllLocked()) {
+                            System.out.println(a.Name + ": " + a.Unlocked);
+                        }
+
                     });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());

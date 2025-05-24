@@ -1,4 +1,4 @@
-package fr.epita.beerreal.data;
+package fr.epita.beerreal.ui.stats.data;
 
 import android.content.Context;
 
@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
@@ -40,9 +42,9 @@ public class Data {
 
 
     public int Size;
-    private float pricesTotal;
-    private float volumeTotal;
-    private int uniqueDays;
+    public float pricesTotal;
+    public float volumeTotal;
+    public int uniqueDays;
 
     public int Days;
 
@@ -259,6 +261,29 @@ public class Data {
     }
 
 
+    public int GetUniqueBars() {
+        Set<String> uniqueBars = new HashSet<>();
+
+        for (int i = 0; i < Bars.size(); i++) {
+            String bar = Bars.get(i);
+            if (bar != null && !bar.trim().isEmpty()) {
+                uniqueBars.add(bar.trim());
+            }
+        }
+
+        return uniqueBars.size();
+    }
+
+    public boolean IsBrandNew(String brandToCheck) {
+        for (int i = 0; i < Brands.size(); i++) {
+            String brand = Brands.get(i);
+            if (brand != null && brand.equalsIgnoreCase(brandToCheck)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 
 
@@ -304,6 +329,23 @@ public class Data {
                 cheapest.Brand.trim(),
                 cheapest.Bar.trim());
     }
+
+    public float GetCheapestBeerPrice() {
+        if (Lines == null || Lines.isEmpty()) return -1f;
+
+        Line cheapest = null;
+
+        for (Line l : Lines) {
+            if (l.Price > 0) {
+                if (cheapest == null || l.Price < cheapest.Price) {
+                    cheapest = l;
+                }
+            }
+        }
+
+        return (cheapest != null) ? cheapest.Price : -1f;
+    }
+
 
     public String GetMostExpensiveBeer() {
         if (Lines == null || Lines.isEmpty()) return "N/A";

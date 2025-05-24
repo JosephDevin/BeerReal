@@ -44,13 +44,14 @@ public class JSONHelper {
         }
     }
 
-    public void SetUnlocked(String name, boolean value) {
+    public String SetUnlocked(String name, boolean value) {
         for (Achievement a : achievementsList) {
             if (a.Name.equals(name)) {
                 a.Unlocked = value;
-                return;
+                return a.Name;
             }
         }
+        throw new IllegalArgumentException(name + "couldn't be find");
     }
 
     public List<Achievement> GetAllUnlocked() {

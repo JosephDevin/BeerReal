@@ -47,11 +47,11 @@
     "unlocked": false,
     "description": "10 beers in a day"
   },
-  "Fast drinker": {
+  "Where are my glasses?": {
     "unlocked": false,
     "description": "Drink 2 beers in a 10 minutes interval"
   },
-  "Very Fast Drinker": {
+  "Linked beers": {
     "unlocked": false,
     "description": "Drink 2 beers in a 1 minute interval"
   },
@@ -93,11 +93,11 @@
   },
   "Value Seeker": {
     "unlocked": false,
-    "description": "Rate 5 stars a less than 1€ beer"
+    "description": "c"
   },
   "Globe trotter": {
     "unlocked": false,
-    "description": "Drink a beer in another country"
+    "description": "Drink a beer in another country (home country is the country you were in when you first opened the app)"
   },
   "On The Road": {
     "unlocked": false,
@@ -109,7 +109,7 @@
   },
   "Bar Explorer": {
     "unlocked": false,
-    "description": "Visit and drink in 20 unique bars/locations"
+    "description": "Visit and drink in 25 unique bars/locations"
   },
   "Bar Conqueror": {
     "unlocked": false,
@@ -145,10 +145,26 @@
   },
   "Look! A swallow!": {
     "unlocked": false,
-    "description": "Drink on the first day of Spring"
+    "description": "Drink on the first day of Spring (March 21st)"
   },
   "Cold one on a hot day": {
     "unlocked": false,
-    "description": "Drink on the first day of Summer"
+    "description": "Drink on the first day of Summer (June 21st)"
+  },
+  "Moderate spender": {
+    "unlocked": false,
+    "description": "Spend more than 15€ on beers"
+  },
+  "Filthy rich": {
+    "unlocked": false,
+    "description": "Spend more than 50€ on beers"
+  },
+  "Life saving on beer": {
+    "unlocked": false,
+    "description": "Spend more than 100€ on beers"
+  },
+  "As rich as Croesus": {
+    "unlocked": false,
+    "description": "Spend more than 250€ on beers"
   }
 }

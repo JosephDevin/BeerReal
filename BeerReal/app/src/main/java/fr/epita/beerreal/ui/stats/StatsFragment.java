@@ -16,10 +16,10 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import fr.epita.beerreal.alcodex.AlcodexFragment;
-import fr.epita.beerreal.data.Data;
+import fr.epita.beerreal.ui.stats.alcodex.AlcodexFragment;
+import fr.epita.beerreal.ui.stats.data.Data;
 import fr.epita.beerreal.R;
-import fr.epita.beerreal.data.Times;
+import fr.epita.beerreal.ui.stats.data.Times;
 import fr.epita.beerreal.databinding.FragmentStatsBinding;
 import fr.epita.beerreal.ui.stats.achievements.AchievementFragment;
 

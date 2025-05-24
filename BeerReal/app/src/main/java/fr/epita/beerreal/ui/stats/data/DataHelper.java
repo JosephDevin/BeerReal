@@ -1,4 +1,4 @@
-package fr.epita.beerreal.data;
+package fr.epita.beerreal.ui.stats.data;
 
 import static fr.epita.beerreal.csv.CsvHelper.GetLinesCsv;
 
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.csv.Line;
 
 public class DataHelper {
@@ -150,6 +151,8 @@ public class DataHelper {
         }
         return 0;
     }
+
+
 
 
 }

@@ -16,14 +16,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.util.Date;
-
-import fr.epita.beerreal.alcodex.AlcodexStorage;
+import fr.epita.beerreal.ui.stats.alcodex.AlcodexStorage;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.ui.map.LocationStorage;
 import fr.epita.beerreal.databinding.ActivityMainBinding;
 import fr.epita.beerreal.ui.home.HomeFragment;
-import fr.epita.beerreal.ui.stats.achievements.Achievement;
 import fr.epita.beerreal.ui.stats.achievements.JSONHelper;
 
 
@@ -96,24 +93,12 @@ public class MainActivity extends AppCompatActivity {
         CsvPath = CsvHelper.InitialiseCSV(this);
         CsvHelper.CreateImageDir(this);
 
-        CsvHelper.AddLineCsv(
-                "photo_12312.jpg",
-                "11",
-                "aaaa",
-                0.5f,
-                1.5f,
-                new double[] {48.825312, 2.350718},
-                new Date(),
-                2.5f,
-                "Neuille"
-        );
 
         // ALCODEX
         alcodex = new AlcodexStorage(this);
 
         // ACHIEVEMENTS
         achievements = new JSONHelper(this, "achievements.json");
-        achievements.SetUnlocked("Marathon runner", true);
 
         // NAVIGATION
         BottomNavigationView navView = findViewById(R.id.nav_view);
