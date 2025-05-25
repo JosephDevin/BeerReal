@@ -20,7 +20,7 @@ import fr.epita.beerreal.csv.Line;
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
     private List<FeedItem> FeedItems;
     private OnItemClickListener listener;
-    private Line line;
+
 
     public FeedAdapter(List<FeedItem> feedItems, OnItemClickListener listener) {
         this.FeedItems = feedItems;

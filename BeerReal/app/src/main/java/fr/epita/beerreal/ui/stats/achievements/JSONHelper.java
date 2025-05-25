@@ -74,10 +74,6 @@ public class JSONHelper {
         return locked;
     }
 
-    public List<Achievement> GetAllAchievements() {
-        return achievementsList;
-    }
-
     private File getAchievementsFile() {
         return new File(context.getExternalFilesDir("csv"), filename);
     }

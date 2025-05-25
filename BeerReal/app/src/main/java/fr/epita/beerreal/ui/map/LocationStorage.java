@@ -13,21 +13,6 @@ import com.google.android.gms.location.LocationServices;
 import java.util.Random;
 
 public class LocationStorage {
-    private static double latitude;
-    private static double longitude;
-
-    public static void saveLocation(double lat, double lon) {
-        latitude = lat;
-        longitude = lon;
-    }
-
-    public static double GetLatitude() {
-        return latitude;
-    }
-
-    public static double GetLongitude() {
-        return longitude;
-    }
 
     public static void RecalculatePosition(Context cxt, LocationCallback callback) {
         GetLocation(callback, cxt);

@@ -17,10 +17,6 @@ public class FeedItem {
         return imageUrl;
     }
 
-    public String getFeedText() {
-        return feedText;
-    }
-
     public Line getLine() {
         return line;
     }

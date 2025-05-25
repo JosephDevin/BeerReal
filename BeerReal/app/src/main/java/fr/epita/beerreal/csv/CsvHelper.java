@@ -91,18 +91,6 @@ public class CsvHelper {
         }
     }
 
-    public static void DebugPrintCsv(Context context) {
-        File file = new File(MainActivity.CsvPath);
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println("CSV LINE: " + line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
 
@@ -248,7 +236,7 @@ public class CsvHelper {
     }
 
     public static int GetDaysSoFarThisWeek() {
-        LocalDate today = null;
+        LocalDate today;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
 
@@ -261,7 +249,7 @@ public class CsvHelper {
     }
 
     public static int GetDaysSoFarThisMonth() {
-        LocalDate today = null;
+        LocalDate today;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
 
@@ -274,7 +262,7 @@ public class CsvHelper {
     }
 
     public static int GetDaysSoFarThisYear() {
-        LocalDate today = null;
+        LocalDate today;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             today = LocalDate.now();
 
