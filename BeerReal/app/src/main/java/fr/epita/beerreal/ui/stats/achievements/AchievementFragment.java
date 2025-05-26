@@ -42,12 +42,11 @@ public class AchievementFragment extends DialogFragment {
         for (Achievement a : MainActivity.achievements.GetAllUnlocked()) {
             TextView textView = new TextView(getContext());
             textView.setText(a.Name);
-            textView.setTextColor(Color.rgb(184, 184, 184));
+            textView.setTextColor(Color.WHITE);
             textView.setGravity(Gravity.START| Gravity.TOP);
             textView.setTextSize(18);
             textView.setHeight(100);
             unlocked.addView(textView);
-
             textView.setOnClickListener(v -> showTooltip(v, a.Description));
         }
 

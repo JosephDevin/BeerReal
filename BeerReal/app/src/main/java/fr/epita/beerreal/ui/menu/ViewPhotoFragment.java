@@ -33,6 +33,7 @@ import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.ui.map.MapFragment;
+import fr.epita.beerreal.ui.stats.achievements.AchievementHandler;
 
 public class ViewPhotoFragment extends DialogFragment {
 
@@ -132,6 +133,9 @@ public class ViewPhotoFragment extends DialogFragment {
                                         MainActivity.alcodex.ClearPhotoForBrand(line.Brand);
                                     }
                                 }
+
+                                AchievementHandler achievementHandler = new AchievementHandler(getContext());
+                                achievementHandler.CheckForNewAchievements(MainActivity.achievements.GetAllAchievements());
 
                                 Bundle result = new Bundle();
                                 getParentFragmentManager().setFragmentResult("refresh_feed", result);

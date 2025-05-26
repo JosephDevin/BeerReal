@@ -1,5 +1,6 @@
 package fr.epita.beerreal.ui.menu;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
@@ -13,17 +14,16 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import fr.epita.beerreal.MainActivity;
-import fr.epita.beerreal.csv.Line;
 import fr.epita.beerreal.ui.map.LocationStorage;
 import fr.epita.beerreal.R;
 import fr.epita.beerreal.csv.CsvHelper;
-import fr.epita.beerreal.ui.stats.achievements.Achievement;
 import fr.epita.beerreal.ui.stats.achievements.AchievementHandler;
 
 public class BeerMenuFragment extends DialogFragment {
@@ -120,36 +120,24 @@ public class BeerMenuFragment extends DialogFragment {
                         );
 
                         Bundle result = new Bundle();
-                        getParentFragmentManager().setFragmentResult("refresh_feed", result);
-                        dismiss();
 
                         if (AlcodexBrands.contains(finalBrand) && !MainActivity.alcodex.LoadBeers().get(finalBrand).hasImage) {
-                            Toast.makeText(requireContext(), "You've just unlocked a beer in the alcodex!", Toast.LENGTH_LONG).show();
+                            result.putBoolean("show_alcodex", true);
                         }
 
                         AchievementHandler achievementHandler = new AchievementHandler(getContext());
-                        achievementHandler.CheckForNewAchievements(MainActivity.achievements.GetAllLocked(),
-                                new Line(photo_path,
-                                        finalTitle,
-                                        finalBrand,
-                                        volume,
-                                        price,
-                                        latitude,
-                                        longitude,
-                                        new SimpleDateFormat("yyyy-MM-dd-HH:mm").format(new Date()),
-                                        ratingInput.getRating(),
-                                        finalBar
-                                )
-                        );
-                        System.out.println("UNLOCKED");
-                        for (Achievement a : MainActivity.achievements.GetAllUnlocked()) {
-                            System.out.println(a.Name + ": " + a.Unlocked);
-                        }
-                        System.out.println("LOCKED");
-                        for (Achievement a : MainActivity.achievements.GetAllLocked()) {
-                            System.out.println(a.Name + ": " + a.Unlocked);
+                        String name = achievementHandler.CheckForNewAchievements(MainActivity.achievements.GetAllAchievements());
+
+                        if (!name.isEmpty()) {
+                            result.putBoolean("show_achievements", true);
                         }
 
+                        result.putBoolean("show_snackbar", true);
+                        getParentFragmentManager().setFragmentResult("refresh_feed", result);
+                        getParentFragmentManager().setFragmentResult("show_achievements", result);
+                        getParentFragmentManager().setFragmentResult("show_alcodex", result);
+
+                        dismiss();
                     });
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> dismiss());
@@ -176,5 +164,22 @@ public class BeerMenuFragment extends DialogFragment {
             return fallback;
         }
     }
+
+    private void showCustomSnackbar(View anchorView) {
+        Snackbar snackbar = Snackbar.make(anchorView, "", Snackbar.LENGTH_LONG);
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        View customView = inflater.inflate(R.layout.notification, null);
+
+        @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        layout.setBackgroundColor(Color.TRANSPARENT); // Hide default background
+        layout.setPadding(0, 0, 0, 0); // Remove default padding
+        layout.removeAllViews(); // Clear default content
+
+        layout.addView(customView);
+
+        snackbar.show();
+    }
+
 
 }

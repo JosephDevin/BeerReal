@@ -1,12 +1,15 @@
 package fr.epita.beerreal.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import fr.epita.beerreal.csv.CsvHelper;
 import fr.epita.beerreal.csv.Line;
@@ -40,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment {
@@ -115,6 +120,58 @@ public class HomeFragment extends Fragment {
                 }
             });
             binding.feedRecyclerView.setAdapter(ad);
+        });
+
+        getParentFragmentManager().setFragmentResultListener("show_achievements", this, (key, bundle) -> {
+            boolean message = bundle.getBoolean("show_achievements");
+
+            if (message) {
+                Snackbar snackbar = Snackbar.make(requireView(), "", Snackbar.LENGTH_LONG);
+
+                LayoutInflater inflater1 = LayoutInflater.from(requireContext());
+                View customView = inflater.inflate(R.layout.notification, null);
+
+                TextView textView = customView.findViewById(R.id.snackbar_text);
+                textView.setText("You've unlocked new achievements!");
+
+                ImageView icon = customView.findViewById(R.id.snackbar_icon);
+                icon.setImageResource(R.drawable.ic_trophy);
+                icon.setColorFilter(Color.rgb(251,177,34));
+
+                @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+                layout.setBackgroundColor(Color.TRANSPARENT);
+                layout.setPadding(0, 0, 0, 0);
+                layout.removeAllViews();
+
+                layout.addView(customView);
+                snackbar.show();
+            }
+        });
+
+        getParentFragmentManager().setFragmentResultListener("show_alcodex", this, (key, bundle) -> {
+            boolean message = bundle.getBoolean("show_alcodex");
+
+            if (message) {
+                Snackbar snackbar = Snackbar.make(requireView(), "", Snackbar.LENGTH_LONG);
+
+                LayoutInflater inflater1 = LayoutInflater.from(requireContext());
+                View customView = inflater.inflate(R.layout.notification, null);
+
+                TextView textView = customView.findViewById(R.id.snackbar_text);
+                textView.setText("You've unlocked a new beer in the alcodex!");
+
+                ImageView icon = customView.findViewById(R.id.snackbar_icon);
+                icon.setImageResource(R.drawable.ic_dashboard_black_24dp);
+                icon.setColorFilter(Color.rgb(251,177,34));
+
+                @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+                layout.setBackgroundColor(Color.TRANSPARENT);
+                layout.setPadding(0, 0, 0, 0);
+                layout.removeAllViews();
+
+                layout.addView(customView);
+                snackbar.show();
+            }
         });
 
 

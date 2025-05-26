@@ -48,10 +48,16 @@ public class JSONHelper {
         for (Achievement a : achievementsList) {
             if (a.Name.equals(name)) {
                 a.Unlocked = value;
+                SaveAchievementsToFile();
                 return a.Name;
             }
         }
-        throw new IllegalArgumentException(name + "couldn't be find");
+        throw new IllegalArgumentException(name + " couldn't be found");
+    }
+
+
+    public List<Achievement> GetAllAchievements() {
+        return achievementsList;
     }
 
     public List<Achievement> GetAllUnlocked() {
@@ -112,4 +118,26 @@ public class JSONHelper {
 
         return json.toString();
     }
+
+    private void SaveAchievementsToFile() {
+        JSONObject achievementsJson = new JSONObject();
+        try {
+            for (Achievement a : achievementsList) {
+                JSONObject obj = new JSONObject();
+                obj.put("description", a.Description);
+                obj.put("unlocked", a.Unlocked);
+                achievementsJson.put(a.Name, obj);
+            }
+
+            File file = getAchievementsFile();
+            try (FileWriter writer = new FileWriter(file, false)) {
+                writer.write(achievementsJson.toString(4));  // pretty print with indent 4
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to write achievements JSON to file.", e);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Failed to serialize achievements to JSON.", e);
+        }
+    }
+
 }

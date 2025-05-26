@@ -1,91 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notification_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:background="#424242">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center"
-        android:padding="8dp">
+        android:padding="16dp"
+        android:background="#424242">
 
-        <EditText
-            android:id="@+id/title_input"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/beer_title"
-            android:inputType="text"
-            android:layout_marginBottom="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
-            />
+            android:gravity="center_horizontal"
+            android:layout_gravity="center"
+            android:padding="8dp">
 
-        <EditText
-            android:id="@+id/brand_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/brand"
-            android:inputType="text"
-            android:layout_marginBottom="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"/>
+            <EditText
+                android:id="@+id/title_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/beer_title"
+                android:inputType="text"
+                android:layout_marginBottom="12dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
-        <EditText
-            android:id="@+id/volume_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/volume_l"
-            android:inputType="numberDecimal"
-            android:layout_marginBottom="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"/>
+            <EditText
+                android:id="@+id/brand_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/brand"
+                android:inputType="text"
+                android:layout_marginBottom="12dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
-        <EditText
-            android:id="@+id/price_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/price"
-            android:inputType="numberDecimal"
-            android:layout_marginBottom="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"/>
+            <EditText
+                android:id="@+id/volume_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/volume_l"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="12dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
-        <EditText
-            android:id="@+id/bar_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/bar_location"
-            android:inputType="text"
-            android:layout_marginBottom="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"/>
+            <EditText
+                android:id="@+id/price_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/price"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="12dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="⭐ Rate this beer:"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"/>
+            <EditText
+                android:id="@+id/bar_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/bar_location"
+                android:inputType="text"
+                android:layout_marginBottom="12dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
-        <RatingBar
-            android:id="@+id/rating_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:progressTint="#FBB122"
-            android:secondaryProgressTint="#6F4E0F"
-            android:indeterminateTint="#FBB122"
-            android:numStars="5"
-            android:stepSize="0.5"
-            android:rating="2.5"
-            android:isIndicator="false"
-            android:layout_marginBottom="16dp"
-            android:layout_gravity="center_horizontal" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐ Rate this beer:"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
-    </LinearLayout>
-</ScrollView>
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:progressTint="#FBB122"
+                android:secondaryProgressTint="#6F4E0F"
+                android:indeterminateTint="#FBB122"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:rating="2.5"
+                android:isIndicator="false"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

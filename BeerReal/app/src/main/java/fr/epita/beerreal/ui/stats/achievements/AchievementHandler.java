@@ -38,146 +38,276 @@ public class AchievementHandler {
         data.SelectTimeToLoad();
     }
 
-    public void CheckForNewAchievements(List<Achievement> achievements, Line line) {
-        String name = "";
+    public String CheckForNewAchievements(List<Achievement> achievements) {
+        List<Line> allLines = CsvHelper.GetLinesCsv(context);
+        StringBuilder name = new StringBuilder();
 
         for (Achievement achievement : achievements) {
             switch (achievement.Name) {
-                case "Fighter": // Drink 5 pints
-                    if (CheckQuantity(5)) name += " " + jsonHelper.SetUnlocked("Fighter", true);
+                case "Fighter":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Fighter", CheckQuantity(5)));
                     break;
-                case "Warrior": // Drink 10 pints
-                    if (CheckQuantity(10)) name += " " + jsonHelper.SetUnlocked("Warrior", true);
+                case "Warrior":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Warrior", CheckQuantity(10)));
                     break;
-                case "War general": // Drink 25 pints
-                    if (CheckQuantity(25)) name += " " + jsonHelper.SetUnlocked("War general", true);
+                case "War general":
+                    name.append(" ").append(jsonHelper.SetUnlocked("War general", CheckQuantity(25)));
                     break;
-                case "Marathon runner": // Drink 42.195 pints
-                    if (CheckQuantity(42.195f)) name += " " + jsonHelper.SetUnlocked("Marathon runner", true);
+                case "Marathon runner":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Marathon runner", CheckQuantity(42.195f)));
                     break;
-                case "The 100th": // Drink a 100 beers
-                    if (data.Size >= 100) name += " " + jsonHelper.SetUnlocked("The 100th", true);
+                case "The 100th":
+                    name.append(" ").append(jsonHelper.SetUnlocked("The 100th", data.Size >= 100));
                     break;
-                case "King of the Keg": // Drink 2L in one glass
-                    if (line.Volume >= 2.0) name += " " + jsonHelper.SetUnlocked("King of the Keg", true);
+                case "King of the Keg":
+                    // Check if ANY line has volume >= 2.0
+                    boolean kingOfKeg = false;
+                    for (Line l : allLines) {
+                        if (l.Volume >= 2.0) {
+                            kingOfKeg = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("King of the Keg", kingOfKeg));
                     break;
-                case "Beer week": // Longest streak of 7
-                    if (data.GetLongestDrinkingStreak() >= 7) name += " " + jsonHelper.SetUnlocked("Beer week", true);
+                case "Beer week":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Beer week", data.GetLongestDrinkingStreak() >= 7));
                     break;
-                case "Alcoholic": // Longest streak of 15
-                    if (data.GetLongestDrinkingStreak() >= 15) name += " " + jsonHelper.SetUnlocked("Alcoholic", true);
+                case "Alcoholic":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Alcoholic", data.GetLongestDrinkingStreak() >= 15));
                     break;
-                case "Ubermensch": // Longest streak of 31
-                    if (data.GetLongestDrinkingStreak() >= 31) name += " " + jsonHelper.SetUnlocked("Ubermensch", true);
+                case "Ubermensch":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Ubermensch", data.GetLongestDrinkingStreak() >= 31));
                     break;
-                case "The Trifecta": // 3 beers in a day
-                    if (CheckNumberToday(3)) name += " " + jsonHelper.SetUnlocked("The Trifecta", true);
+                case "The Trifecta":
+                    name.append(" ").append(jsonHelper.SetUnlocked("The Trifecta", CheckNumberToday(3)));
                     break;
-                case "Five pint plan": // 5 beers in a day
-                    if (CheckNumberToday(5)) name += " " + jsonHelper.SetUnlocked("Five pint plan", true);
+                case "Five pint plan":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Five pint plan", CheckNumberToday(5)));
                     break;
-                case "Decapint": // 10 beers in a day
-                    if (CheckNumberToday(10)) name += " " + jsonHelper.SetUnlocked("Decapint", true);
+                case "Decapint":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Decapint", CheckNumberToday(10)));
                     break;
-                case "Where are my glasses?": // 2 beers in 10 minutes
-                    if (CheckNumberLast10Minutes()) name += " " + jsonHelper.SetUnlocked("Where are my glasses?", true);
+                case "Where are my glasses?":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Where are my glasses?", CheckNumberLast10Minutes()));
                     break;
-                case "Linked beers": // 2 beers in the same minute
-                    if (CheckNumberLastMinute()) name += " " + jsonHelper.SetUnlocked("Linked beers", true);
+                case "Linked beers":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Linked beers", CheckNumberLastMinute()));
                     break;
-                case "Make day drinking great again": // Drink between 8AM and 12AM
-                    if (CheckHourPint(line, 8, 12)) name += " " + jsonHelper.SetUnlocked("Make day drinking great again", true);
+                case "Make day drinking great again":
+                    // Check if any line in time range 8-12
+                    boolean makeDayDrinking = false;
+                    for (Line l : allLines) {
+                        if (CheckHourPint(l, 8, 12)) {
+                            makeDayDrinking = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Make day drinking great again", makeDayDrinking));
                     break;
-                case "Night owl": // Drink between midnight and 3AM
-                    if (CheckHourPint(line, 0, 3)) name += " " + jsonHelper.SetUnlocked("Night owl", true);
+                case "Night owl":
+                    // Check if any line in time range 0-3
+                    boolean nightOwl = false;
+                    for (Line l : allLines) {
+                        if (CheckHourPint(l, 0, 3)) {
+                            nightOwl = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Night owl", nightOwl));
                     break;
-                case "Vivaldi's beer": // Drink in every seasons
-                    if (CheckVivaldi()) name += " " + jsonHelper.SetUnlocked("Vivaldi's beer", true);
+                case "Vivaldi's beer":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Vivaldi's beer", CheckVivaldi()));
                     break;
-                case "Happy Hour Hunter": // Drink 5 beers between 6PM to 8PM
-                    if (CheckForAll(5, l -> CheckHourPint(l, 18, 20))) name += " " + jsonHelper.SetUnlocked("Happy Hour Hunter", true);
+                case "Happy Hour Hunter":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Happy Hour Hunter", CheckForAll(5, l -> CheckHourPint(l, 18, 20))));
                     break;
-                case "What a gift!": // Drink a free beer
-                    if (line.Price == 0) name += " " + jsonHelper.SetUnlocked("What a gift!", true);
+                case "What a gift!":
+                    // Any free line?
+                    boolean gift = false;
+                    for (Line l : allLines) {
+                        if (l.Price == 0) {
+                            gift = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("What a gift!", gift));
                     break;
-                case "Money saver": // Drink a less than 1€ beer
-                    if (line.Price <= 1 && line.Price > 0) name += " " + jsonHelper.SetUnlocked("Money saver", true);
+                case "Money saver":
+                    // Any line price <=1 and >0
+                    boolean moneySaver = false;
+                    for (Line l : allLines) {
+                        if (l.Price <= 1 && l.Price > 0) {
+                            moneySaver = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Money saver", moneySaver));
                     break;
-                case "Fancy beer": // Drink a more than 10€ beer
-                    if (line.Price >= 10 && line.Price < 20) name += " " + jsonHelper.SetUnlocked("Fancy beer", true);
+                case "Fancy beer":
+                    // Any line price 10 <= price < 20
+                    boolean fancyBeer = false;
+                    for (Line l : allLines) {
+                        if (l.Price >= 10 && l.Price < 20) {
+                            fancyBeer = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Fancy beer", fancyBeer));
                     break;
-                case "Gold brew": // Drink a more than 20€ beer
-                    if (line.Price >= 20) name += " " + jsonHelper.SetUnlocked("Gold brew", true);
+                case "Gold brew":
+                    // Any line price >= 20
+                    boolean goldBrew = false;
+                    for (Line l : allLines) {
+                        if (l.Price >= 20) {
+                            goldBrew = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Gold brew", goldBrew));
                     break;
-                case "Price Shock": // Drink a beer that costs 10 times more than your cheapest beer
-                    if (CheckPriceChock(line)) name += " " + jsonHelper.SetUnlocked("Price Shock", true);
+                case "Price Shock":
+                    // Any line satisfies price shock
+                    boolean priceShock = false;
+                    for (Line l : allLines) {
+                        if (CheckPriceChock(l)) {
+                            priceShock = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Price Shock", priceShock));
                     break;
-                case "Value Seeker": // Drink a beer that costs 10 times more than your cheapest beer
-                    if (line.Price <= 1 && line.Rating == 5) name += " " + jsonHelper.SetUnlocked("Value Seeker", true);
+                case "Value Seeker":
+                    // Any line price <=1 and rating == 5
+                    boolean valueSeeker = false;
+                    for (Line l : allLines) {
+                        if (l.Price <= 1 && l.Rating == 5) {
+                            valueSeeker = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Value Seeker", valueSeeker));
                     break;
-                case "Globe trotter": // Drink a beer in another country (home country is where you're last beer was registered)
-                    if (IsGlobeTrotter(context, line)) name += " " + jsonHelper.SetUnlocked("Globe trotter", true);
+                case "Globe trotter":
+                    // Check if last line and new line different country?
+                    if (!allLines.isEmpty()) {
+                        Line lastLine = allLines.get(allLines.size() - 1);
+                        name.append(" ").append(jsonHelper.SetUnlocked("Globe trotter", IsGlobeTrotter(context, lastLine)));
+                    }
                     break;
-                case "On The Road": // Drink beer at a latitude difference of 1000+ km from your last beer
-                    if (CheckOnTheRoad(context, line)) name += " " + jsonHelper.SetUnlocked("On The Road", true);
+                case "On The Road":
+                    if (!allLines.isEmpty()) {
+                        Line lastLine = allLines.get(allLines.size() - 1);
+                        name.append(" ").append(jsonHelper.SetUnlocked("On The Road", CheckOnTheRoad(context, lastLine)));
+                    }
                     break;
-                case "Bar Hopper": // Drink beers in 10 different bars/locations
-                    if (data.GetUniqueBars() >= 10) name += " " + jsonHelper.SetUnlocked("Bar Hopper", true);
+                case "Bar Hopper":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Bar Hopper", data.GetUniqueBars() >= 10));
                     break;
-                case "Bar Explorer": // Drink beers in 25 different bars/locations
-                    if (data.GetUniqueBars() >= 25) name += " " + jsonHelper.SetUnlocked("Bar Hopper", true);
+                case "Bar Explorer":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Bar Explorer", data.GetUniqueBars() >= 25));
                     break;
-                case "Bar Conqueror": // Drink beers in 50 different bars/locations
-                    if (data.GetUniqueBars() >= 50) name += " " + jsonHelper.SetUnlocked("Bar Hopper", true);
+                case "Bar Conqueror":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Bar Conqueror", data.GetUniqueBars() >= 50));
                     break;
-                case "Piss Drinker": // Rate a beer 0 stars
-                    if (line.Rating == 0) name += " " + jsonHelper.SetUnlocked("Piss Drinker", true);
+                case "Piss Drinker":
+                    // Any line rating == 0
+                    boolean pissDrinker = false;
+                    for (Line l : allLines) {
+                        if (l.Rating == 0) {
+                            pissDrinker = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Piss Drinker", pissDrinker));
                     break;
-                case "Connoisseur": // Rate 10 beers 4 stars or above
-                    if (CheckForAll(10, l -> l.Rating >= 4)) name += " " + jsonHelper.SetUnlocked("Connoisseur", true);
+                case "Connoisseur":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Connoisseur", CheckForAll(10, l -> l.Rating >= 4)));
                     break;
-                case "Critic": // Rate 5 beers 2 stars or below
-                    if (CheckForAll(5, l -> l.Rating <= 2)) name += " " + jsonHelper.SetUnlocked("Connoisseur", true);
+                case "Critic":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Critic", CheckForAll(5, l -> l.Rating <= 2)));
                     break;
-                case "Rising Star": // Rate a newly discovered beer with 5 stars
-                    if (CheckForAll(1, l -> data.IsBrandNew(l.Brand))) name += " " + jsonHelper.SetUnlocked("Connoisseur", true);
+                case "Rising Star":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Rising Star", CheckForAll(1, l -> data.IsBrandNew(l.Brand))));
                     break;
-                case "Santa's Little Helper": // Drink on christmas
-                    if (GetDay(line, 12, 25)) name += " " + jsonHelper.SetUnlocked("Santa's Little Helper", true);
+                case "Santa's Little Helper":
+                    // Any line on 12/25
+                    boolean santaHelper = false;
+                    for (Line l : allLines) {
+                        if (GetDay(l, 12, 25)) {
+                            santaHelper = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Santa's Little Helper", santaHelper));
                     break;
-                case "Spooky beer": // Drink on Halloween
-                    if (GetDay(line, 10, 31)) name += " " + jsonHelper.SetUnlocked("Spooky beer", true);
+                case "Spooky beer":
+                    // Any line on 10/31
+                    boolean spookyBeer = false;
+                    for (Line l : allLines) {
+                        if (GetDay(l, 10, 31)) {
+                            spookyBeer = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Spooky beer", spookyBeer));
                     break;
-                case "Revolution!": // Drink on le 14 Juillet
-                    if (GetDay(line, 7, 14)) name += " " + jsonHelper.SetUnlocked("Revolution!", true);
+                case "Revolution!":
+                    // Any line on 7/14
+                    boolean revolution = false;
+                    for (Line l : allLines) {
+                        if (GetDay(l, 7, 14)) {
+                            revolution = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Revolution!", revolution));
                     break;
-                case "Look! A swallow!": // Drink on the first day of spring
-                    if (GetDay(line, 3, 21)) name += " " + jsonHelper.SetUnlocked("Look! A swallow!", true);
+                case "Look! A swallow!":
+                    // Any line on 3/21
+                    boolean swallow = false;
+                    for (Line l : allLines) {
+                        if (GetDay(l, 3, 21)) {
+                            swallow = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Look! A swallow!", swallow));
                     break;
-                case "Cold one on a hot day": // Drink on the first day of summer
-                    if (GetDay(line, 6, 21)) name += " " + jsonHelper.SetUnlocked("Cold one on a hot day", true);
+                case "Cold one on a hot day":
+                    // Any line on 6/21
+                    boolean coldOne = false;
+                    for (Line l : allLines) {
+                        if (GetDay(l, 6, 21)) {
+                            coldOne = true;
+                            break;
+                        }
+                    }
+                    name.append(" ").append(jsonHelper.SetUnlocked("Cold one on a hot day", coldOne));
                     break;
-                case "Moderate spender": // Have a total cost of 15€
-                    if (data.pricesTotal > 15) name += " " + jsonHelper.SetUnlocked(name, true);
+                case "Moderate spender":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Moderate spender", data.pricesTotal / 2 > 15));
                     break;
-                case "Filthy rich": // Have a total cost of 50€
-                    if (data.pricesTotal > 50) name += " " + jsonHelper.SetUnlocked(name, true);
+                case "Filthy rich":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Filthy rich", data.pricesTotal / 2 > 50));
                     break;
-                case "Life saving on beer": // Have a total cost of 100€
-                    if (data.pricesTotal > 100) name += " " + jsonHelper.SetUnlocked(name, true);
+                case "Life saving on beer":
+                    name.append(" ").append(jsonHelper.SetUnlocked("Life saving on beer", data.pricesTotal / 2> 100));
                     break;
-                case "As rich as Croesus": // Have a total cost of 250€
-                    if (data.pricesTotal > 250) name += " " + jsonHelper.SetUnlocked(name, true);
+                case "As rich as Croesus":
+                    name.append(" ").append(jsonHelper.SetUnlocked("As rich as Croesus", data.pricesTotal / 2 > 250));
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + achievement.Name);
             }
         }
 
-        if (!name.isEmpty()) {
-            Toast.makeText(context, "You've unlocked this/these achievement/s:" + name.trim(), Toast.LENGTH_LONG).show();
-        }
+        System.out.println(data.pricesTotal);
+        return name.toString();
     }
+
+
+
 
     private boolean CheckForAll(int target, Predicate<Line> predicate) {
         List<Line> lines = CsvHelper.GetLinesCsv(context);
@@ -384,7 +514,7 @@ public class AchievementHandler {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return R * c; // Distance in km
+        return R * c;
     }
 
 }
