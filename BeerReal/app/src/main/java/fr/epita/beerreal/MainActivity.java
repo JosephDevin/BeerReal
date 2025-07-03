@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Inflate layout early to avoid errors if we show a toast
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -113,4 +111,9 @@ public class MainActivity extends AppCompatActivity {
             HomeFragment.cameraActive = false;
         });
     }
+
+    /*
+    j'ai envie de mourir:
+    - alcodex qui sont lourds comme des lourdingues
+       */
 }

@@ -107,6 +107,23 @@ public class BeerMenuFragment extends DialogFragment {
                     String finalBar = bar;
 
                     LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
+
+                        if (latitude == 0 && longitude == 0) {
+                            Toast.makeText(requireContext(), "Location is disabled. Please enable it to submit.", Toast.LENGTH_LONG).show();
+
+                            File imageFile = new File(photo_path);
+                            if (imageFile.exists()) {
+                                boolean deleted = imageFile.delete();
+                                if (!deleted) {
+                                    System.out.println("Failed to delete image: " + photo_path);
+                                }
+                            }
+
+                            dismiss();
+                            return;
+                        }
+
+
                         CsvHelper.AddLineCsv(
                                 photo_path,
                                 finalTitle,
@@ -123,16 +140,19 @@ public class BeerMenuFragment extends DialogFragment {
 
                         if (AlcodexBrands.contains(finalBrand) && !MainActivity.alcodex.LoadBeers().get(finalBrand).hasImage) {
                             result.putBoolean("show_alcodex", true);
+                        } else {
+                            result.putBoolean("show_alcodex", false);
                         }
 
                         AchievementHandler achievementHandler = new AchievementHandler(getContext());
-                        String name = achievementHandler.CheckForNewAchievements(MainActivity.achievements.GetAllAchievements());
+                        boolean newAchievements = achievementHandler.CheckForNewAchievements(false);
 
-                        if (!name.isEmpty()) {
+                        if (newAchievements) {
                             result.putBoolean("show_achievements", true);
+                        } else {
+                            result.putBoolean("show_achievements", false);
                         }
 
-                        result.putBoolean("show_snackbar", true);
                         getParentFragmentManager().setFragmentResult("refresh_feed", result);
                         getParentFragmentManager().setFragmentResult("show_achievements", result);
                         getParentFragmentManager().setFragmentResult("show_alcodex", result);

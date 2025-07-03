@@ -38,275 +38,176 @@ public class AchievementHandler {
         data.SelectTimeToLoad();
     }
 
-    public String CheckForNewAchievements(List<Achievement> achievements) {
+    public boolean CheckForNewAchievements(boolean isDeleting) {
         List<Line> allLines = CsvHelper.GetLinesCsv(context);
-        StringBuilder name = new StringBuilder();
+        boolean newUnlockOrLock = false;
 
-        for (Achievement achievement : achievements) {
+        for (Achievement achievement : jsonHelper.GetAllAchievements()) {
+            // When not deleting, skip unlocked achievements (only check locked)
+            if (!isDeleting && achievement.Unlocked) continue;
+
+            boolean conditionMet = false;
+
             switch (achievement.Name) {
                 case "Fighter":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Fighter", CheckQuantity(5)));
+                    conditionMet = CheckQuantity(5);
                     break;
                 case "Warrior":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Warrior", CheckQuantity(10)));
+                    conditionMet = CheckQuantity(10);
                     break;
                 case "War general":
-                    name.append(" ").append(jsonHelper.SetUnlocked("War general", CheckQuantity(25)));
+                    conditionMet = CheckQuantity(25);
                     break;
                 case "Marathon runner":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Marathon runner", CheckQuantity(42.195f)));
+                    conditionMet = CheckQuantity(42.195f);
                     break;
                 case "The 100th":
-                    name.append(" ").append(jsonHelper.SetUnlocked("The 100th", data.Size >= 100));
+                    conditionMet = data.Size >= 100;
                     break;
                 case "King of the Keg":
-                    // Check if ANY line has volume >= 2.0
-                    boolean kingOfKeg = false;
-                    for (Line l : allLines) {
-                        if (l.Volume >= 2.0) {
-                            kingOfKeg = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("King of the Keg", kingOfKeg));
+                    conditionMet = any(allLines, l -> l.Volume >= 2.0);
                     break;
                 case "Beer week":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Beer week", data.GetLongestDrinkingStreak() >= 7));
+                    conditionMet = data.GetLongestDrinkingStreak() >= 7;
                     break;
                 case "Alcoholic":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Alcoholic", data.GetLongestDrinkingStreak() >= 15));
+                    conditionMet = data.GetLongestDrinkingStreak() >= 15;
                     break;
                 case "Ubermensch":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Ubermensch", data.GetLongestDrinkingStreak() >= 31));
+                    conditionMet = data.GetLongestDrinkingStreak() >= 31;
                     break;
                 case "The Trifecta":
-                    name.append(" ").append(jsonHelper.SetUnlocked("The Trifecta", CheckNumberToday(3)));
+                    conditionMet = CheckNumberToday(3);
                     break;
                 case "Five pint plan":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Five pint plan", CheckNumberToday(5)));
+                    conditionMet = CheckNumberToday(5);
                     break;
                 case "Decapint":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Decapint", CheckNumberToday(10)));
+                    conditionMet = CheckNumberToday(10);
                     break;
                 case "Where are my glasses?":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Where are my glasses?", CheckNumberLast10Minutes()));
+                    conditionMet = CheckNumberLast10Minutes();
                     break;
                 case "Linked beers":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Linked beers", CheckNumberLastMinute()));
+                    conditionMet = CheckNumberLastMinute();
                     break;
                 case "Make day drinking great again":
-                    // Check if any line in time range 8-12
-                    boolean makeDayDrinking = false;
-                    for (Line l : allLines) {
-                        if (CheckHourPint(l, 8, 12)) {
-                            makeDayDrinking = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Make day drinking great again", makeDayDrinking));
+                    conditionMet = any(allLines, l -> CheckHourPint(l, 8, 12));
                     break;
                 case "Night owl":
-                    // Check if any line in time range 0-3
-                    boolean nightOwl = false;
-                    for (Line l : allLines) {
-                        if (CheckHourPint(l, 0, 3)) {
-                            nightOwl = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Night owl", nightOwl));
+                    conditionMet = any(allLines, l -> CheckHourPint(l, 0, 3));
                     break;
                 case "Vivaldi's beer":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Vivaldi's beer", CheckVivaldi()));
+                    conditionMet = CheckVivaldi();
                     break;
                 case "Happy Hour Hunter":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Happy Hour Hunter", CheckForAll(5, l -> CheckHourPint(l, 18, 20))));
+                    conditionMet = CheckForAll(5, l -> CheckHourPint(l, 18, 20));
                     break;
                 case "What a gift!":
-                    // Any free line?
-                    boolean gift = false;
-                    for (Line l : allLines) {
-                        if (l.Price == 0) {
-                            gift = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("What a gift!", gift));
+                    conditionMet = any(allLines, l -> l.Price == 0);
                     break;
                 case "Money saver":
-                    // Any line price <=1 and >0
-                    boolean moneySaver = false;
-                    for (Line l : allLines) {
-                        if (l.Price <= 1 && l.Price > 0) {
-                            moneySaver = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Money saver", moneySaver));
+                    conditionMet = any(allLines, l -> l.Price <= 1 && l.Price > 0);
                     break;
                 case "Fancy beer":
-                    // Any line price 10 <= price < 20
-                    boolean fancyBeer = false;
-                    for (Line l : allLines) {
-                        if (l.Price >= 10 && l.Price < 20) {
-                            fancyBeer = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Fancy beer", fancyBeer));
+                    conditionMet = any(allLines, l -> l.Price >= 10 && l.Price < 20);
                     break;
                 case "Gold brew":
-                    // Any line price >= 20
-                    boolean goldBrew = false;
-                    for (Line l : allLines) {
-                        if (l.Price >= 20) {
-                            goldBrew = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Gold brew", goldBrew));
+                    conditionMet = any(allLines, l -> l.Price >= 20);
                     break;
                 case "Price Shock":
-                    // Any line satisfies price shock
-                    boolean priceShock = false;
-                    for (Line l : allLines) {
-                        if (CheckPriceChock(l)) {
-                            priceShock = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Price Shock", priceShock));
+                    conditionMet = any(allLines, this::CheckPriceChock);
                     break;
                 case "Value Seeker":
-                    // Any line price <=1 and rating == 5
-                    boolean valueSeeker = false;
-                    for (Line l : allLines) {
-                        if (l.Price <= 1 && l.Rating == 5) {
-                            valueSeeker = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Value Seeker", valueSeeker));
+                    conditionMet = any(allLines, l -> l.Price <= 1 && l.Rating == 5);
                     break;
                 case "Globe trotter":
-                    // Check if last line and new line different country?
                     if (!allLines.isEmpty()) {
-                        Line lastLine = allLines.get(allLines.size() - 1);
-                        name.append(" ").append(jsonHelper.SetUnlocked("Globe trotter", IsGlobeTrotter(context, lastLine)));
+                        conditionMet = IsGlobeTrotter(context, allLines.get(allLines.size() - 1));
                     }
                     break;
                 case "On The Road":
                     if (!allLines.isEmpty()) {
-                        Line lastLine = allLines.get(allLines.size() - 1);
-                        name.append(" ").append(jsonHelper.SetUnlocked("On The Road", CheckOnTheRoad(context, lastLine)));
+                        conditionMet = CheckOnTheRoad(context, allLines.get(allLines.size() - 1));
                     }
                     break;
                 case "Bar Hopper":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Bar Hopper", data.GetUniqueBars() >= 10));
+                    conditionMet = data.GetUniqueBars() >= 10;
                     break;
                 case "Bar Explorer":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Bar Explorer", data.GetUniqueBars() >= 25));
+                    conditionMet = data.GetUniqueBars() >= 25;
                     break;
                 case "Bar Conqueror":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Bar Conqueror", data.GetUniqueBars() >= 50));
+                    conditionMet = data.GetUniqueBars() >= 50;
                     break;
                 case "Piss Drinker":
-                    // Any line rating == 0
-                    boolean pissDrinker = false;
-                    for (Line l : allLines) {
-                        if (l.Rating == 0) {
-                            pissDrinker = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Piss Drinker", pissDrinker));
+                    conditionMet = any(allLines, l -> l.Rating == 0);
                     break;
                 case "Connoisseur":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Connoisseur", CheckForAll(10, l -> l.Rating >= 4)));
+                    conditionMet = CheckForAll(10, l -> l.Rating >= 4);
                     break;
                 case "Critic":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Critic", CheckForAll(5, l -> l.Rating <= 2)));
+                    conditionMet = CheckForAll(5, l -> l.Rating <= 2);
                     break;
                 case "Rising Star":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Rising Star", CheckForAll(1, l -> data.IsBrandNew(l.Brand))));
+                    conditionMet = CheckForAll(1, l -> data.IsBrandNew(l.Brand));
                     break;
                 case "Santa's Little Helper":
-                    // Any line on 12/25
-                    boolean santaHelper = false;
-                    for (Line l : allLines) {
-                        if (GetDay(l, 12, 25)) {
-                            santaHelper = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Santa's Little Helper", santaHelper));
+                    conditionMet = any(allLines, l -> GetDay(l, 12, 25));
                     break;
                 case "Spooky beer":
-                    // Any line on 10/31
-                    boolean spookyBeer = false;
-                    for (Line l : allLines) {
-                        if (GetDay(l, 10, 31)) {
-                            spookyBeer = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Spooky beer", spookyBeer));
+                    conditionMet = any(allLines, l -> GetDay(l, 10, 31));
                     break;
                 case "Revolution!":
-                    // Any line on 7/14
-                    boolean revolution = false;
-                    for (Line l : allLines) {
-                        if (GetDay(l, 7, 14)) {
-                            revolution = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Revolution!", revolution));
+                    conditionMet = any(allLines, l -> GetDay(l, 7, 14));
                     break;
                 case "Look! A swallow!":
-                    // Any line on 3/21
-                    boolean swallow = false;
-                    for (Line l : allLines) {
-                        if (GetDay(l, 3, 21)) {
-                            swallow = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Look! A swallow!", swallow));
+                    conditionMet = any(allLines, l -> GetDay(l, 3, 21));
                     break;
                 case "Cold one on a hot day":
-                    // Any line on 6/21
-                    boolean coldOne = false;
-                    for (Line l : allLines) {
-                        if (GetDay(l, 6, 21)) {
-                            coldOne = true;
-                            break;
-                        }
-                    }
-                    name.append(" ").append(jsonHelper.SetUnlocked("Cold one on a hot day", coldOne));
+                    conditionMet = any(allLines, l -> GetDay(l, 6, 21));
                     break;
                 case "Moderate spender":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Moderate spender", data.pricesTotal / 2 > 15));
+                    conditionMet = data.pricesTotal / 2 > 15;
                     break;
                 case "Filthy rich":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Filthy rich", data.pricesTotal / 2 > 50));
+                    conditionMet = data.pricesTotal / 2 > 50;
                     break;
                 case "Life saving on beer":
-                    name.append(" ").append(jsonHelper.SetUnlocked("Life saving on beer", data.pricesTotal / 2> 100));
+                    conditionMet = data.pricesTotal / 2 > 100;
                     break;
                 case "As rich as Croesus":
-                    name.append(" ").append(jsonHelper.SetUnlocked("As rich as Croesus", data.pricesTotal / 2 > 250));
+                    conditionMet = data.pricesTotal / 2 > 250;
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + achievement.Name);
             }
+
+            if (isDeleting) {
+                if (achievement.Unlocked != conditionMet) {
+                    jsonHelper.SetUnlocked(achievement.Name, conditionMet);
+                    newUnlockOrLock = true;
+                }
+            } else {
+                if (conditionMet && !achievement.Unlocked) {
+                    jsonHelper.SetUnlocked(achievement.Name, true);
+                    newUnlockOrLock = true;
+                }
+            }
         }
 
-        System.out.println(data.pricesTotal);
-        return name.toString();
+        return newUnlockOrLock;
     }
 
 
+
+
+    private boolean any(List<Line> lines, Predicate<Line> predicate) {
+        for (Line l : lines) {
+            if (predicate.test(l)) return true;
+        }
+        return false;
+    }
 
 
     private boolean CheckForAll(int target, Predicate<Line> predicate) {

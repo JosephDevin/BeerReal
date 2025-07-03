@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.fragment.app.Fragment;
@@ -22,6 +23,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -111,72 +113,93 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        getParentFragmentManager().setFragmentResultListener("refresh_feed", this, (key, bundle) -> {
-            List<FeedItem> feed = LoadImagesIntoView(requireContext());
-            FeedAdapter ad = new FeedAdapter(feed, new FeedAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(FeedItem item) {
-                    LoadPicture(item.getLine(), fragment);
-                }
-            });
-            binding.feedRecyclerView.setAdapter(ad);
-        });
-
-        getParentFragmentManager().setFragmentResultListener("show_achievements", this, (key, bundle) -> {
-            boolean message = bundle.getBoolean("show_achievements");
-
-            if (message) {
-                Snackbar snackbar = Snackbar.make(requireView(), "", Snackbar.LENGTH_LONG);
-
-                LayoutInflater inflater1 = LayoutInflater.from(requireContext());
-                View customView = inflater.inflate(R.layout.notification, null);
-
-                TextView textView = customView.findViewById(R.id.snackbar_text);
-                textView.setText("You've unlocked new achievements!");
-
-                ImageView icon = customView.findViewById(R.id.snackbar_icon);
-                icon.setImageResource(R.drawable.ic_trophy);
-                icon.setColorFilter(Color.rgb(251,177,34));
-
-                @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                layout.setBackgroundColor(Color.TRANSPARENT);
-                layout.setPadding(0, 0, 0, 0);
-                layout.removeAllViews();
-
-                layout.addView(customView);
-                snackbar.show();
-            }
-        });
-
-        getParentFragmentManager().setFragmentResultListener("show_alcodex", this, (key, bundle) -> {
-            boolean message = bundle.getBoolean("show_alcodex");
-
-            if (message) {
-                Snackbar snackbar = Snackbar.make(requireView(), "", Snackbar.LENGTH_LONG);
-
-                LayoutInflater inflater1 = LayoutInflater.from(requireContext());
-                View customView = inflater.inflate(R.layout.notification, null);
-
-                TextView textView = customView.findViewById(R.id.snackbar_text);
-                textView.setText("You've unlocked a new beer in the alcodex!");
-
-                ImageView icon = customView.findViewById(R.id.snackbar_icon);
-                icon.setImageResource(R.drawable.ic_dashboard_black_24dp);
-                icon.setColorFilter(Color.rgb(251,177,34));
-
-                @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-                layout.setBackgroundColor(Color.TRANSPARENT);
-                layout.setPadding(0, 0, 0, 0);
-                layout.removeAllViews();
-
-                layout.addView(customView);
-                snackbar.show();
-            }
-        });
-
-
         return root;
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        FragmentManager fm = getParentFragmentManager();
+
+        fm.setFragmentResultListener("refresh_feed", this, (key, bundle) -> {
+            if (binding != null) {
+                List<FeedItem> feed = LoadImagesIntoView(requireContext());
+                FeedAdapter ad = new FeedAdapter(feed, new FeedAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(FeedItem item) {
+                        LoadPicture(item.getLine(), fragment);
+                    }
+                });
+                binding.feedRecyclerView.setAdapter(ad);
+            }
+        });
+
+        fm.setFragmentResultListener("show_achievements", this, (key, bundle) -> {
+            if (bundle.getBoolean("show_achievements", false)) {
+                showAchievements();
+            }
+        });
+
+        fm.setFragmentResultListener("show_alcodex", this, (key, bundle) -> {
+            if (bundle.getBoolean("show_alcodex", false)) {
+                showAlcodexSnackbar();
+            }
+        });
+    }
+
+    private void showAlcodexSnackbar() {
+        if (!isAdded()) return;
+
+        Snackbar snackbar = Snackbar.make(requireView(), "", Snackbar.LENGTH_LONG);
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        View customView = inflater.inflate(R.layout.notification, null);
+
+        TextView textView = customView.findViewById(R.id.snackbar_text);
+        textView.setText("You've unlocked a new beer in the alcodex!");
+
+        ImageView icon = customView.findViewById(R.id.snackbar_icon);
+        icon.setImageResource(R.drawable.ic_dashboard_black_24dp);
+        icon.setColorFilter(Color.rgb(251, 177, 34));
+
+        @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        layout.setBackgroundColor(Color.TRANSPARENT);
+        layout.setPadding(0, 0, 0, 0);
+        layout.removeAllViews();
+        layout.addView(customView);
+
+        snackbar.show();
+    }
+
+    private void showAchievements() {
+        if (!isAdded()) return;
+
+        Snackbar snackbar = Snackbar.make(requireView(), "", Snackbar.LENGTH_LONG);
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        View customView = inflater.inflate(R.layout.notification, null);
+
+        TextView textView = customView.findViewById(R.id.snackbar_text);
+        textView.setText("You've unlocked a new achievement!");
+
+        ImageView icon = customView.findViewById(R.id.snackbar_icon);
+        icon.setImageResource(R.drawable.ic_trophy);
+        icon.setColorFilter(Color.rgb(251, 177, 34));
+
+        @SuppressLint("RestrictedApi") Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        layout.setBackgroundColor(Color.TRANSPARENT);
+        layout.setPadding(0, 0, 0, 0);
+        layout.removeAllViews();
+        layout.addView(customView);
+
+        snackbar.show();
+    }
+
+
+
+
+
 
 
     // CAMERA RELATED

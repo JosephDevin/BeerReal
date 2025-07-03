@@ -122,7 +122,7 @@ public class AlcodexFragment extends DialogFragment {
             } else {
                 File imgFile = new File(context.getExternalFilesDir("pics"), entry.getValue().photoPath);
                 if (imgFile.exists()) {
-                    imageView.setImageBitmap(LoadPictureCorrectly(imgFile));
+                    imageView.setImageBitmap(loadThumbnailRotated90(imgFile, 300));
                 }
             }
 
@@ -147,44 +147,40 @@ public class AlcodexFragment extends DialogFragment {
         return builder.create();
     }
 
+    public Bitmap loadThumbnailRotated90(File file, int maxDim) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        int scale = 1;
+        while (options.outWidth / scale > maxDim || options.outHeight / scale > maxDim) {
+            scale *= 2;
+        }
+
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scale;
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        return Bitmap.createBitmap(
+                bitmap,
+                0, 0,
+                bitmap.getWidth(),
+                bitmap.getHeight(),
+                matrix,
+                true
+        );
+    }
 
     private Bitmap LoadPictureCorrectly(File imgFile) {
         if (imgFile.exists()) {
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
-                ExifInterface exif = new ExifInterface(imgFile.getAbsolutePath());
-                int orientation = exif.getAttributeInt(
-                        ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_NORMAL
-                );
 
-                Matrix matrix = new Matrix();
-                switch (orientation) {
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        matrix.postRotate(90);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        matrix.postRotate(180);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        matrix.postRotate(270);
-                        break;
-                }
 
-                Bitmap rotatedBitmap = Bitmap.createBitmap(
-                        bitmap,
-                        0, 0,
-                        bitmap.getWidth(), bitmap.getHeight(),
-                        matrix,
-                        true
-                );
-
-                return rotatedBitmap;
-
-            } catch (IOException e) {
-                e.printStackTrace(); // or handle properly
-            }
+            return bitmap;
         }
         return null;
     }

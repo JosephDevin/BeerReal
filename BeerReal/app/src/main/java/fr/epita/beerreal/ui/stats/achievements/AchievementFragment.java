@@ -31,6 +31,9 @@ public class AchievementFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_achievements, null);
 
+        AchievementHandler achievementHandler = new AchievementHandler(getContext());
+        achievementHandler.CheckForNewAchievements(false);
+
         TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
         customTitle.setText("\uD83C\uDFC6 Achievements");
 
@@ -62,7 +65,6 @@ public class AchievementFragment extends DialogFragment {
 
             textView.setOnClickListener(v -> showTooltip(v, a.Description));
         }
-
 
         return builder.create();
     }

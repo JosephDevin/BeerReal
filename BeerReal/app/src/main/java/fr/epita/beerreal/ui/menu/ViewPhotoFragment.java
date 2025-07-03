@@ -135,7 +135,7 @@ public class ViewPhotoFragment extends DialogFragment {
                                 }
 
                                 AchievementHandler achievementHandler = new AchievementHandler(getContext());
-                                achievementHandler.CheckForNewAchievements(MainActivity.achievements.GetAllAchievements());
+                                achievementHandler.CheckForNewAchievements(true);
 
                                 Bundle result = new Bundle();
                                 getParentFragmentManager().setFragmentResult("refresh_feed", result);
