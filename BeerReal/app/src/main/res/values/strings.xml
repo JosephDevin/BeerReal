@@ -58,6 +58,8 @@
     <string name="achievements">🏆 Achievements</string>
     <string name="unlocked_n">🔓 Unlocked\n</string>
     <string name="locked_n">🔒 Locked\n</string>
+    <string name="rate_this_beer2">⭐ Rate this beer:</string>
+    <string name="beer_information">Beer Information</string>
 
     <string-array name="header_options">
         <item>All-Time Statbeerstics</item>

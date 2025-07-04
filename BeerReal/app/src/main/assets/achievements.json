@@ -33,7 +33,6 @@
   { "id": "Critic", "title": "Critic", "description": "Rate 5 beers 2 stars or below", "unlocked": false },
   { "id": "Connoisseur", "title": "Connoisseur", "description": "Rate 10 beers 4 stars or above", "unlocked": false },
   { "id": "Piss Drinker", "title": "Piss Drinker", "description": "Rate a beer 0 stars", "unlocked": false },
-  { "id": "Rising Star", "title": "Rising Star", "description": "Rate a newly discovered beer with 5 stars", "unlocked": false },
   { "id": "Bar Hopper", "title": "Bar Hopper", "description": "Drink beers in 10 different bars/locations", "unlocked": false },
   { "id": "Bar Explorer", "title": "Bar Explorer", "description": "Visit and drink in 25 unique bars/locations", "unlocked": false },
   { "id": "Bar Conqueror", "title": "Bar Conqueror", "description": "Visit and drink in 50 unique bars/locations", "unlocked": false },

@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -157,7 +158,11 @@ public class HomeFragment extends Fragment {
         View customView = inflater.inflate(R.layout.notification, null);
 
         TextView textView = customView.findViewById(R.id.snackbar_text);
-        textView.setText("You've unlocked a new beer in the alcodex!");
+
+        String text = Locale.getDefault().getLanguage().equals("fr") ?
+                "Nouvelle bière dans l'alcodex!" :
+                "You've unlocked a new beer in the alcodex!";
+        textView.setText(text);
 
         ImageView icon = customView.findViewById(R.id.snackbar_icon);
         icon.setImageResource(R.drawable.ic_dashboard_black_24dp);
@@ -181,7 +186,11 @@ public class HomeFragment extends Fragment {
         View customView = inflater.inflate(R.layout.notification, null);
 
         TextView textView = customView.findViewById(R.id.snackbar_text);
-        textView.setText("You've unlocked a new achievement!");
+
+        String text = Locale.getDefault().getLanguage().equals("fr") ?
+                "Nouveau succès debloqué!" :
+                "You've unlocked a new achievement!";
+        textView.setText(text);
 
         ImageView icon = customView.findViewById(R.id.snackbar_icon);
         icon.setImageResource(R.drawable.ic_trophy);

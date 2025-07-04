@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +31,8 @@ public class Data {
 
     private final List<Line> Lines;
     private Times _time;
+    private List<Line> FilteredLines;
+
 
     private List<String> Brands;
     private List<Float> Volumes;
@@ -85,19 +88,21 @@ public class Data {
     public void SelectTimeToLoad() {
         switch (_time) {
             case WEEK:
-                LoadAllLinesIntoData(LinesThisWeek());
+                FilteredLines = LinesThisWeek();
                 break;
             case MONTH:
-                LoadAllLinesIntoData(LinesThisMonth());
+                FilteredLines = LinesThisMonth();
                 break;
             case YEAR:
-                LoadAllLinesIntoData(LinesThisYear());
+                FilteredLines = LinesThisYear();
                 break;
             case ALL_TIME:
-                LoadAllLinesIntoData(Lines);
+                FilteredLines = Lines;
                 break;
         }
+        LoadAllLinesIntoData(FilteredLines);
     }
+
 
     public void LoadAllLinesIntoData(List<Line> lines) {
         for (Line l:lines) {
@@ -158,7 +163,7 @@ public class Data {
         Map<String, Float> ratingSums = new HashMap<>();
         Map<String, Integer> ratingCounts = new HashMap<>();
 
-        for (Line line : Lines) {
+        for (Line line : FilteredLines) {
             String brand = line.Bar.trim().toLowerCase();
             float rating = line.Rating  ;
             if (brand != null) {
@@ -189,39 +194,41 @@ public class Data {
 
 
     public String GetFavoriteBrand() {
-        if (Size == 0) return "N/A";
+        if (Brands.isEmpty() || Ratings.isEmpty()) return "None";
 
-        Map<String, Float> ratingSums = new HashMap<>();
-        Map<String, Integer> ratingCounts = new HashMap<>();
+        Map<String, List<Float>> brandRatings = new HashMap<>();
 
-        for (Line line : Lines) {
-            String brand = line.Brand.trim().toLowerCase();
-            float rating = line.Rating  ;
-            if (brand != null) {
-                ratingSums.put(brand, ratingSums.getOrDefault(brand, 0f) + rating);
-                ratingCounts.put(brand, ratingCounts.getOrDefault(brand, 0) + 1);
+        for (int i = 0; i < Brands.size(); i++) {
+            String brand = Brands.get(i);
+            Float rating = Ratings.get(i);
+
+            if (!brandRatings.containsKey(brand)) {
+                brandRatings.put(brand, new ArrayList<>());
+            }
+            brandRatings.get(brand).add(rating);
+        }
+
+        float maxAverage = -1;
+        List<String> favorites = new ArrayList<>();
+
+        for (Map.Entry<String, List<Float>> entry : brandRatings.entrySet()) {
+            List<Float> ratings = entry.getValue();
+            float average = 0;
+            for (Float r : ratings) average += r;
+            average /= ratings.size();
+
+            if (average > maxAverage) {
+                maxAverage = average;
+                favorites.clear();
+                favorites.add(entry.getKey());
+            } else if (average == maxAverage) {
+                favorites.add(entry.getKey());
             }
         }
 
-        Map<String, Float> brandToAverageRating = new HashMap<>();
-        for (String brand : ratingSums.keySet()) {
-            float sum = ratingSums.get(brand);
-            int count = ratingCounts.get(brand);
-            brandToAverageRating.put(brand, sum / count);
-        }
-
-        String bestBrand = null;
-        float bestAverage = -1f;
-
-        for (Map.Entry<String, Float> entry : brandToAverageRating.entrySet()) {
-            if (entry.getValue() > bestAverage) {
-                bestAverage = entry.getValue();
-                bestBrand = entry.getKey();
-            }
-        }
-
-        return bestBrand + " (" + bestAverage + ")";
+        return String.join(", ", favorites);
     }
+
 
     public String GetFavoriteHour() {
         if (Size == 0) return "N/A";
@@ -229,7 +236,7 @@ public class Data {
         Map<String, Float> ratingSums = new HashMap<>();
         Map<String, Integer> ratingCounts = new HashMap<>();
 
-        for (Line line : Lines) {
+        for (Line line : FilteredLines) {
             String date = line.Date;
             float rating = line.Rating;
 
@@ -312,12 +319,12 @@ public class Data {
     // COST:
     public float GetAverageCost() { return pricesTotal / Size; }
     public String GetCheapestBeer() {
-        if (Lines == null || Lines.isEmpty()) return "N/A";
+        if (FilteredLines == null || FilteredLines.isEmpty()) return "N/A";
 
         Line cheapest = null;
 
-        for (int i = 0; i < Lines.size(); i++) {
-            Line l = Lines.get(i);
+        for (int i = 0; i < FilteredLines.size(); i++) {
+            Line l = FilteredLines.get(i);
             if (cheapest == null || l.Price < cheapest.Price) {
                 cheapest = l;
             }
@@ -331,11 +338,11 @@ public class Data {
     }
 
     public float GetCheapestBeerPrice() {
-        if (Lines == null || Lines.isEmpty()) return -1f;
+        if (FilteredLines == null || FilteredLines.isEmpty()) return -1f;
 
         Line cheapest = null;
 
-        for (Line l : Lines) {
+        for (Line l : FilteredLines) {
             if (l.Price > 0) {
                 if (cheapest == null || l.Price < cheapest.Price) {
                     cheapest = l;
@@ -348,12 +355,12 @@ public class Data {
 
 
     public String GetMostExpensiveBeer() {
-        if (Lines == null || Lines.isEmpty()) return "N/A";
+        if (FilteredLines == null || FilteredLines.isEmpty()) return "N/A";
 
         Line expensive = null;
 
-        for (int i = 0; i < Lines.size(); i++) {
-            Line l = Lines.get(i);
+        for (int i = 0; i < FilteredLines.size(); i++) {
+            Line l = FilteredLines.get(i);
             if (expensive == null || l.Price > expensive.Price) {
                 expensive = l;
             }

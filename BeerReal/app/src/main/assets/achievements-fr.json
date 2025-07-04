@@ -33,7 +33,6 @@
   { "id": "Critic", "title": "Critique cullibière", "description": "Noter 5 bières 2 étoiles ou moins", "unlocked": false },
   { "id": "Connoisseur", "title": "Connaisseur", "description": "Noter 10 bières 4 étoiles ou plus", "unlocked": false },
   { "id": "Piss Drinker", "title": "Buveur de pisse", "description": "Noter une bière à 0 étoiles", "unlocked": false },
-  { "id": "Rising Star", "title": "Etoile montante", "description": "Noter une nouvelle bière 5 étoiles", "unlocked": false },
   { "id": "Bar Hopper", "title": "Barathonien", "description": "Boire une bière dans 10 differents lieux", "unlocked": false },
   { "id": "Bar Explorer", "title": "Exploreur de bars", "description": "Boire une bière dans 25 differents lieux", "unlocked": false },
   { "id": "Bar Conqueror", "title": "Conquereur de bars", "description": "Boire une bière dans 50 differents lieux", "unlocked": false },

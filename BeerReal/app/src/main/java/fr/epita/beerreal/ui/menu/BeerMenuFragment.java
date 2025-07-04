@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import fr.epita.beerreal.MainActivity;
 import fr.epita.beerreal.ui.map.LocationStorage;
@@ -50,7 +51,7 @@ public class BeerMenuFragment extends DialogFragment {
         AlcodexBrands = MainActivity.alcodex.GetAllBrands();
 
         TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
-        customTitle.setText("Beer Information");
+        customTitle.setText(R.string.beer_information);
         customTitle.setTextColor(Color.WHITE);
 
         EditText titleInput = view.findViewById(R.id.title_input);
@@ -70,10 +71,18 @@ public class BeerMenuFragment extends DialogFragment {
         EditText barInput = view.findViewById(R.id.bar_input);
         barInput.setTextColor(Color.WHITE);
 
+        String post = Locale.getDefault().getLanguage().equals("fr") ?
+                "Publier" :
+                "Submit";
+
+        String cancel = Locale.getDefault().getLanguage().equals("fr") ?
+                "Annuler" :
+                "Cancel";
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCustomTitle(customTitle)
                 .setView(view)
-                .setPositiveButton("Submit", (dialog, id) -> {
+                .setPositiveButton(post, (dialog, id) -> {
                     String title = titleInput.getText().toString().trim();
                     String brand = brandInput.getText().toString().trim();
                     String bar = barInput.getText().toString().trim();
@@ -88,7 +97,12 @@ public class BeerMenuFragment extends DialogFragment {
 
                     if (title.contains(",") || brand.contains(",") || bar.contains(",")
                             || title.length() > 30 || brand.length() > 30 || bar.length() > 30) {
-                        Toast.makeText(requireContext(), "The maximum length is 30 characters and commas are not allowed", Toast.LENGTH_LONG).show();
+
+                        String text = Locale.getDefault().getLanguage().equals("fr") ?
+                                "La longueur maximale est de 30 caractères et les virgules ne sont pas autorisées." :
+                                "The maximum length is 30 characters and commas are not allowed";
+
+                        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
 
                         File imageFile = new File(photo_path);
                         if (imageFile.exists()) {
@@ -109,7 +123,12 @@ public class BeerMenuFragment extends DialogFragment {
                     LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
 
                         if (latitude == 0 && longitude == 0) {
-                            Toast.makeText(requireContext(), "Location is disabled. Please enable it to submit.", Toast.LENGTH_LONG).show();
+                            String text = Locale.getDefault().getLanguage().equals("fr") ?
+                                    "La localisation est désactivée. Activez la pour publier." :
+                                    "Location is disabled. Please enable it to submit.";
+
+
+                            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
 
                             File imageFile = new File(photo_path);
                             if (imageFile.exists()) {
@@ -160,7 +179,7 @@ public class BeerMenuFragment extends DialogFragment {
                         dismiss();
                     });
                 })
-                .setNegativeButton("Cancel", (dialog, id) -> dismiss());
+                .setNegativeButton(cancel, (dialog, id) -> dismiss());
 
 
         AlertDialog dialog = builder.create();

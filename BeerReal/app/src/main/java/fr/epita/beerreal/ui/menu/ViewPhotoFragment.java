@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 import fr.epita.beerreal.MainActivity;
@@ -89,10 +90,18 @@ public class ViewPhotoFragment extends DialogFragment {
         // Build the custom title
         LinearLayout layout = CreateText(line.Title, dateValue);
 
+        String delete = Locale.getDefault().getLanguage().equals("fr") ?
+                "Supprimer" :
+                "Delete";
+
+        String cancel = Locale.getDefault().getLanguage().equals("fr") ?
+                "Annuler" :
+                "Cancel";
+
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setCustomTitle(layout)
                 .setView(view)
-                .setPositiveButton("Delete", null);
+                .setPositiveButton(delete, null);
 
         AlertDialog dialog = builder.create();
 
@@ -107,10 +116,19 @@ public class ViewPhotoFragment extends DialogFragment {
                 }
 
                 deleteButton.setOnClickListener(v -> {
+
+                    String titleNotif = Locale.getDefault().getLanguage().equals("fr") ?
+                            "Supprimer cette bière? " :
+                            "Delete this beer ?";
+
+                    String subtitleNotif = Locale.getDefault().getLanguage().equals("fr") ?
+                            "Êtes vous sûr de vouloir supprimer cette bière?" :
+                            "Are your sur you want to delete this beer?";
+
                     AlertDialog confirmDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("Delete this beer ?")
-                            .setMessage("Are you sure you want to delete this beer?")
-                            .setPositiveButton("Delete", (confirm, which) -> {
+                            .setTitle(titleNotif)
+                            .setMessage(subtitleNotif)
+                            .setPositiveButton(delete, (confirm, which) -> {
                                 CsvHelper.RemoveLine(requireContext(), line.Picture);
 
                                 File imgToDelete = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
@@ -142,7 +160,7 @@ public class ViewPhotoFragment extends DialogFragment {
                                 dismiss();
                             })
 
-                            .setNegativeButton("Cancel", (confirm, which) -> confirm.dismiss())
+                            .setNegativeButton(cancel, (confirm, which) -> confirm.dismiss())
                             .create();
 
                     confirmDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.rgb(66, 66, 66)));

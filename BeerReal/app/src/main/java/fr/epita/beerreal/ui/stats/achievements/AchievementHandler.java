@@ -11,8 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import fr.epita.beerreal.MainActivity;
@@ -43,7 +45,6 @@ public class AchievementHandler {
         boolean newUnlockOrLock = false;
 
         for (Achievement achievement : jsonHelper.GetAllAchievements()) {
-            // When not deleting, skip unlocked achievements (only check locked)
             if (!isDeleting && achievement.Unlocked) continue;
 
             boolean conditionMet = false;
@@ -149,9 +150,6 @@ public class AchievementHandler {
                 case "Critic":
                     conditionMet = CheckForAll(5, l -> l.Rating <= 2);
                     break;
-                case "Rising Star":
-                    conditionMet = CheckForAll(1, l -> data.IsBrandNew(l.Brand));
-                    break;
                 case "Santa's Little Helper":
                     conditionMet = any(allLines, l -> GetDay(l, 12, 25));
                     break;
@@ -256,28 +254,31 @@ public class AchievementHandler {
 
     private boolean CheckNumberToday(int targetNumber) {
         List<Line> lines = CsvHelper.GetLinesCsv(context);
-        Calendar calendar = Calendar.getInstance();
-
-        int todayDay = calendar.get(Calendar.DAY_OF_MONTH);
-        int todayMonth = calendar.get(Calendar.MONTH) + 1;
-        int todayYear = calendar.get(Calendar.YEAR);
-
-        int count = 0;
+        Map<String, Integer> countsByDate = new HashMap<>();
 
         for (Line l : lines) {
-            String date = l.Date;
+            if (l.Date == null) continue;
 
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            int day = Integer.parseInt(date.substring(8, 10));
+            String rawDate = l.Date.trim();
+            if (rawDate.length() < 10) continue;
 
-            if (day == todayDay && month == todayMonth && year == todayYear) {
-                count++;
+            String date = rawDate.substring(0, 10);
+
+            int currentCount = countsByDate.getOrDefault(date, 0);
+            countsByDate.put(date, currentCount + 1);
+        }
+
+        for (int count : countsByDate.values()) {
+            if (count == targetNumber) {
+                return true;
             }
         }
 
-        return count == targetNumber;
+        return false;
     }
+
+
+
 
     private boolean CheckNumberLast10Minutes() {
         List<Line> lines = CsvHelper.GetLinesCsv(context);

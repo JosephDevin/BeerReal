@@ -6,7 +6,7 @@
     <string name="title_stats">Statbièrestiques</string>
 
     <string name="rate_this_beer">⭐ Note cette bière:</string>
-    <string name="bar_location">🏠 Bar / Emplacement</string>
+    <string name="bar_location">🏠 Bar / Lieu</string>
     <string name="price_eur">💶 Prix (€)</string>
     <string name="volume_l">🍶 Volume (L)</string>
     <string name="brand">🏭 Marque</string>
@@ -58,6 +58,8 @@
     <string name="achievements">🏆 Succès</string>
     <string name="unlocked_n">🔓 Déverrouillé\n</string>
     <string name="locked_n">🔒 Verrouillé\n</string>
+    <string name="rate_this_beer2">⭐ Note cette bière:</string>
+    <string name="beer_information">Informations de la bière</string>
 
     <string-array name="header_options">
         <item>Statbièrestiques</item>

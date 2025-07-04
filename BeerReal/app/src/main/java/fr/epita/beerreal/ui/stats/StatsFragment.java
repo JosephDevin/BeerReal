@@ -56,12 +56,15 @@ public class StatsFragment extends Fragment {
 
                     switch (selected) {
                         case "Weekly Statbeerstics":
+                        case "Statbièrestiques hebdomadaires":
                             data = new Data(requireContext(), Times.WEEK);
                             break;
                         case "Monthly Statbeerstics":
+                        case "Statbièrestiques mensuelles":
                             data = new Data(requireContext(), Times.MONTH);
                             break;
                         case "Yearly Statbeerstics":
+                        case "Statbièrestiques annuelles":
                             data = new Data(requireContext(), Times.YEAR);
                             break;
                         default:

@@ -112,8 +112,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    j'ai envie de mourir:
-    - alcodex qui sont lourds comme des lourdingues
-       */
 }
