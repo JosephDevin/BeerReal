@@ -55,6 +55,9 @@
     <string name="closest_country">🏅 Alcohol nationality:</string>
     <string name="totals">Totals</string>
     <string name="most_drinks">\nMost drinks</string>
+    <string name="achievements">🏆 Achievements</string>
+    <string name="unlocked_n">🔓 Unlocked\n</string>
+    <string name="locked_n">🔒 Locked\n</string>
 
     <string-array name="header_options">
         <item>All-Time Statbeerstics</item>

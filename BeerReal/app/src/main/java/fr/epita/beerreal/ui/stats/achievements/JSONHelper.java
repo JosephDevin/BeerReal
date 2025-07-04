@@ -10,15 +10,16 @@
     import java.util.ArrayList;
     import java.util.Iterator;
     import java.util.List;
+    import java.util.Locale;
 
     public class JSONHelper {
         private final Context context;
         private final String filename;
         private List<Achievement> achievementsList;
 
-        public JSONHelper(Context context, String filename) {
+        public JSONHelper(Context context) {
             this.context = context;
-            this.filename = filename;
+            this.filename = getLocalizedFilename(); // NEW
 
             InitializeAchievementsFileIfMissing();
 
@@ -28,24 +29,34 @@
             }
 
             achievementsList = new ArrayList<>();
-            JSONArray achievementsArray = null;
             try {
-                achievementsArray = new JSONArray(json);
+                JSONArray achievementsArray = new JSONArray(json);
                 for (int i = 0; i < achievementsArray.length(); i++) {
                     JSONObject obj = achievementsArray.getJSONObject(i);
 
+                    String id = obj.optString("id","");
                     String title = obj.optString("title", "");
                     String description = obj.optString("description", "");
                     boolean unlocked = obj.optBoolean("unlocked", false);
 
-                    achievementsList.add(new Achievement(title, description, unlocked));
+                    achievementsList.add(new Achievement(id, title, description, unlocked));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-
-
         }
+
+        private String getLocalizedFilename() {
+            String lang = Locale.getDefault().getLanguage();
+            switch (lang) {
+                case "fr":
+                    return "achievements-fr.json";
+                default:
+                    return "achievements.json"; // default fallback
+            }
+        }
+
+
 
         public boolean SetUnlocked(String name, boolean value) {
             for (Achievement a : achievementsList) {

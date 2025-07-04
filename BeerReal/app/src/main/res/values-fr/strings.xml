@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BeerReal</string>
+    <string name="title_home">Bar</string>
+    <string name="title_map">Carte des bières</string>
+    <string name="title_stats">Statbièrestiques</string>
+
+    <string name="rate_this_beer">⭐ Note cette bière:</string>
+    <string name="bar_location">🏠 Bar / Emplacement</string>
+    <string name="price_eur">💶 Prix (€)</string>
+    <string name="volume_l">🍶 Volume (L)</string>
+    <string name="brand">🏭 Marque</string>
+    <string name="beer_title">🍺 Titre de la bière</string>
+
+    <string name="bar_location_view">🏠 Bar: </string>
+    <string name="price">💶 Prix: </string>
+    <string name="volume">🍶 Volume: </string>
+    <string name="brand_view">🏭 Marque: </string>
+    <string name="hour">☀️ Heure: </string>
+
+
+    <string name="beer_stats_summary">Statbièrestiques\n</string>
+    <string name="total_beers">🍺 Nombre total:</string>
+    <string name="total_cost">💶 Coût total:</string>
+    <string name="total_volume">📦 Volume total:</string>
+    <string name="average_satisfaction">⭐ Note moyenne:</string>
+    <string name="n_daily_averages">\nMoyennes quotidiennes</string>
+    <string name="beers_day">🍺 Bières/Jour:</string>
+    <string name="volume_day">🥛 Volume/Jour:</string>
+    <string name="cost_day">💶 Coût/Jour:</string>
+    <string name="n_favorites">\nFavoris</string>
+    <string name="bar_fav">📍 Lieu:</string>
+    <string name="brand_fav">🏷️ Marque:</string>
+    <string name="hour_fav">🕔 Heure:</string>
+    <string name="bar_most">🧭 Lieu: </string>
+    <string name="brand_most">🧾 Marque:</string>
+    <string name="hour_most">⏰ Heure:</string>
+    <string name="n_streaks">\nDurées</string>
+    <string name="longest_drinking_streak">🔥 Durée de beuverie:</string>
+    <string name="longest_non_drinking_streak">❄️ Durée de non-beuverie:</string>
+    <string name="n_cost_breakdown">\nMesures du coût</string>
+    <string name="avg_cost_per_beer">💶 Coût moyen par bière:</string>
+    <string name="cheapest">🟢 La moins chère:</string>
+    <string name="most_expensive">🔴 La plus chère:</string>
+    <string name="n_health_metrics">\nMesures de santé</string><string name="estimated_calories">🔥 Calories estimées:</string>
+    <string name="alcohol_units">🥴 Unités d\'alcool:</string>
+    <string name="n_global_comparison">\nComparaison globale</string>
+    <string name="romania">🇷🇴 Roumanie:</string>
+    <string name="georgia">🇬🇪 Georgie:</string>
+    <string name="latvia">🇱🇻 Latvie:</string>
+    <string name="france">🇫🇷 France:</string>
+    <string name="ireland">🇮🇪 Irlande:</string>
+    <string name="usa">🇺🇸 USA:</string>
+    <string name="bangladesh">🇧🇩 Bangladesh:</string>
+    <string name="closest_country">🏅 Nationalité de bière:</string>
+    <string name="totals">Totaux</string>
+    <string name="most_drinks">\nLes plus fréquentés</string>
+    <string name="achievements">🏆 Succès</string>
+    <string name="unlocked_n">🔓 Déverrouillé\n</string>
+    <string name="locked_n">🔒 Verrouillé\n</string>
+
+    <string-array name="header_options">
+        <item>Statbièrestiques</item>
+        <item>Statbièrestiques hebdomadaires</item>
+        <item>Statbièrestiques mensuelles</item>
+        <item>Statbièrestiques annuelles</item>
+    </string-array>
+</resources>

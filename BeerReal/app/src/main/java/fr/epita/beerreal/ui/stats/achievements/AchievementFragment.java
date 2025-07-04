@@ -35,7 +35,7 @@ public class AchievementFragment extends DialogFragment {
         achievementHandler.CheckForNewAchievements(false);
 
         TextView customTitle = (TextView) inflater.inflate(R.layout.dialog_title, null);
-        customTitle.setText("\uD83C\uDFC6 Achievements");
+        customTitle.setText(R.string.achievements);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCustomTitle(customTitle)

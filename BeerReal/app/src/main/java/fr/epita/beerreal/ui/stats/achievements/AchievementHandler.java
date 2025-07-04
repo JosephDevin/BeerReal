@@ -48,7 +48,7 @@ public class AchievementHandler {
 
             boolean conditionMet = false;
 
-            switch (achievement.Name) {
+            switch (achievement.Id) {
                 case "Fighter":
                     conditionMet = CheckQuantity(5);
                     break;

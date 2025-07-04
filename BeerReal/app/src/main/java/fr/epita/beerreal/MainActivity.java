@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         alcodex = new AlcodexStorage(this);
 
         // ACHIEVEMENTS
-        achievements = new JSONHelper(this, "achievements.json");
+        achievements = new JSONHelper(this);
 
         // NAVIGATION
         BottomNavigationView navView = findViewById(R.id.nav_view);
