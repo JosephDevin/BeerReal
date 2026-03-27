@@ -59,10 +59,11 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private Fragment fragment;
 
+    private int currentCameraFacing = CameraSelector.LENS_FACING_BACK;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         fragment = this;
 
         // ACTIVITY RELATED
@@ -100,19 +101,43 @@ public class HomeFragment extends Fragment {
         // ADD PICTURE BUTTON
         FloatingActionButton addButton = binding.addButton;
         addButton.setOnClickListener(v -> {
+
             if (!cameraActive) {
-                previewView.setVisibility(View.VISIBLE);
-                StartCamera();
 
-                captureButton.setVisibility(View.VISIBLE);
-                exitButton.setVisibility(View.VISIBLE);
-                addButton.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-                topBar.setVisibility(View.GONE);
+                LocationStorage.RecalculatePosition(requireContext(), (longitude, latitude) -> {
 
-                cameraActive = true;
+                    // If location is disabled, don't show the photo.
+                    if (latitude == 0 && longitude == 0) {
+                        String text = Locale.getDefault().getLanguage().equals("fr") ?
+                                "La localisation est désactivée. Activez la pour publier." :
+                                "Location is disabled. Please enable it to submit.";
+
+                        Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
+
+                    } else {
+
+                        previewView.setVisibility(View.VISIBLE);
+                        StartCamera();
+
+                        captureButton.setVisibility(View.VISIBLE);
+                        exitButton.setVisibility(View.VISIBLE);
+                        addButton.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
+                        topBar.setVisibility(View.GONE);
+
+                        cameraActive = true;
+                    }
+                });
             }
         });
+
+        // Touch listener for flipping camera
+        previewView = binding.previewView;
+        previewView.setVisibility(View.GONE);
+        previewView.setOnClickListener(v -> {
+            if (cameraActive) ToggleCamera();
+        });
+
 
         return root;
     }
@@ -224,9 +249,11 @@ public class HomeFragment extends Fragment {
                 cameraProvider = ProcessCameraProvider.getInstance(requireContext()).get();
 
                 Preview preview = new Preview.Builder().build();
-                imageCapture = new ImageCapture.Builder().build(); // NEW LINE: create capture use case
+                imageCapture = new ImageCapture.Builder().build();
 
-                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+                CameraSelector cameraSelector = new CameraSelector.Builder()
+                        .requireLensFacing(currentCameraFacing)
+                        .build();
 
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
                 cameraProvider.unbindAll();
@@ -242,6 +269,7 @@ public class HomeFragment extends Fragment {
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
+
     private void DestroyCamera() {
         if (cameraProvider != null) {
             cameraProvider.unbindAll();
@@ -250,6 +278,13 @@ public class HomeFragment extends Fragment {
 
             cameraActive = false;
         }
+    }
+
+    private void ToggleCamera() {
+        currentCameraFacing = (currentCameraFacing == CameraSelector.LENS_FACING_BACK)
+                ? CameraSelector.LENS_FACING_FRONT
+                : CameraSelector.LENS_FACING_BACK;
+        StartCamera();
     }
 
 
@@ -284,8 +319,8 @@ public class HomeFragment extends Fragment {
                     public void onError(@NonNull ImageCaptureException exception) {
 
                     }
-                });
-
+                }
+        );
     }
 
     private void OpenBeerMenu(String path) { // Open the fragment to add the information of the beer capture
@@ -340,5 +375,12 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    // Navigation needed
+    public void scrollToTop() {
+        if (binding != null) {
+            binding.feedRecyclerView.smoothScrollToPosition(0);
+        }
     }
 }

@@ -4,14 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatRatingBar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -43,6 +46,17 @@ public class BeerMenuFragment extends DialogFragment {
         return fragment;
     }
 
+    // For round corners
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_dialog_rounded)
+            );
+        }
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -71,124 +85,89 @@ public class BeerMenuFragment extends DialogFragment {
         EditText barInput = view.findViewById(R.id.bar_input);
         barInput.setTextColor(Color.WHITE);
 
-        String post = Locale.getDefault().getLanguage().equals("fr") ?
-                "Publier" :
-                "Submit";
-
-        String cancel = Locale.getDefault().getLanguage().equals("fr") ?
-                "Annuler" :
-                "Cancel";
+        String post = Locale.getDefault().getLanguage().equals("fr") ? "Publier" : "Submit";
+        String cancel = Locale.getDefault().getLanguage().equals("fr") ? "Annuler" : "Cancel";
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCustomTitle(customTitle)
                 .setView(view)
-                .setPositiveButton(post, (dialog, id) -> {
-                    String title = titleInput.getText().toString().trim();
-                    String brand = brandInput.getText().toString().trim();
-                    String bar = barInput.getText().toString().trim();
+                .setPositiveButton(post, null) // null — handled in setOnShowListener
+                .setNegativeButton(cancel, (dialog, id) -> dismiss());
 
-                    if (title.isEmpty()) title = "Unknown Title";
-                    if (brand.isEmpty()) brand = "Unknown Brand";
-                    if (bar.isEmpty()) bar = "Unknown Bar";
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                    // Safely parse volume and price, default to 0 if blank or invalid
-                    float volume = safeParseFloat(volumeInput.getText().toString(), 0f);
-                    float price = safeParseFloat(priceInput.getText().toString(), 0f);
+        dialog.setOnShowListener(d -> {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            View buttonPanel = dialog.findViewById(getResources().getIdentifier("parentPanel", "id", "android"));
+            if (buttonPanel != null) {
+                buttonPanel.setBackgroundColor(Color.parseColor("#424242"));
+            }
 
-                    if (title.contains(",") || brand.contains(",") || bar.contains(",")
-                            || title.length() > 30 || brand.length() > 30 || bar.length() > 30) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String title = titleInput.getText().toString().trim();
+                String brand = brandInput.getText().toString().trim();
+                String bar = barInput.getText().toString().trim();
 
+                if (title.isEmpty()) title = "Unknown Title";
+                if (brand.isEmpty()) brand = "Unknown Brand";
+                if (bar.isEmpty()) bar = "Unknown Bar";
+
+                if (title.contains(",") || brand.contains(",") || bar.contains(",")
+                        || title.length() > 30 || brand.length() > 30 || bar.length() > 30) {
+
+                    String text = Locale.getDefault().getLanguage().equals("fr") ?
+                            "La longueur maximale est de 30 caractères et les virgules ne sont pas autorisées." :
+                            "The maximum length is 30 characters and commas are not allowed.";
+                    Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
+                    return; // Stay open
+                }
+
+                float volume = safeParseFloat(volumeInput.getText().toString(), 0f);
+                float price = safeParseFloat(priceInput.getText().toString(), 0f);
+
+                String finalTitle = title;
+                String finalBrand = brand;
+                String finalBar = bar;
+
+                LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
+                    if (latitude == 0 && longitude == 0) {
                         String text = Locale.getDefault().getLanguage().equals("fr") ?
-                                "La longueur maximale est de 30 caractères et les virgules ne sont pas autorisées." :
-                                "The maximum length is 30 characters and commas are not allowed";
-
+                                "La localisation est désactivée. Activez la pour publier." :
+                                "Location is disabled. Please enable it to submit.";
                         Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
 
                         File imageFile = new File(photo_path);
-                        if (imageFile.exists()) {
-                            boolean deleted = imageFile.delete();
-                            if (!deleted) {
-                                System.out.println("Failed to delete image: " + photo_path);
-                            }
-                        }
+                        if (imageFile.exists()) imageFile.delete();
 
                         dismiss();
                         return;
                     }
 
-                    String finalTitle = title;
-                    String finalBrand = brand;
-                    String finalBar = bar;
+                    CsvHelper.AddLineCsv(
+                            photo_path, finalTitle, finalBrand, volume, price,
+                            new double[]{latitude, longitude},
+                            new Date(), ratingInput.getRating(), finalBar
+                    );
 
-                    LocationStorage.RecalculatePosition(requireContext(), (latitude, longitude) -> {
+                    Bundle result = new Bundle();
+                    result.putBoolean("show_alcodex",
+                            AlcodexBrands.contains(finalBrand) &&
+                                    !MainActivity.alcodex.LoadBeers().get(finalBrand).hasImage);
 
-                        if (latitude == 0 && longitude == 0) {
-                            String text = Locale.getDefault().getLanguage().equals("fr") ?
-                                    "La localisation est désactivée. Activez la pour publier." :
-                                    "Location is disabled. Please enable it to submit.";
+                    AchievementHandler achievementHandler = new AchievementHandler(getContext());
+                    result.putBoolean("show_achievements", achievementHandler.CheckForNewAchievements(false));
 
+                    getParentFragmentManager().setFragmentResult("refresh_feed", result);
+                    getParentFragmentManager().setFragmentResult("show_achievements", result);
+                    getParentFragmentManager().setFragmentResult("show_alcodex", result);
 
-                            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
-
-                            File imageFile = new File(photo_path);
-                            if (imageFile.exists()) {
-                                boolean deleted = imageFile.delete();
-                                if (!deleted) {
-                                    System.out.println("Failed to delete image: " + photo_path);
-                                }
-                            }
-
-                            dismiss();
-                            return;
-                        }
-
-
-                        CsvHelper.AddLineCsv(
-                                photo_path,
-                                finalTitle,
-                                finalBrand,
-                                volume,
-                                price,
-                                new double[] {latitude, longitude},
-                                new Date(),
-                                ratingInput.getRating(),
-                                finalBar
-                        );
-
-                        Bundle result = new Bundle();
-
-                        if (AlcodexBrands.contains(finalBrand) && !MainActivity.alcodex.LoadBeers().get(finalBrand).hasImage) {
-                            result.putBoolean("show_alcodex", true);
-                        } else {
-                            result.putBoolean("show_alcodex", false);
-                        }
-
-                        AchievementHandler achievementHandler = new AchievementHandler(getContext());
-                        boolean newAchievements = achievementHandler.CheckForNewAchievements(false);
-
-                        if (newAchievements) {
-                            result.putBoolean("show_achievements", true);
-                        } else {
-                            result.putBoolean("show_achievements", false);
-                        }
-
-                        getParentFragmentManager().setFragmentResult("refresh_feed", result);
-                        getParentFragmentManager().setFragmentResult("show_achievements", result);
-                        getParentFragmentManager().setFragmentResult("show_alcodex", result);
-
-                        dismiss();
-                    });
-                })
-                .setNegativeButton(cancel, (dialog, id) -> dismiss());
-
-
-        AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(d -> {
-            View buttonPanel = dialog.findViewById(getResources().getIdentifier("parentPanel", "id", "android"));
-            if (buttonPanel != null) {
-                buttonPanel.setBackgroundColor(Color.parseColor("#424242")); // Dark gray background
-            }
+                    dismiss();
+                });
+            });
         });
 
         return dialog;

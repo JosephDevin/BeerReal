@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -27,64 +25,24 @@ public class StatsFragment extends Fragment {
 
     private FragmentStatsBinding binding;
     private Data data;
-    private String currentSelected = null;
-
+    private Times currentPeriod = Times.ALL_TIME;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentStatsBinding.inflate(inflater, container, false);
 
-        data = new Data(requireContext(), Times.ALL_TIME);
+        data = new Data(requireContext(), currentPeriod);
         LoadData(binding);
 
-        Spinner spinnerHeader = binding.spinnerHeader;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.header_options,
-                R.layout.spinner_header_item
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerHeader.setAdapter(adapter);
+        // ── Pill selector wiring ──
+        binding.pillWeek.setOnClickListener(v -> selectPill(Times.WEEK));
+        binding.pillMonth.setOnClickListener(v -> selectPill(Times.MONTH));
+        binding.pillYear.setOnClickListener(v -> selectPill(Times.YEAR));
+        binding.pillAllTime.setOnClickListener(v -> selectPill(Times.ALL_TIME));
 
-        spinnerHeader.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selected = parent.getItemAtPosition(position).toString();
+        updatePillUI(currentPeriod);
 
-                if (!selected.equals(currentSelected)) {
-                    currentSelected = selected;
-
-                    switch (selected) {
-                        case "Weekly Statbeerstics":
-                        case "Statbièrestiques hebdomadaires":
-                            data = new Data(requireContext(), Times.WEEK);
-                            break;
-                        case "Monthly Statbeerstics":
-                        case "Statbièrestiques mensuelles":
-                            data = new Data(requireContext(), Times.MONTH);
-                            break;
-                        case "Yearly Statbeerstics":
-                        case "Statbièrestiques annuelles":
-                            data = new Data(requireContext(), Times.YEAR);
-                            break;
-                        default:
-                            data = new Data(requireContext(), Times.ALL_TIME);
-                            break;
-                    }
-
-                    if (data.Size != 0) {
-                        LoadData(binding);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Optional: Handle no selection
-            }
-        });
-
-
+        // ── Bottom bar buttons ──
         binding.btnAchievements.setOnClickListener(v -> {
             AchievementFragment achievements = AchievementFragment.newInstance();
             achievements.show(getParentFragmentManager(), "Achievements Fragment");
@@ -95,108 +53,192 @@ public class StatsFragment extends Fragment {
             alcodex.show(getParentFragmentManager(), "Alcodex Fragment");
         });
 
-
         return binding.getRoot();
     }
 
+    // ── Pill selection logic ──
 
-    // MAY LOOK SCARY BUT ONLY LOADING THE DATA INTO THE VIEW
+    private void selectPill(Times period) {
+        if (period == currentPeriod) return;
+        currentPeriod = period;
+        updatePillUI(period);
+
+        data = new Data(requireContext(), period);
+        if (data.Size != 0) {
+            LoadData(binding);
+        }
+    }
+
+    private void updatePillUI(Times period) {
+        // Reset all to unselected style
+        setPillUnselected(binding.pillWeek);
+        setPillUnselected(binding.pillMonth);
+        setPillUnselected(binding.pillYear);
+        setPillUnselected(binding.pillAllTime);
+
+        // Highlight the active pill
+        switch (period) {
+            case WEEK:
+                setPillSelected(binding.pillWeek);
+                break;
+            case MONTH:
+                setPillSelected(binding.pillMonth);
+                break;
+            case YEAR:
+                setPillSelected(binding.pillYear);
+                break;
+            case ALL_TIME:
+                setPillSelected(binding.pillAllTime);
+                break;
+        }
+    }
+
+    private void setPillSelected(android.widget.TextView pill) {
+        pill.setBackgroundResource(R.drawable.pill_selected_bg);
+        pill.setTextColor(0xFF0D0D0D);
+    }
+
+    private void setPillUnselected(android.widget.TextView pill) {
+        pill.setBackgroundResource(android.R.color.transparent);
+        pill.setTextColor(0xFF888888);
+    }
+
+    // ── Data loading ──
+
     @SuppressLint("DefaultLocale")
     private void LoadData(FragmentStatsBinding binding) {
 
-        binding.tvTotalBeers.setText(String.format("%s %d", getString(R.string.total_beers), data.GetTotalBeers()));
-        binding.tvTotalCost.setText(String.format("%s %.2f€", getString(R.string.total_cost), data.GetTotalCost()));
-        binding.tvTotalVolume.setText(String.format("%s %.2f L", getString(R.string.total_volume), data.GetTotalVolume()));
-        binding.tvAverageSatisfaction.setText(String.format("%s %.1f / 5", getString(R.string.average_satisfaction), data.GetAverageSatisfaction()));
+        // Totals
+        binding.tvTotalBeers.setText(String.valueOf(data.GetTotalBeers()));
+        binding.tvTotalCost.setText(String.format("%.2f€", data.GetTotalCost()));
+        binding.tvTotalVolume.setText(String.format("%.2f L", data.GetTotalVolume()));
+        binding.tvAverageSatisfaction.setText(String.format("%.1f / 5", data.GetAverageSatisfaction()));
 
-        binding.tvBeersPerDay.setText(String.format("%s %.2f", getString(R.string.beers_day), data.GetAverageDrinksPerDay()));
-        binding.tvCostPerDay.setText(String.format("%s %.2f€", getString(R.string.cost_day), data.GetAverageCostPerDay()));
-        binding.tvVolumePerDay.setText(String.format("%s %.2f L", getString(R.string.volume_day), data.GetAverageVolumePerDay()));
+        // Daily averages
+        binding.tvBeersPerDay.setText(String.format("%.2f", data.GetAverageDrinksPerDay()));
+        binding.tvCostPerDay.setText(String.format("%.2f€", data.GetAverageCostPerDay()));
+        binding.tvVolumePerDay.setText(String.format("%.2f L", data.GetAverageVolumePerDay()));
 
-        binding.tvFavoriteBar.setText(String.format("%s %s", getString(R.string.bar_fav), data.GetFavoriteBar()));
-        binding.tvFavoriteBrand.setText(String.format("%s %s", getString(R.string.brand_fav), data.GetFavoriteBrand()));
-        binding.tvFavoriteHour.setText(String.format("%s %s", getString(R.string.hour_fav), data.GetFavoriteHour()));
+        // Favorites
+        binding.tvFavoriteBar.setText(data.GetFavoriteBar());
+        binding.tvFavoriteBrand.setText(data.GetFavoriteBrand());
+        binding.tvFavoriteHour.setText(data.GetFavoriteHour());
 
-        binding.tvMostBar.setText(String.format("%s %s", getString(R.string.bar_most), data.GetMostBar()));
-        binding.tvMostBrand.setText(String.format("%s %s", getString(R.string.brand_most), data.GetMostBrand()));
-        binding.tvMostHour.setText(String.format("%s %s", getString(R.string.hour_most), data.GetMostHour()));
+        // Most
+        binding.tvMostBar.setText(data.GetMostBar());
+        binding.tvMostBrand.setText(data.GetMostBrand());
+        binding.tvMostHour.setText(data.GetMostHour());
 
-        binding.tvLongestDrinkingStreak.setText(String.format("%s %d days", getString(R.string.longest_drinking_streak), data.GetLongestDrinkingStreak()));
-        binding.tvLongestNonDrinkingStreak.setText(String.format("%s %d days", getString(R.string.longest_non_drinking_streak), data.GetLongestNonDrinkingStreak()));
+        // Streaks
+        int drinkStreak = data.GetLongestDrinkingStreak();
+        int soberStreak = data.GetLongestNonDrinkingStreak();
 
-        binding.tvAvgCostPerBeer.setText(String.format("%s %.2f€", getString(R.string.avg_cost_per_beer), data.GetAverageCost()));
-        binding.tvCheapestBeer.setText(String.format("%s\n %s", getString(R.string.cheapest), data.GetCheapestBeer()));
-        binding.tvMostExpensiveBeer.setText(String.format("%s\n %s", getString(R.string.most_expensive), data.GetMostExpensiveBeer()));
+        binding.tvLongestDrinkingStreak.setText(String.format("%d days", drinkStreak));
+        binding.tvLongestNonDrinkingStreak.setText(String.format("%d days", soberStreak));
 
-        binding.tvEstimatedCalories.setText(String.format("%s %.0f kcal", getString(R.string.estimated_calories), data.GetCaloricIntakeFromBeer()));
-        binding.tvAlcoholUnits.setText(String.format("%s %.1f", getString(R.string.alcohol_units), data.GetAlcoholUnitsConsumed()));
-
-        float[] countries = data.CompareToWorldsDrinkers();
-        binding.tvRomaniaRatio.setText(String.format("%s %.1fx", getString(R.string.romania), countries[0]));
-        binding.tvGeorgiaRatio.setText(String.format("%s %.1fx", getString(R.string.georgia), countries[1]));
-        binding.tvLatviaRatio.setText(String.format("%s %.1fx", getString(R.string.latvia), countries[2]));
-        binding.tvFranceRatio.setText(String.format("%s %.1fx", getString(R.string.france), countries[3]));
-        binding.tvIrelandRatio.setText(String.format("%s %.1fx", getString(R.string.ireland), countries[4]));
-        binding.tvUSARatio.setText(String.format("%s %.1fx", getString(R.string.usa), countries[5]));
-        binding.tvBangladeshRatio.setText(String.format("%s %.1fx", getString(R.string.bangladesh), countries[6]));
-        try {
-            binding.tvClosestCountry.setText(String.format("%s %s", getString(R.string.closest_country), data.ClosestComparison(requireContext())));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        // Animate streak progress bars after layout is measured
+        int maxStreak = Math.max(drinkStreak, soberStreak);
+        if (maxStreak > 0) {
+            animateProgressBar(binding.progressDrinkingStreak, drinkStreak, maxStreak);
+            animateProgressBar(binding.progressSoberStreak, soberStreak, maxStreak);
         }
 
+        // Cost breakdown
+        binding.tvAvgCostPerBeer.setText(String.format("%.2f€", data.GetAverageCost()));
+        binding.tvCheapestBeer.setText(data.GetCheapestBeer());
+        binding.tvMostExpensiveBeer.setText(data.GetMostExpensiveBeer());
+
+        // Health
+        binding.tvEstimatedCalories.setText(String.format("%.0f kcal", data.GetCaloricIntakeFromBeer()));
+        binding.tvAlcoholUnits.setText(String.format("%.1f units", data.GetAlcoholUnitsConsumed()));
+
+        // Global comparison bars
+        float[] countries = data.CompareToWorldsDrinkers();
+        // countries: [Romania, Georgia, Latvia, France, Ireland, USA, Bangladesh]
+
+        // Clamp ratios for bar width: cap at 3x to avoid bars flying off screen
+        float maxRatio = 3f;
+        setCountryBar(binding.tvRomaniaRatio,   binding.barRomania,    countries[0], maxRatio);
+        setCountryBar(binding.tvGeorgiaRatio,   binding.barGeorgia,    countries[1], maxRatio);
+        setCountryBar(binding.tvLatviaRatio,    binding.barLatvia,     countries[2], maxRatio);
+        setCountryBar(binding.tvFranceRatio,    binding.barFrance,     countries[3], maxRatio);
+        setCountryBar(binding.tvIrelandRatio,   binding.barIreland,    countries[4], maxRatio);
+        setCountryBar(binding.tvUSARatio,       binding.barUSA,        countries[5], maxRatio);
+        setCountryBar(binding.tvBangladeshRatio,binding.barBangladesh, countries[6], maxRatio);
+
+        try {
+            binding.tvClosestCountry.setText(data.ClosestComparison(requireContext()));
+        } catch (JSONException | IOException e) {
+            binding.tvClosestCountry.setText("—");
+        }
     }
 
-    /*
-
-    Drop down menu: Week - Month - Year (Default) - All time
-
-        TOTALS:
-
-        Numbers of beers: INT
-        Total cost: FLOAT EUR/USD
-        Total volume: FLOAT L
-        Average satisfaction: FLOAT stars
-        Total number of different bar visited = INT
-
-        AVERAGE PER DAY:
-
-        Average number of drinks per day: FLOAT
-        Average cost of drinks per day: FLOAT EUR/USD
-
-        FAVORITES:
-
-        Favorite bar: STRING + INT drinks
-        Favorite brand: STRING + INT drinks
-        Favorite hour: STRING H + INT drinks
-
-        COST:
-
-        Average cost of a pint: FLOAT EUR/USD
-        Cheapest drink: FLOAT EUR/USD
-        Most expensive drink: FLOAT EUR/USD
-
-        STREAKS:
-
-        Longest streak with: INT days
-        Longest streak without: INT days
-
-        HEALTH RELATED:
-
-        Caloric Intake from Beer: FLOAT
-        Alcohol Units Consumed: FLOAT
-
-        NATIONALITY:
-
-        Comparison with a few nationalities: FLOAT nationality-ish person
-        Nationality with Highest Consumption Similarity: STRING
-
-        YEARLY VIEW =>
-                        Month you drank the most: as a graph
-                        Days you drink the most on average
+    /**
+     * Animates a horizontal progress bar to fill a fraction of its parent width.
+     * Uses post() so the layout has been measured first.
      */
+    private void animateProgressBar(View bar, int value, int max) {
+        View parent = (View) bar.getParent();
+        parent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                parent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int parentWidth = parent.getWidth();
+                float fraction = Math.min((float) value / max, 1f);
+                int targetWidth = (int) (parentWidth * fraction);
+
+                android.animation.ValueAnimator anim = android.animation.ValueAnimator.ofInt(0, targetWidth);
+                anim.setDuration(600);
+                anim.setInterpolator(new android.view.animation.DecelerateInterpolator());
+                anim.addUpdateListener(animation -> {
+                    ViewGroup.LayoutParams params = bar.getLayoutParams();
+                    params.width = (int) animation.getAnimatedValue();
+                    bar.setLayoutParams(params);
+                });
+                anim.start();
+            }
+        });
+    }
+
+    /**
+     * Sets ratio label text and triggers animated bar fill.
+     * ratio > 1 → drinking more than that country, < 1 → less.
+     * Bar width is clamped to maxRatio.
+     */
+    @SuppressLint("DefaultLocale")
+    private void setCountryBar(android.widget.TextView label, View bar, float ratio, float maxRatio) {
+        label.setText(String.format("%.1fx", ratio));
+
+        // Colour: > 1.5x amber, < 0.75x green, else neutral white
+        if (ratio > 1.5f) {
+            label.setTextColor(0xFFFBB122);
+        } else if (ratio < 0.75f) {
+            label.setTextColor(0xFF4CAF8B);
+        } else {
+            label.setTextColor(0xFFFFFFFF);
+        }
+
+        View parent = (View) bar.getParent();
+        parent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                parent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int parentWidth = parent.getWidth();
+                float fraction = Math.min(ratio / maxRatio, 1f);
+                int targetWidth = (int) (parentWidth * fraction);
+
+                android.animation.ValueAnimator anim = android.animation.ValueAnimator.ofInt(0, targetWidth);
+                anim.setDuration(500);
+                anim.setInterpolator(new android.view.animation.DecelerateInterpolator());
+                anim.addUpdateListener(animation -> {
+                    ViewGroup.LayoutParams params = bar.getLayoutParams();
+                    params.width = (int) animation.getAnimatedValue();
+                    bar.setLayoutParams(params);
+                });
+                anim.start();
+            }
+        });
+    }
 
     @Override
     public void onDestroyView() {

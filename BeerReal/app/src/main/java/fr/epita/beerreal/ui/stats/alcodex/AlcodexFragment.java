@@ -7,16 +7,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Outline;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.DialogFragment;
 
@@ -34,6 +37,16 @@ import fr.epita.beerreal.csv.CsvHelper;
 public class AlcodexFragment extends DialogFragment {
 
     private static Context context;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_dialog_rounded)
+            );
+        }
+    }
 
     public static AlcodexFragment newInstance(Context cxt) {
         context = cxt;
@@ -109,13 +122,16 @@ public class AlcodexFragment extends DialogFragment {
         for (Map.Entry<String, BeerInfo> entry : map.entrySet()) {
             LinearLayout itemLayout = new LinearLayout(context);
             itemLayout.setOrientation(LinearLayout.VERTICAL);
-            itemLayout.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
             itemLayout.setGravity(Gravity.CENTER);
 
+            GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
+            gridParams.width = 0;
+            gridParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+            gridParams.setMargins(16, 16, 16, 128);
+            itemLayout.setLayoutParams(gridParams);
+
             ImageView imageView = new ImageView(context);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             if (!entry.getValue().hasImage || entry.getValue().photoPath == null || entry.getValue().photoPath.isEmpty()) {
                 imageView.setImageResource(R.drawable.beer_unknown);
@@ -126,13 +142,22 @@ public class AlcodexFragment extends DialogFragment {
                 }
             }
 
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(300, 500));
+            // Rounded image corners
+            imageView.setClipToOutline(true);
+            imageView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 12f);
+                }
+            });
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(240, 360));
 
             TextView textView = new TextView(context);
             textView.setText(entry.getKey());
-            textView.setTextColor(Color.rgb(184,184,184));
-            textView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-            textView.setHeight(175);
+            textView.setTextColor(Color.rgb(184, 184, 184));
+            textView.setTextSize(13f);
+            textView.setGravity(Gravity.CENTER);
+            textView.setPadding(4, 8, 4, 0);
 
             itemLayout.addView(imageView);
             itemLayout.addView(textView);

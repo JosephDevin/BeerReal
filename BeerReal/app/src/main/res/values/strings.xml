@@ -60,6 +60,8 @@
     <string name="locked_n">🔒 Locked\n</string>
     <string name="rate_this_beer2">⭐ Rate this beer:</string>
     <string name="beer_information">Beer Information</string>
+    <string name="delete">Delete</string>
+    <string name="abuse">Excessive alcohol consumption is dangerous for your health. Drink in moderation.</string>
 
     <string-array name="header_options">
         <item>All-Time Statbeerstics</item>

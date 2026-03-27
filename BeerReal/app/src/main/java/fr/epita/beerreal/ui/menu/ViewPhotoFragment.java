@@ -54,12 +54,13 @@ public class ViewPhotoFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_view_photo, null);
 
+        // Load image
         ImageView image = view.findViewById(R.id.photoImageView);
         File picsDir = requireContext().getExternalFilesDir("pics");
         File imgFile = new File(picsDir, line.Picture);
 
+        Bitmap bitmap = LoadPictureCorrectly(imgFile);
         if (imgFile.exists() && imgFile.canRead()) {
-            Bitmap bitmap = LoadPictureCorrectly(imgFile);
             if (bitmap != null) {
                 image.setImageBitmap(bitmap);
             } else {
@@ -69,144 +70,117 @@ public class ViewPhotoFragment extends DialogFragment {
             image.setImageResource(R.drawable.beer_unknown);
         }
 
+        image.setOnClickListener(v -> {
+            ImageView fullImage = new ImageView(requireContext());
+            fullImage.setImageBitmap(bitmap);
+            fullImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            fullImage.setAdjustViewBounds(true);
 
-        String dateValue = line.Date.substring(0, 10).replace('-', ' ');
+            AlertDialog fullscreen = new AlertDialog.Builder(requireContext())
+                    .setView(fullImage)
+                    .create();
+
+            fullscreen.getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+            fullscreen.show();
+        });
+
         String hourValue = line.Date.substring(11, 16);
 
-        // Load text views
-        TextView brand = view.findViewById(R.id.brandText);
+        // Load views
+        TextView brand  = view.findViewById(R.id.brandText);
         TextView volume = view.findViewById(R.id.volumeText);
-        TextView price = view.findViewById(R.id.priceText);
-        TextView hour = view.findViewById(R.id.hourText);
-        TextView bar = view.findViewById(R.id.barText);
+        TextView price  = view.findViewById(R.id.priceText);
+        TextView hour   = view.findViewById(R.id.hourText);
+        TextView bar    = view.findViewById(R.id.barText);
         RatingBar rating = view.findViewById(R.id.ratingBar);
+        TextView deleteButton = view.findViewById(R.id.deleteButton);
 
-        brand.setTextColor(Color.WHITE);
-        volume.setTextColor(Color.WHITE);
-        price.setTextColor(Color.WHITE);
-        hour.setTextColor(Color.WHITE);
-        bar.setTextColor(Color.WHITE);
+        // Set field values
+        brand.setText(line.Brand);
+        volume.setText(line.Volume + " L");
+        price.setText(line.Price + " €");
+        bar.setText(line.Bar);
+        hour.setText(hourValue);
+        rating.setRating(line.Rating);
 
-        // Build the custom title
-        LinearLayout layout = CreateText(line.Title, dateValue);
+        String delete = Locale.getDefault().getLanguage().equals("fr") ? "Supprimer" : "Delete";
+        String cancel = Locale.getDefault().getLanguage().equals("fr") ? "Annuler" : "Cancel";
 
-        String delete = Locale.getDefault().getLanguage().equals("fr") ?
-                "Supprimer" :
-                "Delete";
-
-        String cancel = Locale.getDefault().getLanguage().equals("fr") ?
-                "Annuler" :
-                "Cancel";
-
+        // Build dialog — no buttons, fully custom
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-        builder.setCustomTitle(layout)
-                .setView(view)
-                .setPositiveButton(delete, null);
-
+        builder.setView(view);
         AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialog.setOnShowListener(d -> {
-            Button deleteButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            if (deleteButton != null) {
-                deleteButton.setTextColor(Color.rgb(251, 177, 34));  // existing color
+        // Wire delete button inside the card
+        deleteButton.setText(delete);
+        deleteButton.setOnClickListener(v -> {
+            String titleNotif = Locale.getDefault().getLanguage().equals("fr") ?
+                    "Supprimer cette bière?" : "Delete this beer?";
+            String subtitleNotif = Locale.getDefault().getLanguage().equals("fr") ?
+                    "Êtes vous sûr de vouloir supprimer cette bière?" :
+                    "Are you sure you want to delete this beer?";
 
-                View buttonPanel = (View) deleteButton.getParent();
-                if (buttonPanel != null) {
-                    buttonPanel.setBackgroundColor(Color.rgb(66, 66, 66));
-                }
+            AlertDialog confirmDialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(titleNotif)
+                    .setMessage(subtitleNotif)
+                    .setPositiveButton(delete, (confirm, which) -> {
+                        CsvHelper.RemoveLine(requireContext(), line.Picture);
 
-                deleteButton.setOnClickListener(v -> {
-
-                    String titleNotif = Locale.getDefault().getLanguage().equals("fr") ?
-                            "Supprimer cette bière? " :
-                            "Delete this beer ?";
-
-                    String subtitleNotif = Locale.getDefault().getLanguage().equals("fr") ?
-                            "Êtes vous sûr de vouloir supprimer cette bière?" :
-                            "Are your sur you want to delete this beer?";
-
-                    AlertDialog confirmDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle(titleNotif)
-                            .setMessage(subtitleNotif)
-                            .setPositiveButton(delete, (confirm, which) -> {
-                                CsvHelper.RemoveLine(requireContext(), line.Picture);
-
-                                File imgToDelete = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
-                                if (imgToDelete.exists()) {
-                                    boolean deleted = imgToDelete.delete();
-                                    if (!deleted) {
-                                        System.out.println("Failed to delete image: " + imgToDelete.getAbsolutePath());
-                                    }
-                                }
-
-                                if (map instanceof MapFragment) {
-                                    ((MapFragment) map).ClearAllMarkers();
-                                    ((MapFragment) map).LoadBeers();
-                                }
-
-                                if (MainActivity.alcodex.GetAllBrands().contains(line.Brand)) {
-                                    if (!CsvHelper.IsBrandDuplicated(line.Brand, requireContext())
-                                            && !Objects.equals(requireContext().getExternalFilesDir("pics") + line.Picture,
-                                            MainActivity.alcodex.LoadBeers().get(line.Brand).photoPath)) {
-                                        MainActivity.alcodex.ClearPhotoForBrand(line.Brand);
-                                    }
-                                }
-
-                                AchievementHandler achievementHandler = new AchievementHandler(getContext());
-                                achievementHandler.CheckForNewAchievements(true);
-
-                                Bundle result = new Bundle();
-                                getParentFragmentManager().setFragmentResult("refresh_feed", result);
-                                dismiss();
-                            })
-
-                            .setNegativeButton(cancel, (confirm, which) -> confirm.dismiss())
-                            .create();
-
-                    confirmDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.rgb(66, 66, 66)));
-
-                    confirmDialog.setOnShowListener(c -> {
-                        Button pos = confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        Button neg = confirmDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                        if (pos != null) {
-                            pos.setTextColor(Color.rgb(251, 177, 34));  // existing color
-                        }
-                        if (neg != null) {
-                            neg.setTextColor(Color.rgb(251, 177, 34));  // existing color
-                        }
-
-                        // Change confirm dialog footer background
-                        if (pos != null) {
-                            View footer = (View) pos.getParent();
-                            if (footer != null) {
-                                footer.setBackgroundColor(Color.rgb(66, 66, 66));
+                        File imgToDelete = new File(requireContext().getExternalFilesDir("pics"), line.Picture);
+                        if (imgToDelete.exists()) {
+                            boolean deleted = imgToDelete.delete();
+                            if (!deleted) {
+                                System.out.println("Failed to delete image: " + imgToDelete.getAbsolutePath());
                             }
                         }
 
-                        TextView message = confirmDialog.findViewById(android.R.id.message);
-                        if (message != null) {
-                            message.setTextColor(Color.WHITE);
+                        if (map instanceof MapFragment) {
+                            ((MapFragment) map).ClearAllMarkers();
+                            ((MapFragment) map).LoadBeers();
                         }
 
-                        TextView title = confirmDialog.findViewById(android.R.id.title);
-                        if (title != null) {
-                            title.setTextColor(Color.WHITE);
+                        if (MainActivity.alcodex.GetAllBrands().contains(line.Brand)) {
+                            if (!CsvHelper.IsBrandDuplicated(line.Brand, requireContext())
+                                    && !Objects.equals(requireContext().getExternalFilesDir("pics") + line.Picture,
+                                    MainActivity.alcodex.LoadBeers().get(line.Brand).photoPath)) {
+                                MainActivity.alcodex.ClearPhotoForBrand(line.Brand);
+                            }
                         }
-                    });
 
-                    confirmDialog.show();
-                });
-            }
+                        AchievementHandler achievementHandler = new AchievementHandler(getContext());
+                        achievementHandler.CheckForNewAchievements(true);
+
+                        Bundle result = new Bundle();
+                        getParentFragmentManager().setFragmentResult("refresh_feed", result);
+                        dismiss();
+                    })
+                    .setNegativeButton(cancel, (confirm, which) -> confirm.dismiss())
+                    .create();
+
+            confirmDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.rgb(30, 30, 30)));
+
+            confirmDialog.setOnShowListener(c -> {
+                Button pos = confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button neg = confirmDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                if (pos != null) pos.setTextColor(Color.rgb(251, 177, 34));
+                if (neg != null) neg.setTextColor(Color.rgb(251, 177, 34));
+
+                if (pos != null) {
+                    View footer = (View) pos.getParent();
+                    if (footer != null) footer.setBackgroundColor(Color.rgb(30, 30, 30));
+                }
+
+                TextView message = confirmDialog.findViewById(android.R.id.message);
+                if (message != null) message.setTextColor(Color.WHITE);
+
+                TextView title = confirmDialog.findViewById(android.R.id.title);
+                if (title != null) title.setTextColor(Color.WHITE);
+            });
+
+            confirmDialog.show();
         });
-
-        // Set field values
-        brand.setText(getString(R.string.brand_view) + "       " + line.Brand);
-        volume.setText(getString(R.string.volume) + "    " + line.Volume + " L");
-        price.setText(getString(R.string.price) + "         " + line.Price + " €");
-        bar.setText(getString(R.string.bar_location_view) + "            " + line.Bar);
-        hour.setText(getString(R.string.hour) + "         " + hourValue);
-        rating.setRating(line.Rating);
 
         return dialog;
     }
@@ -242,36 +216,5 @@ public class ViewPhotoFragment extends DialogFragment {
             }
         }
         return null;
-    }
-
-    // Create a custom title bar
-    private LinearLayout CreateText(String title, String date) {
-        LinearLayout layout = new LinearLayout(requireContext());
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setPadding(32, 32, 32, 16);
-        layout.setBackgroundColor(Color.rgb(66, 66, 66));
-        layout.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        TextView titleText = new TextView(requireContext());
-        titleText.setText(title);
-        titleText.setTextSize(20);
-        titleText.setTypeface(null, Typeface.BOLD);
-        titleText.setTextColor(Color.rgb(200, 200, 200)); // already colored — keep as-is
-        titleText.setLayoutParams(new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-        TextView dateText = new TextView(requireContext());
-        dateText.setText(date);
-        dateText.setTextSize(20);
-        dateText.setTextColor(Color.rgb(136, 136, 136)); // already colored — keep as-is
-        dateText.setTypeface(null, Typeface.NORMAL);
-        dateText.setGravity(Gravity.END);
-
-        layout.addView(titleText);
-        layout.addView(dateText);
-
-        return layout;
     }
 }

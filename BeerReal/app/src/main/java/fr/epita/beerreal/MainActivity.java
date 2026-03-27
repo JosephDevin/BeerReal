@@ -11,10 +11,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
 
 import fr.epita.beerreal.ui.stats.alcodex.AlcodexStorage;
 import fr.epita.beerreal.csv.CsvHelper;
@@ -110,6 +113,21 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             HomeFragment.cameraActive = false;
         });
+
+        navView.setOnItemReselectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_home) {
+                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment_activity_main);
+                if (navHostFragment != null) {
+                    Fragment currentFragment = navHostFragment.getChildFragmentManager()
+                            .getPrimaryNavigationFragment();
+                    if (currentFragment instanceof HomeFragment) {
+                        ((HomeFragment) currentFragment).scrollToTop();
+                    }
+                }
+            }
+        });
+
     }
 
 }

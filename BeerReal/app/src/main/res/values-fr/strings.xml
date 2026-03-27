@@ -60,6 +60,8 @@
     <string name="locked_n">🔒 Verrouillé\n</string>
     <string name="rate_this_beer2">⭐ Note cette bière:</string>
     <string name="beer_information">Informations de la bière</string>
+    <string name="delete">Supprimer</string>
+    <string name="abuse">L\'abus d\'alcool est dangereux pour la santé. Consommez avec moderation.</string>
 
     <string-array name="header_options">
         <item>Statbièrestiques</item>

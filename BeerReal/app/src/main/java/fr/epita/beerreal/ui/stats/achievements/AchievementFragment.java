@@ -14,8 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+
+import java.util.List;
 
 import fr.epita.beerreal.MainActivity;
 import fr.epita.beerreal.R;
@@ -24,6 +27,17 @@ public class AchievementFragment extends DialogFragment {
 
     public static AchievementFragment newInstance() {
         return new AchievementFragment();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Apply rounded corners to the dialog window itself
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_dialog_rounded)
+            );
+        }
     }
 
     @Override
@@ -42,30 +56,53 @@ public class AchievementFragment extends DialogFragment {
                 .setView(view);
 
         LinearLayout unlocked = view.findViewById(R.id.unlockedLayout);
-        for (Achievement a : MainActivity.achievements.GetAllUnlocked()) {
+        List<Achievement> unlockedList = MainActivity.achievements.GetAllUnlocked();
+        for (int i = 0; i < unlockedList.size(); i++) {
+            Achievement a = unlockedList.get(i);
+
             TextView textView = new TextView(getContext());
             textView.setText(a.Name);
             textView.setTextColor(Color.WHITE);
-            textView.setGravity(Gravity.START| Gravity.TOP);
+            textView.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
             textView.setTextSize(18);
-            textView.setHeight(100);
+            textView.setPadding(8, 24, 8, 24);
             unlocked.addView(textView);
             textView.setOnClickListener(v -> showTooltip(v, a.Description));
+
+            // Add divider between items, not after the last one
+            if (i < unlockedList.size() - 1) {
+                View divider = new View(getContext());
+                LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                divider.setLayoutParams(p);
+                divider.setBackgroundResource(R.drawable.divider_achievement);
+                unlocked.addView(divider);
+            }
         }
 
         LinearLayout locked = view.findViewById(R.id.lockedLayout);
-        for (Achievement a : MainActivity.achievements.GetAllLocked()) {
+        List<Achievement> lockedList = MainActivity.achievements.GetAllLocked();
+        for (int i = 0; i < lockedList.size(); i++) {
+            Achievement a = lockedList.get(i);
+
             TextView textView = new TextView(getContext());
             textView.setText(a.Name);
             textView.setTextColor(Color.rgb(184, 184, 184));
-            textView.setGravity(Gravity.START | Gravity.TOP);
+            textView.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
             textView.setTextSize(18);
-            textView.setHeight(100);
+            textView.setPadding(8, 24, 8, 24);
             locked.addView(textView);
-
             textView.setOnClickListener(v -> showTooltip(v, a.Description));
-        }
 
+            if (i < lockedList.size() - 1) {
+                View divider = new View(getContext());
+                LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                divider.setLayoutParams(p);
+                divider.setBackgroundResource(R.drawable.divider_achievement);
+                locked.addView(divider);
+            }
+        }
         return builder.create();
     }
 
