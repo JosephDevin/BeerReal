@@ -45,7 +45,7 @@ BeerReal offers the following features:
 
 ## Installation
 
-Not available yet.
+V 1.0 on Playstore
 
 ### Prerequisites
 
