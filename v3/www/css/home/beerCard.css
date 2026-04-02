@@ -1,0 +1,88 @@
+/* ── FEED ITEM CARD (list item in home feed) ─────────────────────────────────*/
+
+.beer-card {
+    position: relative;
+    margin: 0 12px 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #242424;
+    cursor: pointer;
+}
+
+.bc-photo-wrapper {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: #1e1e1e;
+    overflow: hidden;
+}
+
+.bc-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bc-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+    pointer-events: none;
+}
+
+.bc-title {
+    position: absolute;
+    bottom: 28px;
+    left: 12px;
+    right: 12px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bc-date {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+}
+
+/* ── Placeholder shimmer ──────────────────────────────────────────────────────*/
+
+.bc-photo-placeholder {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            90deg,
+            #2a2a2a 25%,
+            #3a3a3a 50%,
+            #2a2a2a 75%
+    );
+    background-size: 200% 100%;
+    animation: bc-shimmer 1.4s infinite linear;
+}
+
+@keyframes bc-shimmer {
+    from { background-position:  200% 0; }
+    to   { background-position: -200% 0; }
+}
+
+/* ── Lazy-load fade-in ────────────────────────────────────────────────────────*/
+
+.beer-card.bc-lazy {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.beer-card.bc-lazy--visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+            opacity   0.4s ease,
+            transform 0.4s ease;
+}

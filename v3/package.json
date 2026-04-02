@@ -1,0 +1,32 @@
+{
+  "name": "v3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite www",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@capacitor-community/camera-preview": "^8.0.0",
+    "@capacitor-community/media": "^9.1.0",
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/camera": "^8.0.2",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/geolocation": "^8.1.0",
+    "@capacitor/ios": "^8.3.0",
+    "@capacitor/toast": "^8.0.1",
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "vite": "^8.0.3"
+  }
+}

@@ -1,0 +1,393 @@
+/* ── Backdrop ────────────────────────────────────────────────────────────────*/
+
+.bm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.bm-backdrop--visible {
+    opacity: 1;
+}
+
+/* ── Dialog ──────────────────────────────────────────────────────────────────*/
+
+.bm-dialog {
+    width: 100%;
+    max-height: 90dvh;
+    background: #424242;
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+    padding: 24px 16px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+}
+
+.bm-backdrop--visible .bm-dialog {
+    transform: translateY(0);
+}
+
+/* ── Title ───────────────────────────────────────────────────────────────────*/
+
+.bm-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+}
+
+/* ── Form ────────────────────────────────────────────────────────────────────*/
+
+.bm-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bm-input-wrap {
+    width: 100%;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────────────*/
+
+.bm-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px 4px 0 0;
+    padding: 10px 8px;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+}
+
+.bm-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Star rating ─────────────────────────────────────────────────────────────*/
+
+.bm-rating-label {
+    color: #fff;
+    font-size: 16px;
+    margin: 4px 0 0;
+    text-align: center;
+}
+
+.bm-stars {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.bm-star {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.bm-star__half {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    z-index: 2;
+}
+
+.bm-star__half--left  { left: 0; }
+.bm-star__half--right { right: 0; }
+
+.bm-star__empty {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.bm-star__filled {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    overflow: hidden;
+    width: 0;
+}
+
+.bm-star__filled svg {
+    min-width: 36px;
+    height: 100%;
+}
+
+.bm-star[data-fill="full"]  .bm-star__filled { width: 100%; }
+.bm-star[data-fill="half"]  .bm-star__filled { width: 50%;  }
+.bm-star[data-fill="empty"] .bm-star__filled { width: 0;    }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────*/
+
+.bm-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.bm-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.bm-btn--cancel {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: transparent;
+    color: #fff;
+}
+
+.bm-btn--submit {
+    border: none;
+    background: #FBB122;
+    color: #1a1a1a;
+    font-weight: 700;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.bm-btn--submit:disabled {
+    background: #7a6010;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────────*/
+
+.bm-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    z-index: 2000;/* ── Backdrop ────────────────────────────────────────────────────────────────*/
+
+.bm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.bm-backdrop--visible {
+    opacity: 1;
+}
+
+/* ── Dialog ──────────────────────────────────────────────────────────────────*/
+
+.bm-dialog {
+    width: 100%;
+    max-height: 90dvh;
+    background: #424242;
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+    padding: 24px 16px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+}
+
+.bm-backdrop--visible .bm-dialog {
+    transform: translateY(0);
+}
+
+/* ── Title ───────────────────────────────────────────────────────────────────*/
+
+.bm-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+}
+
+/* ── Form ────────────────────────────────────────────────────────────────────*/
+
+.bm-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bm-input-wrap {
+    width: 100%;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────────────*/
+
+.bm-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px 4px 0 0;
+    padding: 10px 8px;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+}
+
+.bm-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Star rating ─────────────────────────────────────────────────────────────*/
+
+.bm-rating-label {
+    color: #fff;
+    font-size: 16px;
+    margin: 4px 0 0;
+    text-align: center;
+}
+
+.bm-stars {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+
+.bm-star {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.bm-star__half {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    z-index: 2;
+}
+
+.bm-star__half--left  { left: 0; }
+.bm-star__half--right { right: 0; }
+
+.bm-star__empty {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.bm-star__filled {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    overflow: hidden;
+    width: 0;
+}
+
+.bm-star__filled svg {
+    min-width: 36px;
+    height: 100%;
+}
+
+.bm-star[data-fill="full"]  .bm-star__filled { width: 100%; }
+.bm-star[data-fill="half"]  .bm-star__filled { width: 50%;  }
+.bm-star[data-fill="empty"] .bm-star__filled { width: 0;    }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────*/
+
+.bm-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.bm-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.bm-btn--cancel {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: transparent;
+    color: #fff;
+}
+
+.bm-btn--submit {
+    border: none;
+    background: #FBB122;
+    color: #1a1a1a;
+    font-weight: 700;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.bm-btn--submit:disabled {
+    background: #7a6010;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────────*/
+
+.bm-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.bm-toast--visible {
+    opacity: 1;
+}
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.bm-toast--visible {
+    opacity: 1;
+}

@@ -1,0 +1,211 @@
+#page-stats {
+    position: absolute;
+    inset: 0;
+    background: #0D0D0D;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: Roboto, 'Noto Sans', sans-serif;
+}
+
+/* ── Scroll area ── */
+#stats-scroll {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 16px 80px;
+}
+
+/* ── Section headers (amber bar + title) ── */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.section-header .bar {
+    width: 4px;
+    height: 22px;
+    background: #FBB122;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.section-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+/* ── Stat cards ── */
+.stat-card {
+    background: #1C1C1C;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #888888;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.1;
+}
+
+.stat-value.amber  { color: #FBB122; }
+.stat-value.green  { color: #4CAF8B; }
+.stat-value.medium { font-size: 20px; }
+.stat-value.small  { font-size: 16px; }
+.stat-value.xsmall { font-size: 13px; }
+.stat-value.cost   { font-size: 22px; }
+
+/* ── 2-column grid ── */
+.card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.card-row.mb-20 { margin-bottom: 20px; }
+
+/* ── Full-width card ── */
+.card-full {
+    margin-bottom: 8px;
+}
+
+.card-full.mb-20 { margin-bottom: 20px; }
+
+/* ── Pill segment selector ── */
+.pill-scroll {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 20px;
+}
+
+.pill-scroll::-webkit-scrollbar { display: none; }
+
+.pill-container {
+    align-items: center;
+    display: inline-flex;
+    height: 48px;
+    background: #1C1C1C;
+    border-radius: 24px;
+    padding: 4px;
+    gap: 2px;
+    white-space: nowrap;
+}
+
+.pill {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    height: 100%;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #888888;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pill.active {
+    background: #FBB122;
+    color: #0D0D0D;
+}
+
+/* ── Progress bar ── */
+.progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.progress-row .progress-label {
+    font-size: 11px;
+    color: #888888;
+    flex: 1;
+}
+
+.progress-row .progress-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #FBB122;
+}
+
+.progress-row .progress-value.green { color: #4CAF8B; }
+
+.progress-track {
+    width: 100%;
+    height: 6px;
+    background: #2A2A2A;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #FBB122;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.6s ease;
+}
+
+.progress-fill.green { background: #4CAF8B; }
+
+/* ── Country comparison rows ── */
+.country-row {
+    margin-bottom: 10px;
+}
+
+.country-row:last-child { margin-bottom: 0; }
+
+.country-row .progress-track { height: 5px; }
+
+/* ── Bottom bar ── */
+#stats-bottom-bar {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+}
+
+.bottom-btn {
+    flex: 1;
+    height: 44px;
+    background: #FBB122;
+    border: none;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+}
+
+.bottom-btn:active { opacity: 0.85; }
+
+.bottom-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #000;
+}

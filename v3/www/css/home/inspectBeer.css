@@ -1,0 +1,248 @@
+/* ── FEED ITEM DETAIL OVERLAY ────────────────────────────────────────────────*/
+
+#feed-card-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+#feed-card-overlay.fc-visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Backdrop */
+.fc-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Card */
+.fc-card {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: #1A1A1A;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    transform: translateY(40px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#feed-card-overlay.fc-visible .fc-card {
+    transform: translateY(0);
+}
+
+/* ── Photo ───────────────────────────────────────────────────────────────────*/
+
+.fc-photo-wrapper {
+    position: relative;
+    height: 420px;
+    background: #111;
+    overflow: hidden;
+}
+
+.fc-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.fc-photo-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.65) 100%);
+    pointer-events: none;
+}
+
+/* Volume pill */
+.fc-pill {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 0.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    padding: 3px 12px;
+    color: #fff;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+/* Hour */
+.fc-hour {
+    position: absolute;
+    bottom: 14px;
+    right: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+/* Close button */
+.fc-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.fc-close:active {
+    transform: scale(0.93);
+}
+
+/* ── Body ────────────────────────────────────────────────────────────────────*/
+
+.fc-body {
+    padding: 14px 16px 24px;
+}
+
+.fc-row-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.fc-name-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.fc-brand {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fc-bar {
+    margin: 2px 0 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fc-price {
+    margin: 0;
+    color: #EFAB27;
+    font-size: 22px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fc-divider {
+    height: 0.5px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 16px 0 0;
+}
+
+.fc-row-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+}
+
+/* Stars */
+.fc-stars {
+    display: flex;
+    gap: 3px;
+}
+
+/* Actions */
+.fc-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fc-btn-edit {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #EFAB27;
+    border: none;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+}
+
+.fc-btn-edit:active {
+    transform: scale(0.93);
+}
+
+.fc-btn-delete {
+    background: transparent;
+    border: 1.5px solid #EFAB27;
+    border-radius: 999px;
+    padding: 6px 18px;
+    color: #EFAB27;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.fc-btn-delete:active {
+    background: rgba(239, 171, 39, 0.1);
+}
+
+/* ── Lightbox ─────────────────────────────────────────────────────────────────*/
+
+#fc-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: zoom-out;
+}
+
+#fc-lightbox.fc-lb-visible {
+    opacity: 1;
+}
+
+#fc-lightbox img {
+    max-width: 95vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 4px;
+}

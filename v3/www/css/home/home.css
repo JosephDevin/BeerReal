@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
+
+/* ── Root variables ── */
+:root {
+    --amber:   #FBB122;
+    --arsenic: #383838;
+    --surface: #1a1a1a;
+    --gray:    #6e6e6e;
+}
+
+/* ── Page shell — mirrors FrameLayout (match_parent x match_parent) ── */
+#page-home {
+    display: flex;
+    flex-direction: column;
+    height: 100%;          /* fills the router container */
+    overflow: hidden;      /* prevents the whole page from scrolling */
+}
+
+/* ── PreviewView — full bleed camera background ── */
+#previewView {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
+}
+
+#previewView .camera-placeholder {
+    color: #333;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Camera active state */
+#page-home.camera-active #previewView {
+    background: #111;
+}
+
+#page-home:not(.camera-active) #previewView {
+    display: none;
+}
+
+/* ── Top bar — android:layout_height="56dp", black bg, "BeerReal." ── */
+#topBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+#topBar span {
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    font-size: 26px;
+    color: #FFFFFF;
+}
+
+/* ── Welcome text — shown when feed is empty ── */
+#welcomeText {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 1;
+    padding: 32px;
+    text-align: center;
+    pointer-events: none;
+}
+
+#welcomeText h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: #fff;
+    letter-spacing: 0.06em;
+}
+
+#welcomeText p {
+    font-size: 15px;
+    color: var(--gray);
+    line-height: 1.5;
+}
+
+#welcomeText.hidden { display: none; }
+
+/* ── Feed RecyclerView — marginTop 64dp, fills rest ── */
+#feedRecyclerView {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 72px 0 16px;   /* 56px topbar + 16px breathing room */
+    background: var(--surface);  /* restores #1a1a1a background */
+}
+
+
+/* Beer card (RecyclerView item) */
+.beer-card {
+    background: #242424;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #2e2e2e;
+}
+
+.beer-card .card-image {
+    width: 100%;
+    height: 200px;
+    background: #2e2e2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.beer-card .card-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.beer-card .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.beer-card .card-meta {
+    font-size: 13px;
+    color: var(--gray);
+}
+
+.beer-card .card-rating {
+    font-size: 13px;
+    color: var(--amber);
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+/* ── Exit FAB — top|end, mini ── */
+#exitButton {
+    position: absolute;
+    top: 60px;    /* just below top bar */
+    right: 4px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: none;
+    cursor: pointer;
+    display: none;           /* only visible when camera is active */
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+#exitButton:active { transform: scale(0.92); }
+
+#exitButton svg { width: 18px; height: 18px; color: #000; fill: #000; }
+
+#page-home.camera-active #exitButton { display: flex; }
+
+#captureButton {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #fff;
+    border: 5px solid var(--amber);
+    cursor: pointer;
+    display: none;           /* only visible when camera is active */
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    box-shadow: 0 1px 2px rgba(251,177,34,0.35);
+    transition: transform 0.12s ease;
+}
+
+#captureButton:active { transform: translateX(-50%) scale(0.92); }
+#captureButton .inner { width: 56px; height: 56px; border-radius: 50%; background: #fff; }
+
+#page-home.camera-active #captureButton { display: flex; }
+
+#addButton {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(251,177,34,0.4);
+    transition: transform 0.15s ease;
+}
+
+#addButton:active { transform: scale(0.92); }
+#addButton svg { width: 24px; height: 24px; fill: #000; }
+
+/* When camera is active, punch through the WebView so the native
+   camera layer (toBack: true) is visible behind the HTML */
+#page-home.camera-active {
+    background: transparent;
+}
+
+#page-home.camera-active #previewView {
+    background: transparent;
+}
+
+#page-home.camera-active #topBar,
+#page-home.camera-active #feedRecyclerView,
+#page-home.camera-active #welcomeText,
+#page-home.camera-active #addButton {
+    display: none;
+}

@@ -1,0 +1,10 @@
+{
+  "appId": "fr.beerreal.app",
+  "appName": "BeerReal",
+  "webDir": "dist",
+  "plugins": {
+    "Filesystem": {
+      "iosScheme": "capacitor"
+    }
+  }
+}

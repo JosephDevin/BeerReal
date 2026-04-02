@@ -1,0 +1,34 @@
+#page-map {
+    position: absolute;
+    inset: 0;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+#recalculateButton {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(251,177,34,0.4);
+    transition: transform 0.15s ease;
+}
+
+#recalculateButton svg { width: 24px; height: 24px; fill: #000; }
+
+#inspectView,
+.inspect-overlay {
+    z-index: 1001;
+}
