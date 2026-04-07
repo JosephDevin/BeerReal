@@ -1,7 +1,7 @@
-import {isFeedCardOpen, removeFeedCard, showFeedCard} from './inspectBeer.js';
+import {isFeedCardOpen, removeFeedCard, showFeedCard} from './menu/inspectBeer.js';
 import { createImageDir, getLinesCsv, initialiseCSV } from '../stats/storage/csvHelper.js';
 import { FeedItem }     from './feedItem.js';
-import { openBeerMenu, openEditBeerMenu } from "./beerMenu"; // ← add openEditBeerMenu
+import { openBeerMenu, openEditBeerMenu } from "./menu/beerMenu"; // ← add openEditBeerMenu
 
 import { t }            from '../../assets/strings/strings.js';
 
@@ -14,6 +14,35 @@ import { App } from '@capacitor/app';
 import '../../css/home/home.css';
 import '../../css/home/beerCard.css';
 import '../../css/home/beerMenu.css';
+
+
+// ── MODULE-LEVEL STATE ────────────────────────────────────────────────────────
+// Kept here so the document listeners below are registered exactly once,
+// even if render() is called multiple times (e.g. HMR, route re-entry).
+
+let _feed    = null;
+let _welcome = null;
+
+function onFeedCardEdit(e) {
+    openEditBeerMenu(e.detail.line, () => loadFeed(_feed, _welcome), () => {});
+}
+
+function onFeedCardDeleted() {
+    loadFeed(_feed, _welcome);
+}
+
+document.addEventListener('feedcard:edit',    onFeedCardEdit);
+document.addEventListener('feedcard:deleted', onFeedCardDeleted);
+
+// HMR cleanup — removes the listeners before the old module is discarded,
+// preventing accumulation across hot reloads during development.
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+        document.removeEventListener('feedcard:edit',    onFeedCardEdit);
+        document.removeEventListener('feedcard:deleted', onFeedCardDeleted);
+    });
+}
+
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 
@@ -70,6 +99,11 @@ async function initHome() {
     const captureBtn = document.getElementById('captureButton');
     const preview    = document.getElementById('previewView');
 
+    // Update module-level refs so the document listeners always target
+    // the freshest DOM nodes after a re-render.
+    _feed    = feed;
+    _welcome = welcome;
+
     await requestAllPermissions();
     await initialiseCSV();
     await createImageDir();
@@ -94,12 +128,6 @@ async function initHome() {
     captureBtn.addEventListener('click', async () => {
         await capturePhoto(page, addBtn, feed, welcome);
     });
-
-    document.addEventListener('feedcard:edit', (e) => {
-        openEditBeerMenu(e.detail.line, () => loadFeed(feed, welcome), () => {});
-    });
-
-    document.addEventListener('feedcard:deleted', () => loadFeed(feed, welcome));
 }
 
 
@@ -319,7 +347,7 @@ async function resolveAndInjectImage(beer, card, feedItem) {
 function bindFeedItem(feedItem) {
     const beer  = feedItem.getLine();
     const title = beer.Title;
-    const date  = beer.Date.slice(5, 10);
+    const date  = `${beer.Date.slice(8, 10)}-${beer.Date.slice(5, 7)}`;
 
     const card = document.createElement('div');
     card.className = 'beer-card';
@@ -347,7 +375,7 @@ function escHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
-// ── Android/iOS back button → close inspect overlay if open ──────────────────
+// ── Android/iOS back button ──────────────────
 App.addListener('backButton', () => {
     if (isFeedCardOpen()) {
         removeFeedCard();

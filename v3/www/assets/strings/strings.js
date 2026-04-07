@@ -15,6 +15,15 @@ export const strings = {
         beer_bar:              '📍 Bar/Location',
         beer_rating:              '⭐ Rate this beer',
 
+        update:                   'Update',
+        submit:                   'Submit',
+
+        locating:                'Locating...',
+        error_location:          'Location is disabled. Please enable it to submit.',
+        error_chars:             'The maximum length is ${MAX} characters and commas are not allowed.',
+        edit_title:               'Edit this beer?',
+        beer_information:         'Beer information',
+
         // ── STATS ────────────────────────────────────────────────────────────────────
         totals:                   'Totals',
         total_beers:              '🍺 Total Beers',
@@ -56,12 +65,17 @@ export const strings = {
         week:                     'Week',
         month:                    'Month',
         year:                     'Year',
+        days:                     'days',
+
+        units:                    'units',
+        none:                     'None',
 
         // ── DELETING ────────────────────────────────────────────────────────────────────
         confirm_title:            'Delete this beer?',
         confirm_subtitle:         'Are you sure you want to delete this beer?',
-        confirm_cancel:           'Cancel',
-        confirm_delete:           'Delete',
+        cancel:                   'Cancel',
+        delete:                   'Delete',
+
 
         // ── NO INFO BEER ──────────────────────────────────────────────────────────────────
         no_title:                 'Untitled',
@@ -76,10 +90,25 @@ export const strings = {
         welcome:                 'Welcome!',
         welcome_sub:             'Here is where you\'ll find all your beers!',
 
-        location_error:           'Please enable location to log a beer.'
+        location_error:           'Please enable location to log a beer.',
 
+        // ── ALCODEX ───────────────────────────────────────────────────────
+        alcodex_title:           'New brand captured!',
+        alcodex_sub:             'Are you sure you want to add this beer brand to your alcodex?',
+        skip:                    'Skip',
+        add:                     'Add',
+        alcodex_empty:            'No beers logged yet.',
 
+        // ── BACKUP ───────────────────────────────────────────────────────
+        import_title:            'Import backup',
+        import_body:             `Select a .zip file previously exported by another instance of BeerReal.<br>Beware this will erase <strong style="color:#e57373;">every data here and can not be undone.</strong>`,
 
+        // ── SUCCES ───────────────────────────────────────────────────────
+        achievement_title:        '🏆 Achievements',
+        achievement_unlocked:     '🏆 Achievement unlocked:',
+        unlocked:                 'Unlocked —',
+        locked:                   'Locked —',
+        warning:                  'BeerReal does not promote excessive alcohol consumption. Drink responsibly.',
 
     },
 
@@ -98,6 +127,15 @@ export const strings = {
         beer_volume:              '🍶 Volume (L)',
         beer_bar:                 '📍 Bar/Endroit',
         beer_rating:              '⭐ Notez cette bière',
+
+        edit_title:               'Modifier cette bière?',
+        beer_information:         'Informations de la bière',
+
+        update:                   'Modifier',
+        submit:                   'Publier',
+        locating:                'Localisation...',
+        error_location:          'La localisation est désactivée. Activez la pour poster..',
+        error_chars:             'La longueur maximale est de 30 caractères et les virgules ne sont pas autorisées.',
 
         // ── STATS ────────────────────────────────────────────────────────────────────
         totals:                   'Totaux',
@@ -140,12 +178,17 @@ export const strings = {
         week:                     'Semaine',
         month:                    'Mois',
         year:                     'Année',
+        days:                     'jours',
+
+        units:                    'unités',
+        none:                     'Aucune',
 
         // ── DELETING ────────────────────────────────────────────────────────────────────
         confirm_title:            'Supprimer cette bière?',
         confirm_subtitle:         'Êtes vous sûr de vouloir supprimer cette bière?',
-        confirm_cancel:           'Annuler',
-        confirm_delete:           'Supprimer',
+        cancel:           'Annuler',
+        delete:           'Supprimer',
+
 
         // ── NO INFO BEER ────────────────────────────────────────────────────────────
         no_title:                 'Sans titre',
@@ -160,7 +203,25 @@ export const strings = {
         welcome:                 'Bienvenue!',
         welcome_sub:              'C\'est ici que tu trouveras toutes tes bières!',
 
-        location_error:           'Activez la géolocalisation pour enregistrer votre bière.'
+        location_error:           'Activez la géolocalisation pour enregistrer votre bière.',
+
+        // ── ALCODEX ───────────────────────────────────────────────────────
+        alcodex_title:           'Nouvelle marque!',
+        alcodex_sub:             'Est tu sûr de vouloir garder cette marque dans ton Alcodex?',
+        skip:                    'Passer',
+        add:                     'Ajouter',
+        alcodex_empty:            'Aucune bière pour le moment.',
+
+        // ── BACKUP ───────────────────────────────────────────────────────
+        import_title:            'Importer une sauvegarde',
+        import_body:             `Selectionner un fichier .zip exporté auparavant par une autre instance de BeerReal.<br>Ayez conscience que cela effacera <strong style="color:#e57373;">toutes les données ici et ne peut pas être annulé.</strong>`,
+
+        // ── ACHIEVEMENTS ───────────────────────────────────────────────────────
+        achievement_unlocked:     '🏆 Succès débloqué:',
+        achievement_title:        '🏆 Succès',
+        unlocked:                 'Verrouillés —',
+        locked:                   'Déverouillés —',
+        warning:                  'L\'alcool est dangereux pour la santé. Consommez avec modération.',
     }
 };
 

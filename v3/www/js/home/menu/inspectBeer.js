@@ -1,15 +1,17 @@
-import '../../css/home/inspectBeer.css';
-import { removeLine } from '../stats/storage/csvHelper.js';
+import '../../../css/home/inspectBeer.css';
+import { removeLine } from '../../stats/storage/csvHelper.js';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 
-import { t } from '../../assets/strings/strings.js';
+import { t } from '../../../assets/strings/strings.js';
+import { checkForNewAchievements } from '../../stats/achievements/achievementHandler';
+import { alcodex } from '../../stats/alcodex/alcodexHelper';
 
 
 export function showFeedCard(feedItem) {
     const line = feedItem.getLine();
 
-    // Parse hour from date string (format: YYYY-MM-DD-HH:MM)
-    const hour = line.date ? line.date.slice(-5) : '';
+    const hour = line.Date ? line.Date.slice(-5) : '';
+    const dateLabel = _formatMonthDay(line.Date);
 
     removeFeedCard();
 
@@ -19,6 +21,8 @@ export function showFeedCard(feedItem) {
         <div class="fc-backdrop"></div>
         <div class="fc-card" role="dialog" aria-modal="true">
 
+            <div class="fc-drag-handle"></div>
+
             <div class="fc-photo-wrapper">
                 <img
                     class="fc-photo"
@@ -27,7 +31,7 @@ export function showFeedCard(feedItem) {
                 />
                 <div class="fc-photo-scrim"></div>
                 <span class="fc-pill">${escHtml(line.Volume)}L</span>
-                <span class="fc-hour">${escHtml(hour)}</span>
+                <span class="fc-date-pill">${escHtml(dateLabel)}</span>
                 <button class="fc-close" aria-label="Close">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2.5"
@@ -44,7 +48,10 @@ export function showFeedCard(feedItem) {
                         <p class="fc-brand">${escHtml(line.Brand)}</p>
                         <p class="fc-bar">${escHtml(line.Bar)}</p>
                     </div>
-                    <p class="fc-price">${escHtml(line.Price.toFixed(2))}€</p>
+                    <div class="fc-price-group">
+                        <p class="fc-price">${escHtml(line.Price.toFixed(2))}€</p>
+                        <p class="fc-hour">${escHtml(hour)}</p>
+                    </div>
                 </div>
 
                 <div class="fc-divider"></div>
@@ -60,7 +67,7 @@ export function showFeedCard(feedItem) {
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
                         </button>
-                        <button class="fc-btn-delete" data-path="${escHtml(line.Picture)}">Delete</button>
+                        <button class="fc-btn-delete" data-path="${escHtml(line.Picture)}">${t.delete}</button>
                     </div>
                 </div>
             </div>
@@ -72,23 +79,21 @@ export function showFeedCard(feedItem) {
 
     renderStars(overlay.querySelector('.fc-stars'), parseFloat(line.Rating));
 
-    // Animate in
     requestAnimationFrame(() => overlay.classList.add('fc-visible'));
 
-    // Close handlers
     overlay.querySelector('.fc-backdrop').addEventListener('click', removeFeedCard);
     overlay.querySelector('.fc-close').addEventListener('click', removeFeedCard);
     document.addEventListener('keydown', onEscKey);
 
-    // Edit button
     overlay.querySelector('.fc-btn-edit').addEventListener('click', () => {
         removeFeedCard();
         document.dispatchEvent(new CustomEvent('feedcard:edit', { detail: { line } }));
     });
 
-    // Delete button — show confirmation first
+    _addSwipeToClose(overlay.querySelector('.fc-card'), removeFeedCard);
+
     overlay.querySelector('.fc-btn-delete').addEventListener('click', () => {
-        showDeleteConfirm(line.Picture, () => {
+        showDeleteConfirm(line, () => {
             removeFeedCard();
         });
     });
@@ -105,7 +110,7 @@ export function removeFeedCard() {
 
 // ── DELETE CONFIRMATION ───────────────────────────────────────────────────────
 
-function showDeleteConfirm(picturePath, onDeleted) {
+function showDeleteConfirm(line, onDeleted) {
     const existing = document.getElementById('fc-delete-confirm');
     if (existing) existing.remove();
 
@@ -130,21 +135,21 @@ function showDeleteConfirm(picturePath, onDeleted) {
     `;
     box.innerHTML = `
         <p style="margin:0 0 6px; font-size:17px; font-weight:600; color:#fff;">
-            ${t.confirm_title ?? 'Delete beer?'}
+            ${t.confirm_title}
         </p>
         <p style="margin:0 0 20px; font-size:14px; color:rgba(255,255,255,0.55);">
-            ${t.confirm_subtitle ?? 'This cannot be undone.'}
+            ${t.confirm_subtitle}
         </p>
         <div style="display:flex; gap:10px;">
             <button id="fc-cancel-btn" style="
                 flex:1; padding:12px; border-radius:10px; border:none;
                 background:rgba(255,255,255,0.1); color:#fff; font-size:15px; cursor:pointer;">
-                ${t.confirm_cancel}
+                ${t.cancel}
             </button>
             <button id="fc-delete-btn" style="
                 flex:1; padding:12px; border-radius:10px; border:none;
                 background:#EFAB27; color:#000; font-size:15px;
-                font-weight:600; cursor:pointer;">${t.confirm_delete}</button>
+                font-weight:600; cursor:pointer;">${t.delete}</button>
         </div>
     `;
 
@@ -157,27 +162,27 @@ function showDeleteConfirm(picturePath, onDeleted) {
     backdrop.addEventListener('click', dismiss);
     box.querySelector('#fc-cancel-btn').addEventListener('click', dismiss);
     box.querySelector('#fc-delete-btn').addEventListener('click', async () => {
-        await deleteBeer(picturePath);
+        await deleteBeer(line);
         dismiss();
         onDeleted();
         document.dispatchEvent(new CustomEvent('feedcard:deleted'));
     });
 }
-function dismissDeleteConfirm(dialog) {
-    dialog.classList.remove('fc-confirm-visible');
-    dialog.addEventListener('transitionend', () => dialog.remove(), { once: true });
-}
 
-async function deleteBeer(picturePath) {
-    await removeLine(picturePath);
+async function deleteBeer(line) {
+    await removeLine(line.Picture);
 
-    // Delete the image file if one exists
-    if (picturePath) {
+    await alcodex.init();
+    await alcodex.resyncBrand(line.Brand);
+
+    if (line.Picture) {
         try {
             await Filesystem.deleteFile({
-                path: `pics/${picturePath}`,
+                path: `pics/${line.Picture}`,
                 directory: Directory.External,
             });
+
+            checkForNewAchievements(true).catch(console.error);
         } catch (e) {
             console.error('Failed to delete image file:', e);
         }
@@ -186,6 +191,38 @@ async function deleteBeer(picturePath) {
 
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
+
+function _addSwipeToClose(card, closeFn) {
+    let startY = 0;
+    let dragging = false;
+
+    card.addEventListener('touchstart', e => {
+        startY = e.touches[0].clientY;
+        dragging = false;
+    }, { passive: true });
+
+    card.addEventListener('touchmove', e => {
+        const dy = e.touches[0].clientY - startY;
+        if (dy > 0) {
+            dragging = true;
+            card.style.transform = `translateY(${dy}px)`;
+            card.style.transition = 'none';
+        }
+    }, { passive: true });
+
+    card.addEventListener('touchend', e => {
+        const dy = e.changedTouches[0].clientY - startY;
+        if (dragging && dy > 80) {
+            card.style.transition = 'transform 0.2s ease';
+            card.style.transform = `translateY(${window.innerHeight}px)`;
+            setTimeout(closeFn, 200);
+        } else {
+            card.style.transition = '';
+            card.style.transform = '';
+        }
+        dragging = false;
+    }, { passive: true });
+}
 
 function onEscKey(e) {
     if (e.key === 'Escape') removeFeedCard();
@@ -199,11 +236,19 @@ function escHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
+function _formatMonthDay(dateStr) {
+    if (!dateStr) return '';
+    // Format stored in CSV: "YYYY-MM-DD-HH:MM"
+    const parts = dateStr.trim().split('-');
+    if (parts.length < 3) return '';
+    return `${parts[2]}-${parts[1]}`;
+}
+
 function renderStars(container, rating) {
     for (let i = 1; i <= 5; i++) {
         const fill =
-            i <= Math.floor(rating)              ? '#EFAB27' :
-                i === Math.ceil(rating) && rating % 1 >= 0.5 ? 'url(#fc-half)' :
+            i <= Math.floor(rating)                          ? '#EFAB27' :
+                i === Math.ceil(rating) && rating % 1 >= 0.5    ? 'url(#fc-half)' :
                     'rgba(255,255,255,0.15)';
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', '20');

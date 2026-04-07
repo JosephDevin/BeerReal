@@ -1,8 +1,9 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../../css/map/map.css';
+
 import { getLinesCsv }          from '../stats/storage/csvHelper.js';
-import { showFeedCard }         from '../home/inspectBeer.js';
+import { showFeedCard }         from '../home/menu/inspectBeer.js';
 import { FeedItem }             from '../home/feedItem.js';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import {Capacitor} from "@capacitor/core";

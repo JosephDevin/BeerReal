@@ -1,6 +1,7 @@
-import { addLineCsv, updateLine } from '../stats/storage/csvHelper.js';
-import { Geolocation }            from '@capacitor/geolocation';
-import { t }                      from '../../assets/strings/strings.js';
+import { addLineCsv, updateLine }            from '../../stats/storage/csvHelper.js';
+import { t }                                  from '../../../assets/strings/strings.js';
+import { checkForNewAchievements }            from '../../stats/achievements/achievementHandler.js';
+import {alcodex} from "../../stats/alcodex/alcodexHelper";
 
 
 export function openBeerMenu(filename, coordsPromise, onSubmit, onCancel) {
@@ -28,12 +29,12 @@ function _buildDialog({ filename, coordsPromise, existingLine, onSubmit, onCance
     dialog.className = 'bm-dialog';
     dialog.setAttribute('role', 'dialog');
     dialog.setAttribute('aria-modal', 'true');
-    dialog.setAttribute('aria-label', isEditing ? 'Edit beer' : 'Beer information');
+    dialog.setAttribute('aria-label', isEditing ? t.edit_title : t.beer_information);
 
     // ── Title ─────────────────────────────────────────────────────────────────
     const titleBar = document.createElement('h2');
     titleBar.className = 'bm-title';
-    titleBar.textContent = isEditing ? 'Edit beer' : 'Beer information';
+    titleBar.textContent = isEditing ? t.edit_title : t.beer_information;
 
     // ── Form body ─────────────────────────────────────────────────────────────
     const body = document.createElement('div');
@@ -48,11 +49,11 @@ function _buildDialog({ filename, coordsPromise, existingLine, onSubmit, onCance
 
     const cancelBtn = document.createElement('button');
     cancelBtn.className = 'bm-btn bm-btn--cancel';
-    cancelBtn.textContent = 'Cancel';
+    cancelBtn.textContent = t.cancel;
 
     const submitBtn = document.createElement('button');
     submitBtn.className = 'bm-btn bm-btn--submit';
-    submitBtn.textContent = isEditing ? 'Update' : 'Submit';
+    submitBtn.textContent = isEditing ? t.update : t.submit;
 
     btnRow.appendChild(cancelBtn);
     btnRow.appendChild(submitBtn);
@@ -90,19 +91,32 @@ function _buildDialog({ filename, coordsPromise, existingLine, onSubmit, onCance
         }
 
         if (isEditing) {
+            const oldBrand = existingLine.Brand;
+            const brandChanged = _normalize(brand) !== _normalize(oldBrand);
+
             await updateLine(existingLine.Picture, title, brand, volume, price, rating, bar);
+
+            await alcodex.init();
+            if (brandChanged) {
+                await alcodex.handleBrandRename(oldBrand, brand, existingLine.Picture);
+            }
+            // (If brand didn't change the photo path is the same — nothing to update)
+            // ─────────────────────────────────────────────────────────────────────────
+
             close();
             onSubmit?.({ ...existingLine, Title: title, Brand: brand,
                 Volume: volume, Price: price, Rating: rating, Bar: bar });
 
+            _runAchievementCheck();
         } else {
-            submitBtn.textContent = 'Locating…';
+            // ── New beer path ─────────────────────────────────────────────────
+            submitBtn.textContent = t.locating;
 
             // Await here — resolves instantly if GPS already came back during form fill
             const [latitude, longitude] = await coordsPromise;
 
             if (latitude === 0 && longitude === 0) {
-                _showToast('Location is disabled. Please enable it to submit.');
+                _showToast(t.error_location);
                 try {
                     const { Filesystem, Directory } = await import('@capacitor/filesystem');
                     await Filesystem.deleteFile({ path: `pics/${filename}`, directory: Directory.External });
@@ -112,15 +126,53 @@ function _buildDialog({ filename, coordsPromise, existingLine, onSubmit, onCance
                 return;
             }
 
+
             const newLine = await addLineCsv(
                 filename, title, brand, volume, price,
                 [latitude, longitude],
                 new Date(), rating, bar
             );
-            close();
-            onSubmit?.(newLine);
+
+            await alcodex.init();
+            const isNewBrand = !alcodex.hasBrand(brand);
+
+            if (isNewBrand) {
+                close();
+                onSubmit?.(newLine);
+                _runAchievementCheck();
+                _showAlcodexConfirm(brand, async () => {
+                    await alcodex.addOrUpdateBrand(brand, filename);
+                });
+            } else {
+                await alcodex.addOrUpdateBrand(brand, filename);
+                close();
+                onSubmit?.(newLine);
+                _runAchievementCheck();
+            }
         }
     });
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ACHIEVEMENT CHECK
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function _runAchievementCheck() {
+    try {
+        const newlyUnlocked = await checkForNewAchievements(false);
+
+        if (newlyUnlocked.length === 0) return;
+
+        // Show one toast per unlocked achievement, staggered by 600 ms
+        for (let i = 0; i < newlyUnlocked.length; i++) {
+            setTimeout(() => {
+                _showToast(t.achievement_unlocked +  newlyUnlocked[i]);
+            }, i * 600);
+        }
+    } catch (e) {
+        console.error('Achievement check failed:', e);
+    }
 }
 
 
@@ -166,7 +218,7 @@ function _readFields({ titleInput, brandInput, volumeInput, priceInput, barInput
     const MAX = 30;
     for (const [label, val] of [['Title', title], ['Brand', brand], ['Bar', bar]]) {
         if (val.includes(',') || val.length > MAX) {
-            return { error: `The maximum length is ${MAX} characters and commas are not allowed.` };
+            return { error: `${t.error_chars}` };
         }
     }
 
@@ -270,6 +322,70 @@ function _input(type, placeholder, value) {
 function _safeFloat(str, fallback) {
     const v = parseFloat(String(str).trim());
     return isNaN(v) ? fallback : v;
+}
+
+function _normalize(str) {
+    return String(str ?? '').trim().toLowerCase();
+}
+
+function _showAlcodexConfirm(brand, onConfirm) {
+    const existing = document.getElementById('bm-alcodex-confirm');
+    if (existing) existing.remove();
+
+    const dialog = document.createElement('div');
+    dialog.id = 'bm-alcodex-confirm';
+    dialog.style.cssText = `
+        position: fixed; inset: 0; z-index: 99999;
+        display: flex; align-items: center; justify-content: center;
+    `;
+
+    const backdrop = document.createElement('div');
+    backdrop.style.cssText = `
+        position: absolute; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);
+    `;
+
+    const safeBrand = brand.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const box = document.createElement('div');
+    box.style.cssText = `
+        position: relative; background: #1e1e1e; border-radius: 16px;
+        padding: 24px; width: min(320px, 85vw); text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    `;
+    box.innerHTML = `
+        <p style="margin:0 0 6px; font-size:17px; font-weight:600; color:#fff;">
+            ${t.alcodex_title}
+        </p>
+        <p style="margin:0 0 20px; font-size:14px; color:rgba(255,255,255,0.55);">
+           ${t.alcodex_sub}
+        </p>
+        <div style="display:flex; gap:10px;">
+            <button id="bm-alcodex-skip-btn" style="
+                flex:1; padding:12px; border-radius:10px; border:none;
+                background:rgba(255,255,255,0.1); color:#fff; font-size:15px; cursor:pointer;">
+                ${t.skip}
+            </button>
+            <button id="bm-alcodex-add-btn" style="
+                flex:1; padding:12px; border-radius:10px; border:none;
+                background:#EFAB27; color:#000; font-size:15px;
+                font-weight:600; cursor:pointer;">
+                ${t.add}
+            </button>
+        </div>
+    `;
+
+    dialog.appendChild(backdrop);
+    dialog.appendChild(box);
+    document.body.appendChild(dialog);
+
+    const dismiss = () => dialog.remove();
+
+    backdrop.addEventListener('click', dismiss);
+    box.querySelector('#bm-alcodex-skip-btn').addEventListener('click', dismiss);
+    box.querySelector('#bm-alcodex-add-btn').addEventListener('click', async () => {
+        dismiss();
+        await onConfirm();
+    });
 }
 
 function _showToast(message) {

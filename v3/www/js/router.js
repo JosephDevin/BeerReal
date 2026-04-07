@@ -1,3 +1,5 @@
+import {alcodex} from "./stats/alcodex/alcodexHelper";
+
 const routes = {
     map:   () => import('./map/map.js'),
     home:  () => import('./home/home.js'),
@@ -43,7 +45,11 @@ async function onAppStart() {
     try {
         // Dynamic import — only runs on device where Capacitor is available
         const { initialiseCSV, createImageDir } = await import('./stats/storage/csvHelper.js');
+
         await initialiseCSV();
+        await alcodex.init();
+        await alcodex.syncFromCsv();
+
         await createImageDir();
 
     } catch (e) {

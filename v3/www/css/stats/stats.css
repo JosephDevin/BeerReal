@@ -209,3 +209,42 @@
     height: 20px;
     fill: #000;
 }
+
+/* ── Backup row ── */
+#stats-backup-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 0 8px;
+    margin-top: 4px;
+}
+
+.backup-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 7px 18px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.backup-btn:active {
+    color: rgba(255, 255, 255, 0.75);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.backup-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.backup-sep {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+    user-select: none;
+}

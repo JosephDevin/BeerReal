@@ -1,6 +1,11 @@
 import { t } from '../../assets/strings/strings.js';
 import '../../css/stats/stats.css';
-import { Data, Times } from "./data/data";
+import '../../css/stats/achievements/achievements.css';
+import { Data, Times }              from './data/data';
+import { openAchievementsDialog }   from './achievements/achievementDialog.js';
+import {checkForNewAchievements} from "./achievements/achievementHandler";
+import {openAlcodexDialog}                from "./alcodex/alcodexDialog";
+import { triggerExport, openImportDialog } from './backup/backupDialog.js';
 
 export function render(container) {
     container.innerHTML = `
@@ -261,6 +266,13 @@ export function render(container) {
           </div>
         </div>
 
+        <!-- ── BACKUP ── -->
+        <div id="stats-backup-row">
+          <button class="backup-btn" id="btnExportBackup">↑ Export</button>
+          <span class="backup-sep">·</span>
+          <button class="backup-btn" id="btnImportBackup">↓ Import</button>
+        </div>
+
       </div>
 
       <!-- ── BOTTOM BAR ── -->
@@ -268,7 +280,7 @@ export function render(container) {
         <button class="bottom-btn" id="btnAchievements">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
-                d="M12,14V17M12,14C9.581,14 7.563,12.282 7.1,10M12,14C14.419,14 16.437,12.282 16.9,10M17,5H19.75C19.982,5 20.098,5 20.195,5.019C20.592,5.098 20.902,5.408 20.981,5.805C21,5.902 21,6.018 21,6.25C21,6.947 21,7.295 20.942,7.585C20.706,8.775 19.775,9.706 18.585,9.942C18.295,10 17.947,10 17.25,10H17H16.9M7,5H4.25C4.018,5 3.902,5 3.805,5.019C3.408,5.098 3.098,5.408 3.019,5.805C3,5.902 3,6.018 3,6.25C3,6.947 3,7.295 3.058,7.585C3.294,8.775 4.225,9.706 5.415,9.942C5.705,10 6.053,10 6.75,10H7H7.1M12,17C12.93,17 13.395,17 13.776,17.102C14.812,17.38 15.62,18.188 15.898,19.223C16,19.605 16,20.07 16,21H8C8,20.07 8,19.605 8.102,19.223C8.38,18.188 9.188,17.38 10.224,17.102C10.605,17 11.07,17 12,17ZM7.1,10C7.034,9.677 7,9.342 7,9V4.571C7,4.038 7,3.772 7.099,3.566C7.197,3.362 7.362,3.197 7.566,3.099C7.772,3 8.038,3 8.571,3H15.429C15.962,3 16.228,3 16.434,3.099C16.638,3.197 16.803,3.362 16.901,3.566C17,3.772 17,4.038 17,4.571V9C17,9.342 16.966,9.677 16.9,10"
+                d="M12,14V17M12,14C9.581,14 7.563,12.282 7.1,10M12,14C14.419,14 16.437,12.282 16.9,10M17,5H19.75C19.982,5 20.098,5 20.195,5.019C20.592,5.098 20.902,5.408 20.981,5.805C21,5.902 21,6.018 21,6.25C21,6.947 21,7.295 20.942,7.585C20.706,8.775 19.775,9.706 18.585,9.942C18.295,10 17.947,10 17.25,10H17H16.9M7,5H4.25C4.018,5 3.902,5 3.805,5.019C3.408,5.098 3.098,5.408 3.019,5.805C3,5.902 3,6.018 3,6.25C3,6.947 3,7.295 3.058,7.585C3.294,8.775 4.225,9.706 5.415,9.942C5.705,10 6.053,10 6.75,10H7H7.1M12,17C12.93,17 13.395,17 13.776,17.102C14.812,17.38 15.62,18.188 15.898,19.223C16,19.605 16,20.07 16,21H8C8,20.07 8,19.605 8.102,19.223C8.38,18.188 9.188,17.38 10.224,17.102C10.605,17 11.07,17 12,17ZM7,5H4.25C4.018,5 3.902,5 3.805,5.019C3.408,5.098 3.098,5.408 3.019,5.805C3,5.902 3,6.018 3,6.25C3,6.947 3,7.295 3.058,7.585C3.294,8.775 4.225,9.706 5.415,9.942C5.705,10 6.053,10 6.75,10H7H7.1"
                 stroke="#000000"
                 stroke-width="2"
                 stroke-linecap="round"
@@ -316,7 +328,7 @@ async function populateStats(data) {
     set('tvTotalBeers',          data.getTotalBeers());
     set('tvTotalCost',           `${data.getTotalCost().toFixed(2)}€`);
     set('tvTotalVolume',         `${data.getTotalVolume().toFixed(2)}L`);
-    set('tvAverageSatisfaction', satisfaction === null ? 'None' : `${satisfaction.toFixed(2)}/5`);
+    set('tvAverageSatisfaction', satisfaction === null ? t.none : `${satisfaction.toFixed(2)}/5`);
 
     // Daily averages
     set('tvBeersPerDay',  data.getAverageDrinksPerDay().toFixed(2));
@@ -338,22 +350,22 @@ async function populateStats(data) {
     const soberStreak = data.getLongestNonDrinkingStreak();
     const maxStreak   = Math.max(drinkStreak, soberStreak, 1);
 
-    set('tvLongestDrinkingStreak',    `${drinkStreak} days`);
-    set('tvLongestNonDrinkingStreak', `${soberStreak} days`);
+    set('tvLongestDrinkingStreak',    `${drinkStreak} ${t.days}`);
+    set('tvLongestNonDrinkingStreak', `${soberStreak} ${t.days}`);
     setBar('progressDrinkingStreak', (drinkStreak / maxStreak) * 100);
     setBar('progressSoberStreak',    (soberStreak / maxStreak) * 100);
 
     // Cost
-    set('tvAvgCostPerBeer',   `${data.getAverageCost().toFixed(2)}€`);
-    set('tvCheapestBeer',     data.getCheapestBeer());
+    set('tvAvgCostPerBeer',    `${data.getAverageCost().toFixed(2)}€`);
+    set('tvCheapestBeer',      data.getCheapestBeer());
     set('tvMostExpensiveBeer', data.getMostExpensiveBeer());
 
     // Health
     set('tvEstimatedCalories', `${Math.round(data.getCaloricIntake())} kcal`);
-    set('tvAlcoholUnits',      `${data.getAlcoholUnits().toFixed(1)} units`);
+    set('tvAlcoholUnits',      `${data.getAlcoholUnits().toFixed(1)} ${t.units}`);
 
     // Global comparison
-    const r      = data.compareToWorldsDrinkers();
+    const r = data.compareToWorldsDrinkers();
 
     set('tvCzechiaRatio',    `${r.czechia.toFixed(1)}x`);
     set('tvLatviaRatio',     `${r.latvia.toFixed(1)}x`);
@@ -363,13 +375,13 @@ async function populateStats(data) {
     set('tvUSARatio',        `${r.usa.toFixed(1)}x`);
     set('tvBangladeshRatio', `${r.bangladesh.toFixed(1)}x`);
 
-    setBar('barCzechia',    (r.czechia)    * 100);
-    setBar('barLatvia',     (r.latvia)     * 100);
-    setBar('barEstonia',    (r.estonia)    * 100);
-    setBar('barFrance',     (r.france)     * 100);
-    setBar('barIreland',    (r.ireland)    * 100);
-    setBar('barUSA',        (r.usa)        * 100);
-    setBar('barBangladesh', (r.bangladesh) * 100);
+    setBar('barCzechia',    r.czechia    * 100);
+    setBar('barLatvia',     r.latvia     * 100);
+    setBar('barEstonia',    r.estonia    * 100);
+    setBar('barFrance',     r.france     * 100);
+    setBar('barIreland',    r.ireland    * 100);
+    setBar('barUSA',        r.usa        * 100);
+    setBar('barBangladesh', r.bangladesh * 100);
 
     set('tvClosestCountry', data.getClosestCountry());
 }
@@ -381,6 +393,8 @@ async function initStats() {
     // Load and display default period (ALL_TIME)
     const defaultData = await Data.create(Times.ALL_TIME);
     await populateStats(defaultData);
+
+    checkForNewAchievements(false).catch(console.error);
 
     // Pill switching
     for (const pill of document.querySelectorAll('.pill')) {
@@ -394,11 +408,18 @@ async function initStats() {
         });
     }
 
+    // ── Achievements button ───────────────────────────────────────────────────
     document.getElementById('btnAchievements').addEventListener('click', () => {
-        console.log('Achievements');
+        openAchievementsDialog();
     });
 
     document.getElementById('btnAlcodex').addEventListener('click', () => {
-        console.log('Alcodex');
+        openAlcodexDialog();
     });
+
+    const exportBtn = document.getElementById('btnExportBackup');
+    const importBtn = document.getElementById('btnImportBackup');
+
+    exportBtn.addEventListener('click', () => triggerExport(exportBtn));
+    importBtn.addEventListener('click', () => openImportDialog());
 }
