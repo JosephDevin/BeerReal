@@ -137,6 +137,97 @@ export function openImportDialog() {
 
 
 // ─────────────────────────────────────────────────────────────────────────────
+// FIRST LAUNCH DIALOG
+// ─────────────────────────────────────────────────────────────────────────────
+
+const FIRST_LAUNCH_KEY = 'br_first_launch_done';
+
+export function maybeShowFirstLaunchDialog() {
+    if (localStorage.getItem(FIRST_LAUNCH_KEY)) return;
+
+    // ── Wrapper ───────────────────────────────────────────────────────────────
+    const wrapper = document.createElement('div');
+    wrapper.id = 'br-first-launch-dialog';
+    wrapper.style.cssText = `
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+        padding: 24px;
+    `;
+
+    // ── Backdrop ──────────────────────────────────────────────────────────────
+    const backdrop = document.createElement('div');
+    backdrop.style.cssText = `
+        position: absolute; inset: 0;
+        background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
+    `;
+
+    // ── Box ───────────────────────────────────────────────────────────────────
+    const box = document.createElement('div');
+    box.style.cssText = `
+        position: relative;
+        background: #1e1e1e;
+        border-radius: 16px;
+        padding: 28px 20px 20px;
+        width: min(360px, 100%);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+        text-align: center;
+    `;
+
+    box.innerHTML = `
+        <div style="font-size:48px; margin-bottom:12px;">🍺</div>
+        <p style="margin:0 0 10px; font-size:18px; font-weight:700; color:#fff;">
+            ${t.first_launch_title}
+        </p>
+        <p style="margin:0 0 24px; font-size:13px; color:rgba(255,255,255,0.5); line-height:1.6;">
+            ${t.first_launch_body}
+        </p>
+        <div style="display:flex; gap:10px;">
+            <button id="br-first-import" style="
+                flex:1; padding:12px; border-radius:10px; border:none;
+                background:rgba(255,255,255,0.08); color:#fff;
+                font-size:14px; font-weight:600; cursor:pointer;">
+                ${t.first_launch_import}
+            </button>
+            <button id="br-first-next" style="
+                flex:1; padding:12px; border-radius:10px; border:none;
+                background:#EFAB27; color:#000;
+                font-size:14px; font-weight:700; cursor:pointer;">
+                ${t.first_launch_next}
+            </button>
+        </div>
+    `;
+
+    wrapper.appendChild(backdrop);
+    wrapper.appendChild(box);
+    document.body.appendChild(wrapper);
+
+    // ── Animate in ────────────────────────────────────────────────────────────
+    box.style.opacity   = '0';
+    box.style.transform = 'scale(0.95)';
+    box.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        box.style.opacity   = '1';
+        box.style.transform = 'scale(1)';
+    }));
+
+    function dismiss() {
+        localStorage.setItem(FIRST_LAUNCH_KEY, '1');
+        box.style.opacity   = '0';
+        box.style.transform = 'scale(0.95)';
+        setTimeout(() => wrapper.remove(), 200);
+    }
+
+    box.querySelector('#br-first-next').addEventListener('click', dismiss);
+
+    box.querySelector('#br-first-import').addEventListener('click', () => {
+        dismiss();
+        // Small delay so first-launch dialog finishes animating out first
+        setTimeout(() => openImportDialog(), 220);
+    });
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
 // TOAST
 // ─────────────────────────────────────────────────────────────────────────────
 

@@ -21,8 +21,8 @@ export const strings = {
         locating:                'Locating...',
         error_location:          'Location is disabled. Please enable it to submit.',
         error_chars:             'The maximum length is ${MAX} characters and commas are not allowed.',
-        edit_title:               'Edit this beer?',
-        beer_information:         'Beer information',
+        edit_title:              'Edit this beer?',
+        beer_information:        'Beer information',
 
         // ── STATS ────────────────────────────────────────────────────────────────────
         totals:                   'Totals',
@@ -102,6 +102,12 @@ export const strings = {
         // ── BACKUP ───────────────────────────────────────────────────────
         import_title:            'Import backup',
         import_body:             `Select a .zip file previously exported by another instance of BeerReal.<br>Beware this will erase <strong style="color:#e57373;">every data here and can not be undone.</strong>`,
+
+        // ── FIRST LAUNCH ─────────────────────────────────────────────────
+        first_launch_title:      'Welcome to BeerReal!',
+        first_launch_body:       'If you are coming from v1 or just changed devices, you might have some old data to import. Click on Import Backup to do so.',
+        first_launch_next:       'Get started',
+        first_launch_import:     'Import backup',
 
         // ── SUCCES ───────────────────────────────────────────────────────
         achievement_title:        '🏆 Achievements',
@@ -215,6 +221,12 @@ export const strings = {
         // ── BACKUP ───────────────────────────────────────────────────────
         import_title:            'Importer une sauvegarde',
         import_body:             `Selectionner un fichier .zip exporté auparavant par une autre instance de BeerReal.<br>Ayez conscience que cela effacera <strong style="color:#e57373;">toutes les données ici et ne peut pas être annulé.</strong>`,
+
+        // ── FIRST LAUNCH ─────────────────────────────────────────────────
+        first_launch_title:      'Bienvenue sur BeerReal!',
+        first_launch_body:       'Si vous venez de la v1 ou que vous venez de changer de téléphone, vous avez peut-être des données sauvegardées! Importez les en cliquant sur Importer une sauvegarde.',
+        first_launch_next:       'Commencer',
+        first_launch_import:     'Importer une sauvegarde',
 
         // ── ACHIEVEMENTS ───────────────────────────────────────────────────────
         achievement_unlocked:     '🏆 Succès débloqué:',

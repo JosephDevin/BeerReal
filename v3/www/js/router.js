@@ -1,4 +1,5 @@
 import {alcodex} from "./stats/alcodex/alcodexHelper";
+import { maybeShowFirstLaunchDialog } from './stats/backup/backupDialog.js';
 
 const routes = {
     map:   () => import('./map/map.js'),
@@ -58,4 +59,7 @@ async function onAppStart() {
 }
 
 // Boot — router always starts even if startup fails
-onAppStart().then(() => initRouter());
+onAppStart().then(() => {
+    initRouter();
+    maybeShowFirstLaunchDialog();
+});

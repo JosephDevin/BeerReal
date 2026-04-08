@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/web-CiZKFI_A.js","assets/dist-DVAlI8Z_.js"])))=>i.map(i=>d[i]);
+import{a as e,c as t,o as n}from"./dist-DVAlI8Z_.js";import{n as r,t as i}from"./preload-helper-DQdQJW1-.js";var a=t((()=>{})),o;t((()=>{e(),a(),r(),o=n(`Share`,{web:()=>i(()=>import(`./web-CiZKFI_A.js`).then(e=>new e.ShareWeb),__vite__mapDeps([0,1]))})}))();export{o as Share};
