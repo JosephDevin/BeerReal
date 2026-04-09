@@ -167,15 +167,10 @@ function _addRow(list, a, state, addDivider) {
     const row = document.createElement('div');
     row.className = `ach-row ach-row--${state}`;
 
-    const icon = document.createElement('span');
-    icon.className = 'ach-row-icon';
-    icon.textContent = state === 'unlocked' ? '✓' : '🔒';
-
     const label = document.createElement('span');
     label.className = 'ach-row-label';
     label.textContent = a.name;
 
-    row.appendChild(icon);
     row.appendChild(label);
     list.appendChild(row);
 

@@ -156,18 +156,10 @@
 }
 
 /* Unlocked — white (mirrors Color.WHITE in Java) */
-.ach-row--unlocked .ach-row-icon  { color: #4caf50; font-size: 14px; }
 .ach-row--unlocked .ach-row-label { color: #ffffff; }
 
 /* Locked — gray (mirrors Color.rgb(184,184,184) in Java) */
-.ach-row--locked .ach-row-icon  { color: rgba(255, 255, 255, 0.3); font-size: 11px; }
 .ach-row--locked .ach-row-label { color: #b8b8b8; }
-
-.ach-row-icon {
-    width: 18px;
-    text-align: center;
-    flex-shrink: 0;
-}
 
 .ach-row-label {
     font-size: 16px;
