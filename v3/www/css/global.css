@@ -31,7 +31,8 @@ html, body {
 #nav-view {
     flex-shrink: 0;
     width: 100%;
-    height: 64px;
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     background: #383838;       /* Arsenic */
     display: flex;
     align-items: stretch;
@@ -101,4 +102,8 @@ html, body {
 
 html, body {
     background: transparent;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
 }

@@ -9,6 +9,10 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import {Capacitor} from "@capacitor/core";
 import { Geolocation } from '@capacitor/geolocation';
 
+// Default centre shown while geolocation resolves (Paris, France)
+const DEFAULT_LAT = 48.8566;
+const DEFAULT_LNG = 2.3522;
+
 export async function render(container) {
     container.innerHTML = `
     <div id="page-map">
@@ -21,18 +25,29 @@ export async function render(container) {
     </div>
   `;
 
-    const [lat, lng] = await recalculatePosition();
-    const map = L.map('map').setView([lat, lng], 12.5);
+    // Initialise the map immediately with a default view so tiles start
+    // loading right away — don't wait for geolocation first.
+    const map = L.map('map').setView([DEFAULT_LAT, DEFAULT_LNG], 5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    await loadBeers(map);
+    // Force Leaflet to recalculate container size in case the layout
+    // wasn't fully settled when the map was constructed.
+    setTimeout(() => map.invalidateSize(), 100);
 
-    document.getElementById('recalculateButton').addEventListener('click', async () => {
+    // Fetch user position and beer markers in parallel
+    const [[lat, lng]] = await Promise.all([
+        recalculatePosition(),
+        loadBeers(map),
+    ]);
+
+    map.flyTo([lat, lng], 12.5, { duration: 0.8 });
+
+    document.getElementById('recalculateButton')?.addEventListener('click', async () => {
         const [lat, lng] = await recalculatePosition();
-        map.flyTo([lat, lng], 14, { duration: 0.5});
+        map.flyTo([lat, lng], 14, { duration: 0.5 });
     });
 }
 
@@ -73,6 +88,9 @@ async function loadBeers(map) {
 
 export async function recalculatePosition() {
     try {
+        if (Capacitor.isNativePlatform()) {
+            await Geolocation.requestPermissions();
+        }
         const { coords } = await Geolocation.getCurrentPosition({
             enableHighAccuracy: true,
             timeout: 10000,
@@ -80,7 +98,7 @@ export async function recalculatePosition() {
         return [coords.latitude, coords.longitude];
     } catch (e) {
         console.error('Location error:', e);
-        return [0, 0];
+        return [DEFAULT_LAT, DEFAULT_LNG];
     }
 }
 

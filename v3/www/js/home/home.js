@@ -104,13 +104,19 @@ async function initHome() {
     _feed    = feed;
     _welcome = welcome;
 
-    await requestAllPermissions();
+    // Request location early (needed for recording beer coordinates).
+    // Camera permission is deferred to when the user actually taps the
+    // camera button so it never blocks the feed from appearing.
+    await requestLocationPermission();
     await initialiseCSV();
     await createImageDir();
 
     await loadFeed(feed, welcome);
 
     addBtn.addEventListener('click', async () => {
+        // Request camera permission on first tap — avoids crashing on
+        // iOS if Info.plist keys were somehow missing from a prior build.
+        await requestCameraPermission();
         page.classList.add('camera-active');
         addBtn.style.display = 'none';
         await startCamera();
@@ -133,14 +139,22 @@ async function initHome() {
 
 // ── PERMISSIONS ───────────────────────────────────────────────────────────────
 
-async function requestAllPermissions() {
+async function requestCameraPermission() {
     if (!Capacitor.isNativePlatform()) return;
     try {
         const { Camera } = await import('@capacitor/camera');
         await Camera.requestPermissions({ permissions: ['camera'] });
+    } catch (e) {
+        console.error('Failed to request camera permission:', e);
+    }
+}
+
+async function requestLocationPermission() {
+    if (!Capacitor.isNativePlatform()) return;
+    try {
         await Geolocation.requestPermissions();
     } catch (e) {
-        console.error('Failed to request permissions:', e);
+        console.error('Failed to request location permission:', e);
     }
 }
 
@@ -259,7 +273,14 @@ async function capturePhoto(page, addBtn, feed, welcome) {
 const EAGER_LOAD_COUNT = 10;
 
 async function loadFeed(feed, welcome) {
-    const beers = await getLinesCsv();
+    let beers;
+    try {
+        beers = await getLinesCsv();
+    } catch (e) {
+        console.error('loadFeed: failed to read CSV:', e);
+        welcome.classList.remove('hidden');
+        return;
+    }
 
     if (beers.length === 0) {
         welcome.classList.remove('hidden');

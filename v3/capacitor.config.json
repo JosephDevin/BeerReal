@@ -2,6 +2,9 @@
   "appId": "fr.beerreal.app",
   "appName": "BeerReal",
   "webDir": "dist",
+  "ios": {
+    "backgroundColor": "#00000000"
+  },
   "plugins": {
     "Filesystem": {
       "iosScheme": "capacitor"
